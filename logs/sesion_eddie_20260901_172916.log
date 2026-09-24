@@ -1,0 +1,6 @@
+2026-09-01 17:29:16,644 | INFO     | EDDIE | Sesion EDDIE iniciada — 30 ciclos programados
+2026-09-01 17:29:16,644 | INFO     | EDDIE | Hardware: MockEyeTracker | MockCamera | SimulatedGesture
+2026-09-01 17:29:16,650 | DEBUG    | EDDIE | Ciclo #001 | lat=5.71ms | gaze=(0.56,0.59) | gesto=point | palabras=7 | fijacion=True
+2026-09-01 17:29:16,692 | DEBUG    | EDDIE | Ciclo #011 | lat=4.63ms | gaze=(0.65,0.33) | gesto=point | palabras=13 | fijacion=True
+2026-09-01 17:29:16,729 | DEBUG    | EDDIE | Ciclo #021 | lat=6.03ms | gaze=(0.46,0.48) | gesto=scroll_up | palabras=25 | fijacion=True
+2026-09-01 17:29:16,767 | INFO     | EDDIE | Sesion completada: 30 ciclos

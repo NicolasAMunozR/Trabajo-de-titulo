@@ -1,0 +1,6 @@
+﻿C:\Users\nicol\OneDrive\Documentos\GitHub\Trabajo-de-titulo\EDDIE-2023\InterfacesModuloConsistencia\ICommentsDP.cs
+C:\Users\nicol\OneDrive\Documentos\GitHub\Trabajo-de-titulo\EDDIE-2023\InterfacesModuloConsistencia\ICommentsPD.cs
+C:\Users\nicol\OneDrive\Documentos\GitHub\Trabajo-de-titulo\EDDIE-2023\InterfacesModuloConsistencia\IFiguresDP.cs
+C:\Users\nicol\OneDrive\Documentos\GitHub\Trabajo-de-titulo\EDDIE-2023\InterfacesModuloConsistencia\IFiguresPD.cs
+C:\Users\nicol\OneDrive\Documentos\GitHub\Trabajo-de-titulo\EDDIE-2023\InterfacesModuloConsistencia\IPageMarker.cs
+C:\Users\nicol\OneDrive\Documentos\GitHub\Trabajo-de-titulo\EDDIE-2023\InterfacesModuloConsistencia\IPageMarkerPD.cs

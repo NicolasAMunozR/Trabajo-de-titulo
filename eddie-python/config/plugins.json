@@ -1,0 +1,58 @@
+{
+  "_comentario": "Archivo de configuración de plugins del sistema EDDIE Python.",
+  "_nota": "Para activar/desactivar un plugin, cambia 'enabled' a true/false.",
+  "_uso_mock": "Durante desarrollo sin hardware, usa 'use_mock': true en los plugins que lo soporten.",
+  "plugins": [
+    {
+      "name": "ImageProcessor",
+      "class": "plugins.image_processor_plugin.ImageProcessorPlugin",
+      "enabled": true,
+      "config": {
+        "camera_index": 0,
+        "ocr_language": "spa",
+        "use_mock": false,
+        "tesseract_path": "C:\\Program Files\\Tesseract-OCR\\tesseract.exe",
+        "min_confidence": 0.6
+      }
+    },
+    {
+      "name": "EyeTracker",
+      "class": "hardware.mock.mock_eye_tracker.MockEyeTracker",
+      "enabled": true,
+      "config": {
+        "device": "mock",
+        "use_mock": true,
+        "noise_std": 0.02,
+        "fixation_duration_s": 0.3
+      }
+    },
+    {
+      "name": "GesturePlugin",
+      "class": "plugins.gesture_plugin.GesturePlugin",
+      "enabled": false,
+      "config": {
+        "camera_index": 1,
+        "use_mock": true,
+        "detection_method": "opencv_contours"
+      }
+    },
+    {
+      "name": "ConsistencyProvider",
+      "class": "plugins.consistency_plugin.ConsistencyPlugin",
+      "enabled": false,
+      "config": {
+        "pdf_path": "",
+        "use_mock": true
+      }
+    },
+    {
+      "name": "WebSearchProvider",
+      "class": "plugins.web_search_plugin.WebSearchPlugin",
+      "enabled": false,
+      "_nota": "MVP: Solo interfaz. Implementación es trabajo futuro (APIs vencidas).",
+      "config": {
+        "use_mock": true
+      }
+    }
+  ]
+}

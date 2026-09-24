@@ -1,0 +1,259 @@
+{"ts": 1790202894.0481, "iso": "19:34:54", "type": "SESSION_START", "thread": "MainThread", "data": {"session_id": "sess_1790202894", "version": "1.0.0"}}
+{"ts": 1790202894.0489, "iso": "19:34:54", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 300, "y": 139, "confidence": 0.966}}
+{"ts": 1790202894.0491, "iso": "19:34:54", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "visión", "confidence": 0.789, "page": 1, "line": 2}}
+{"ts": 1790202894.0497, "iso": "19:34:54", "type": "TTS_SPEAK", "thread": "TTSThread", "data": {"text": "Definición encontrada", "rate": 165, "engine": "pyttsx3"}}
+{"ts": 1790202894.0498, "iso": "19:34:54", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 6, "x1": 40, "x2": 560, "y": 330, "color": "cyan"}}
+{"ts": 1790202894.1491, "iso": "19:34:54", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 302, "y": 141, "confidence": 0.914}}
+{"ts": 1790202894.2492, "iso": "19:34:54", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 304, "y": 144, "confidence": 0.883}}
+{"ts": 1790202894.3495, "iso": "19:34:54", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 306, "y": 147, "confidence": 0.873}}
+{"ts": 1790202894.4496, "iso": "19:34:54", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 308, "y": 150, "confidence": 0.861}}
+{"ts": 1790202894.55, "iso": "19:34:54", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 310, "y": 154, "confidence": 0.988}}
+{"ts": 1790202894.6353, "iso": "19:34:54", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "visión", "confidence": 0.777, "page": 1, "line": 9}}
+{"ts": 1790202894.6502, "iso": "19:34:54", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 312, "y": 157, "confidence": 0.914}}
+{"ts": 1790202894.7508, "iso": "19:34:54", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 314, "y": 160, "confidence": 0.861}}
+{"ts": 1790202894.8514, "iso": "19:34:54", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 316, "y": 164, "confidence": 0.882}}
+{"ts": 1790202894.9515, "iso": "19:34:54", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 318, "y": 167, "confidence": 0.879}}
+{"ts": 1790202895.0518, "iso": "19:34:55", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 320, "y": 171, "confidence": 0.943}}
+{"ts": 1790202895.1524, "iso": "19:34:55", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 322, "y": 175, "confidence": 0.974}}
+{"ts": 1790202895.2526, "iso": "19:34:55", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 324, "y": 179, "confidence": 0.984}}
+{"ts": 1790202895.3529, "iso": "19:34:55", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 326, "y": 183, "confidence": 0.958}}
+{"ts": 1790202895.4078, "iso": "19:34:55", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "gaze", "confidence": 0.741, "page": 1, "line": 8}}
+{"ts": 1790202895.453, "iso": "19:34:55", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 328, "y": 187, "confidence": 0.983}}
+{"ts": 1790202895.5535, "iso": "19:34:55", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 330, "y": 191, "confidence": 0.999}}
+{"ts": 1790202895.654, "iso": "19:34:55", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 332, "y": 195, "confidence": 0.925}}
+{"ts": 1790202895.7543, "iso": "19:34:55", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 334, "y": 199, "confidence": 0.982}}
+{"ts": 1790202895.8547, "iso": "19:34:55", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 336, "y": 203, "confidence": 0.947}}
+{"ts": 1790202895.955, "iso": "19:34:55", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 338, "y": 207, "confidence": 0.958}}
+{"ts": 1790202896.0555, "iso": "19:34:56", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 340, "y": 211, "confidence": 0.999}}
+{"ts": 1790202896.0714, "iso": "19:34:56", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "gaze", "confidence": 0.821, "page": 1, "line": 4}}
+{"ts": 1790202896.1556, "iso": "19:34:56", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 342, "y": 215, "confidence": 0.9}}
+{"ts": 1790202896.2558, "iso": "19:34:56", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 344, "y": 219, "confidence": 0.879}}
+{"ts": 1790202896.3559, "iso": "19:34:56", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 346, "y": 222, "confidence": 0.928}}
+{"ts": 1790202896.3959, "iso": "19:34:56", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 1, "x1": 40, "x2": 560, "y": 105, "color": "cyan"}}
+{"ts": 1790202896.456, "iso": "19:34:56", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 348, "y": 226, "confidence": 0.971}}
+{"ts": 1790202896.5083, "iso": "19:34:56", "type": "TTS_SPEAK", "thread": "TTSThread", "data": {"text": "Lectura aumentada activa", "rate": 165, "engine": "pyttsx3"}}
+{"ts": 1790202896.5563, "iso": "19:34:56", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 350, "y": 230, "confidence": 0.926}}
+{"ts": 1790202896.6298, "iso": "19:34:56", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "gaze", "confidence": 0.757, "page": 1, "line": 9}}
+{"ts": 1790202896.6565, "iso": "19:34:56", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 352, "y": 234, "confidence": 0.865}}
+{"ts": 1790202896.7569, "iso": "19:34:56", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 354, "y": 237, "confidence": 0.976}}
+{"ts": 1790202896.8569, "iso": "19:34:56", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 356, "y": 241, "confidence": 0.859}}
+{"ts": 1790202896.9575, "iso": "19:34:56", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 358, "y": 244, "confidence": 0.947}}
+{"ts": 1790202897.0577, "iso": "19:34:57", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 360, "y": 247, "confidence": 0.986}}
+{"ts": 1790202897.1541, "iso": "19:34:57", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "aumentada", "confidence": 0.706, "page": 1, "line": 6}}
+{"ts": 1790202897.1581, "iso": "19:34:57", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 362, "y": 251, "confidence": 0.978}}
+{"ts": 1790202897.2584, "iso": "19:34:57", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 364, "y": 254, "confidence": 0.963}}
+{"ts": 1790202897.3589, "iso": "19:34:57", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 366, "y": 256, "confidence": 0.855}}
+{"ts": 1790202897.4591, "iso": "19:34:57", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 368, "y": 259, "confidence": 0.982}}
+{"ts": 1790202897.5596, "iso": "19:34:57", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 370, "y": 262, "confidence": 0.857}}
+{"ts": 1790202897.6601, "iso": "19:34:57", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 372, "y": 264, "confidence": 0.974}}
+{"ts": 1790202897.7236, "iso": "19:34:57", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "texto", "confidence": 0.706, "page": 1, "line": 8}}
+{"ts": 1790202897.7602, "iso": "19:34:57", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 374, "y": 266, "confidence": 0.903}}
+{"ts": 1790202897.8605, "iso": "19:34:57", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 376, "y": 269, "confidence": 0.93}}
+{"ts": 1790202897.9608, "iso": "19:34:57", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 378, "y": 271, "confidence": 0.938}}
+{"ts": 1790202898.0608, "iso": "19:34:58", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 7, "x1": 40, "x2": 560, "y": 375, "color": "cyan"}}
+{"ts": 1790202898.0613, "iso": "19:34:58", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 380, "y": 272, "confidence": 0.929}}
+{"ts": 1790202898.1617, "iso": "19:34:58", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 382, "y": 274, "confidence": 0.886}}
+{"ts": 1790202898.2618, "iso": "19:34:58", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 384, "y": 275, "confidence": 0.883}}
+{"ts": 1790202898.3622, "iso": "19:34:58", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 386, "y": 276, "confidence": 0.992}}
+{"ts": 1790202898.4559, "iso": "19:34:58", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "Tesseract", "confidence": 0.728, "page": 1, "line": 8}}
+{"ts": 1790202898.4624, "iso": "19:34:58", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 388, "y": 277, "confidence": 0.999}}
+{"ts": 1790202898.5625, "iso": "19:34:58", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 390, "y": 278, "confidence": 0.867}}
+{"ts": 1790202898.5766, "iso": "19:34:58", "type": "TTS_SPEAK", "thread": "TTSThread", "data": {"text": "EDDIE detectó texto", "rate": 165, "engine": "pyttsx3"}}
+{"ts": 1790202898.6631, "iso": "19:34:58", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 392, "y": 279, "confidence": 0.929}}
+{"ts": 1790202898.7632, "iso": "19:34:58", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 394, "y": 279, "confidence": 0.904}}
+{"ts": 1790202898.8636, "iso": "19:34:58", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 396, "y": 279, "confidence": 0.876}}
+{"ts": 1790202898.9007, "iso": "19:34:58", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "OCR", "confidence": 0.896, "page": 1, "line": 9}}
+{"ts": 1790202898.9638, "iso": "19:34:58", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 398, "y": 279, "confidence": 0.914}}
+{"ts": 1790202899.0643, "iso": "19:34:59", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 400, "y": 279, "confidence": 0.877}}
+{"ts": 1790202899.1647, "iso": "19:34:59", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 402, "y": 279, "confidence": 0.957}}
+{"ts": 1790202899.2652, "iso": "19:34:59", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 404, "y": 278, "confidence": 0.958}}
+{"ts": 1790202899.3654, "iso": "19:34:59", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 406, "y": 277, "confidence": 0.881}}
+{"ts": 1790202899.4225, "iso": "19:34:59", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "Tesseract", "confidence": 0.938, "page": 1, "line": 6}}
+{"ts": 1790202899.4656, "iso": "19:34:59", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 408, "y": 277, "confidence": 0.958}}
+{"ts": 1790202899.5658, "iso": "19:34:59", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 410, "y": 275, "confidence": 0.924}}
+{"ts": 1790202899.6662, "iso": "19:34:59", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 412, "y": 274, "confidence": 0.894}}
+{"ts": 1790202899.7665, "iso": "19:34:59", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 414, "y": 272, "confidence": 0.874}}
+{"ts": 1790202899.8671, "iso": "19:34:59", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 416, "y": 271, "confidence": 0.932}}
+{"ts": 1790202899.9674, "iso": "19:34:59", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 418, "y": 269, "confidence": 0.87}}
+{"ts": 1790202900.0305, "iso": "19:35:00", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "aumentada", "confidence": 0.731, "page": 1, "line": 8}}
+{"ts": 1790202900.0676, "iso": "19:35:00", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 420, "y": 267, "confidence": 0.998}}
+{"ts": 1790202900.1679, "iso": "19:35:00", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 422, "y": 264, "confidence": 0.864}}
+{"ts": 1790202900.268, "iso": "19:35:00", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 424, "y": 262, "confidence": 0.887}}
+{"ts": 1790202900.3685, "iso": "19:35:00", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 426, "y": 259, "confidence": 0.948}}
+{"ts": 1790202900.4689, "iso": "19:35:00", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 428, "y": 257, "confidence": 0.893}}
+{"ts": 1790202900.5402, "iso": "19:35:00", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 2, "x1": 40, "x2": 560, "y": 150, "color": "cyan"}}
+{"ts": 1790202900.5694, "iso": "19:35:00", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 430, "y": 254, "confidence": 0.989}}
+{"ts": 1790202900.5914, "iso": "19:35:00", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "aumentada", "confidence": 0.782, "page": 1, "line": 3}}
+{"ts": 1790202900.6696, "iso": "19:35:00", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 432, "y": 251, "confidence": 0.876}}
+{"ts": 1790202900.7697, "iso": "19:35:00", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 434, "y": 248, "confidence": 0.92}}
+{"ts": 1790202900.8702, "iso": "19:35:00", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 436, "y": 244, "confidence": 0.996}}
+{"ts": 1790202900.9706, "iso": "19:35:00", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 438, "y": 241, "confidence": 0.892}}
+{"ts": 1790202901.0132, "iso": "19:35:01", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "lectura", "confidence": 0.73, "page": 1, "line": 8}}
+{"ts": 1790202901.0709, "iso": "19:35:01", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 440, "y": 237, "confidence": 0.948}}
+{"ts": 1790202901.1715, "iso": "19:35:01", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 442, "y": 234, "confidence": 0.883}}
+{"ts": 1790202901.272, "iso": "19:35:01", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 444, "y": 230, "confidence": 0.954}}
+{"ts": 1790202901.3251, "iso": "19:35:01", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "EDDIE", "confidence": 0.974, "page": 1, "line": 1}}
+{"ts": 1790202901.3723, "iso": "19:35:01", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 446, "y": 226, "confidence": 0.91}}
+{"ts": 1790202901.4727, "iso": "19:35:01", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 448, "y": 223, "confidence": 0.896}}
+{"ts": 1790202901.5732, "iso": "19:35:01", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 450, "y": 219, "confidence": 0.9}}
+{"ts": 1790202901.6004, "iso": "19:35:01", "type": "TTS_SPEAK", "thread": "TTSThread", "data": {"text": "Definición encontrada", "rate": 165, "engine": "pyttsx3"}}
+{"ts": 1790202901.6735, "iso": "19:35:01", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 452, "y": 215, "confidence": 0.961}}
+{"ts": 1790202901.7737, "iso": "19:35:01", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 454, "y": 211, "confidence": 0.937}}
+{"ts": 1790202901.8739, "iso": "19:35:01", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 456, "y": 207, "confidence": 0.898}}
+{"ts": 1790202901.9552, "iso": "19:35:01", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "Tesseract", "confidence": 0.709, "page": 1, "line": 2}}
+{"ts": 1790202901.9742, "iso": "19:35:01", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 458, "y": 203, "confidence": 0.854}}
+{"ts": 1790202902.0747, "iso": "19:35:02", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 460, "y": 199, "confidence": 0.867}}
+{"ts": 1790202902.1365, "iso": "19:35:02", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 6, "x1": 40, "x2": 560, "y": 330, "color": "cyan"}}
+{"ts": 1790202902.1747, "iso": "19:35:02", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 462, "y": 195, "confidence": 0.884}}
+{"ts": 1790202902.2751, "iso": "19:35:02", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 464, "y": 191, "confidence": 0.924}}
+{"ts": 1790202902.3752, "iso": "19:35:02", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 466, "y": 187, "confidence": 0.923}}
+{"ts": 1790202902.4754, "iso": "19:35:02", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 468, "y": 183, "confidence": 0.941}}
+{"ts": 1790202902.576, "iso": "19:35:02", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 470, "y": 179, "confidence": 0.935}}
+{"ts": 1790202902.6765, "iso": "19:35:02", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 472, "y": 175, "confidence": 0.99}}
+{"ts": 1790202902.6947, "iso": "19:35:02", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "gaze", "confidence": 0.757, "page": 1, "line": 4}}
+{"ts": 1790202902.7769, "iso": "19:35:02", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 474, "y": 171, "confidence": 0.934}}
+{"ts": 1790202902.877, "iso": "19:35:02", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 476, "y": 168, "confidence": 0.911}}
+{"ts": 1790202902.9773, "iso": "19:35:02", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 478, "y": 164, "confidence": 0.881}}
+{"ts": 1790202903.0775, "iso": "19:35:03", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 480, "y": 160, "confidence": 0.953}}
+{"ts": 1790202903.1116, "iso": "19:35:03", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "lectura", "confidence": 0.933, "page": 1, "line": 8}}
+{"ts": 1790202903.1775, "iso": "19:35:03", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 482, "y": 157, "confidence": 0.979}}
+{"ts": 1790202903.2777, "iso": "19:35:03", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 484, "y": 154, "confidence": 0.884}}
+{"ts": 1790202903.378, "iso": "19:35:03", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 486, "y": 150, "confidence": 0.915}}
+{"ts": 1790202903.4781, "iso": "19:35:03", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 488, "y": 147, "confidence": 0.989}}
+{"ts": 1790202903.5782, "iso": "19:35:03", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 490, "y": 144, "confidence": 0.923}}
+{"ts": 1790202903.6786, "iso": "19:35:03", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 492, "y": 142, "confidence": 0.915}}
+{"ts": 1790202903.765, "iso": "19:35:03", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "lectura", "confidence": 0.883, "page": 1, "line": 5}}
+{"ts": 1790202903.779, "iso": "19:35:03", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 494, "y": 139, "confidence": 0.871}}
+{"ts": 1790202903.8792, "iso": "19:35:03", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 496, "y": 136, "confidence": 0.979}}
+{"ts": 1790202903.9793, "iso": "19:35:03", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 498, "y": 134, "confidence": 0.929}}
+{"ts": 1790202904.0287, "iso": "19:35:04", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 2, "x1": 40, "x2": 560, "y": 150, "color": "cyan"}}
+{"ts": 1790202904.0794, "iso": "19:35:04", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 300, "y": 132, "confidence": 0.872}}
+{"ts": 1790202904.1612, "iso": "19:35:04", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "texto", "confidence": 0.919, "page": 1, "line": 6}}
+{"ts": 1790202904.1795, "iso": "19:35:04", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 302, "y": 130, "confidence": 0.934}}
+{"ts": 1790202904.2796, "iso": "19:35:04", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 304, "y": 128, "confidence": 0.891}}
+{"ts": 1790202904.2852, "iso": "19:35:04", "type": "TTS_SPEAK", "thread": "TTSThread", "data": {"text": "Definición encontrada", "rate": 165, "engine": "pyttsx3"}}
+{"ts": 1790202904.38, "iso": "19:35:04", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 306, "y": 126, "confidence": 0.934}}
+{"ts": 1790202904.4805, "iso": "19:35:04", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 308, "y": 125, "confidence": 0.875}}
+{"ts": 1790202904.534, "iso": "19:35:04", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "visión", "confidence": 0.706, "page": 1, "line": 3}}
+{"ts": 1790202904.5807, "iso": "19:35:04", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 310, "y": 123, "confidence": 0.877}}
+{"ts": 1790202904.6811, "iso": "19:35:04", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 312, "y": 122, "confidence": 0.907}}
+{"ts": 1790202904.7814, "iso": "19:35:04", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 314, "y": 121, "confidence": 0.941}}
+{"ts": 1790202904.8818, "iso": "19:35:04", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 316, "y": 121, "confidence": 0.963}}
+{"ts": 1790202904.9461, "iso": "19:35:04", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "gaze", "confidence": 0.764, "page": 1, "line": 10}}
+{"ts": 1790202904.9822, "iso": "19:35:04", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 318, "y": 120, "confidence": 0.892}}
+{"ts": 1790202905.0826, "iso": "19:35:05", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 320, "y": 120, "confidence": 0.964}}
+{"ts": 1790202905.183, "iso": "19:35:05", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 322, "y": 120, "confidence": 0.927}}
+{"ts": 1790202905.2831, "iso": "19:35:05", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 324, "y": 120, "confidence": 0.858}}
+{"ts": 1790202905.3832, "iso": "19:35:05", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 326, "y": 120, "confidence": 0.998}}
+{"ts": 1790202905.4833, "iso": "19:35:05", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 328, "y": 120, "confidence": 0.965}}
+{"ts": 1790202905.5837, "iso": "19:35:05", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 330, "y": 121, "confidence": 0.995}}
+{"ts": 1790202905.6838, "iso": "19:35:05", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 332, "y": 122, "confidence": 0.956}}
+{"ts": 1790202905.7249, "iso": "19:35:05", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "Tesseract", "confidence": 0.906, "page": 1, "line": 1}}
+{"ts": 1790202905.7843, "iso": "19:35:05", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 334, "y": 123, "confidence": 0.894}}
+{"ts": 1790202905.8845, "iso": "19:35:05", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 336, "y": 124, "confidence": 0.882}}
+{"ts": 1790202905.9846, "iso": "19:35:05", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 338, "y": 126, "confidence": 0.852}}
+{"ts": 1790202906.0848, "iso": "19:35:06", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 340, "y": 127, "confidence": 0.853}}
+{"ts": 1790202906.1848, "iso": "19:35:06", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 342, "y": 129, "confidence": 0.994}}
+{"ts": 1790202906.2258, "iso": "19:35:06", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "visión", "confidence": 0.846, "page": 1, "line": 8}}
+{"ts": 1790202906.2855, "iso": "19:35:06", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 344, "y": 131, "confidence": 0.917}}
+{"ts": 1790202906.3243, "iso": "19:35:06", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 4, "x1": 40, "x2": 560, "y": 240, "color": "cyan"}}
+{"ts": 1790202906.3858, "iso": "19:35:06", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 346, "y": 133, "confidence": 0.898}}
+{"ts": 1790202906.4862, "iso": "19:35:06", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 348, "y": 135, "confidence": 0.89}}
+{"ts": 1790202906.5865, "iso": "19:35:06", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 350, "y": 138, "confidence": 0.895}}
+{"ts": 1790202906.6868, "iso": "19:35:06", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 352, "y": 141, "confidence": 0.924}}
+{"ts": 1790202906.7247, "iso": "19:35:06", "type": "TTS_SPEAK", "thread": "TTSThread", "data": {"text": "EDDIE detectó texto", "rate": 165, "engine": "pyttsx3"}}
+{"ts": 1790202906.7872, "iso": "19:35:06", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 354, "y": 143, "confidence": 0.987}}
+{"ts": 1790202906.8794, "iso": "19:35:06", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "gaze", "confidence": 0.968, "page": 1, "line": 10}}
+{"ts": 1790202906.8874, "iso": "19:35:06", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 356, "y": 146, "confidence": 0.913}}
+{"ts": 1790202906.9878, "iso": "19:35:06", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 358, "y": 149, "confidence": 0.923}}
+{"ts": 1790202907.0879, "iso": "19:35:07", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 360, "y": 153, "confidence": 0.952}}
+{"ts": 1790202907.1882, "iso": "19:35:07", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 362, "y": 156, "confidence": 0.906}}
+{"ts": 1790202907.2889, "iso": "19:35:07", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 364, "y": 159, "confidence": 0.991}}
+{"ts": 1790202907.3893, "iso": "19:35:07", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 366, "y": 163, "confidence": 0.882}}
+{"ts": 1790202907.4897, "iso": "19:35:07", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 368, "y": 166, "confidence": 0.966}}
+{"ts": 1790202907.511, "iso": "19:35:07", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "aumentada", "confidence": 0.79, "page": 1, "line": 6}}
+{"ts": 1790202907.5898, "iso": "19:35:07", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 370, "y": 170, "confidence": 0.994}}
+{"ts": 1790202907.6903, "iso": "19:35:07", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 372, "y": 174, "confidence": 0.972}}
+{"ts": 1790202907.7905, "iso": "19:35:07", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 374, "y": 178, "confidence": 0.87}}
+{"ts": 1790202907.8905, "iso": "19:35:07", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 376, "y": 182, "confidence": 0.926}}
+{"ts": 1790202907.9675, "iso": "19:35:07", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "Tesseract", "confidence": 0.94, "page": 1, "line": 10}}
+{"ts": 1790202907.991, "iso": "19:35:07", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 378, "y": 186, "confidence": 0.912}}
+{"ts": 1790202908.0914, "iso": "19:35:08", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 380, "y": 190, "confidence": 0.87}}
+{"ts": 1790202908.1917, "iso": "19:35:08", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 382, "y": 194, "confidence": 0.951}}
+{"ts": 1790202908.2918, "iso": "19:35:08", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 384, "y": 198, "confidence": 0.934}}
+{"ts": 1790202908.3921, "iso": "19:35:08", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 386, "y": 202, "confidence": 0.976}}
+{"ts": 1790202908.4922, "iso": "19:35:08", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 388, "y": 206, "confidence": 0.94}}
+{"ts": 1790202908.5923, "iso": "19:35:08", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 390, "y": 210, "confidence": 0.935}}
+{"ts": 1790202908.6924, "iso": "19:35:08", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 392, "y": 213, "confidence": 0.89}}
+{"ts": 1790202908.751, "iso": "19:35:08", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "visión", "confidence": 0.756, "page": 1, "line": 6}}
+{"ts": 1790202908.7742, "iso": "19:35:08", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 7, "x1": 40, "x2": 560, "y": 375, "color": "cyan"}}
+{"ts": 1790202908.7926, "iso": "19:35:08", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 394, "y": 217, "confidence": 0.88}}
+{"ts": 1790202908.8932, "iso": "19:35:08", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 396, "y": 221, "confidence": 0.991}}
+{"ts": 1790202908.9934, "iso": "19:35:08", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 398, "y": 225, "confidence": 0.937}}
+{"ts": 1790202909.0934, "iso": "19:35:09", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 400, "y": 229, "confidence": 0.901}}
+{"ts": 1790202909.1938, "iso": "19:35:09", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 402, "y": 233, "confidence": 0.967}}
+{"ts": 1790202909.2939, "iso": "19:35:09", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 404, "y": 236, "confidence": 0.9}}
+{"ts": 1790202909.394, "iso": "19:35:09", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 406, "y": 240, "confidence": 0.862}}
+{"ts": 1790202909.42, "iso": "19:35:09", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "gaze", "confidence": 0.875, "page": 1, "line": 9}}
+{"ts": 1790202909.4943, "iso": "19:35:09", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 408, "y": 243, "confidence": 0.978}}
+{"ts": 1790202909.5945, "iso": "19:35:09", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 410, "y": 246, "confidence": 0.946}}
+{"ts": 1790202909.6946, "iso": "19:35:09", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 412, "y": 250, "confidence": 0.962}}
+{"ts": 1790202909.7946, "iso": "19:35:09", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 414, "y": 253, "confidence": 0.955}}
+{"ts": 1790202909.8948, "iso": "19:35:09", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 416, "y": 256, "confidence": 0.998}}
+{"ts": 1790202909.9953, "iso": "19:35:09", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 418, "y": 258, "confidence": 0.904}}
+{"ts": 1790202910.0119, "iso": "19:35:10", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "visión", "confidence": 0.744, "page": 1, "line": 7}}
+{"ts": 1790202910.0954, "iso": "19:35:10", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 420, "y": 261, "confidence": 0.995}}
+{"ts": 1790202910.1147, "iso": "19:35:10", "type": "TTS_SPEAK", "thread": "TTSThread", "data": {"text": "EDDIE detectó texto", "rate": 165, "engine": "pyttsx3"}}
+{"ts": 1790202910.1595, "iso": "19:35:10", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 1, "x1": 40, "x2": 560, "y": 105, "color": "cyan"}}
+{"ts": 1790202910.1956, "iso": "19:35:10", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 422, "y": 263, "confidence": 0.968}}
+{"ts": 1790202910.2962, "iso": "19:35:10", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 424, "y": 266, "confidence": 0.853}}
+{"ts": 1790202910.3963, "iso": "19:35:10", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 426, "y": 268, "confidence": 0.98}}
+{"ts": 1790202910.4968, "iso": "19:35:10", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 428, "y": 270, "confidence": 0.872}}
+{"ts": 1790202910.5972, "iso": "19:35:10", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 430, "y": 272, "confidence": 0.987}}
+{"ts": 1790202910.6452, "iso": "19:35:10", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "gaze", "confidence": 0.903, "page": 1, "line": 7}}
+{"ts": 1790202910.6976, "iso": "19:35:10", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 432, "y": 273, "confidence": 0.985}}
+{"ts": 1790202910.798, "iso": "19:35:10", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 434, "y": 275, "confidence": 0.992}}
+{"ts": 1790202910.8983, "iso": "19:35:10", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 436, "y": 276, "confidence": 0.914}}
+{"ts": 1790202910.9984, "iso": "19:35:10", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 438, "y": 277, "confidence": 0.854}}
+{"ts": 1790202911.0082, "iso": "19:35:11", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "gaze", "confidence": 0.73, "page": 1, "line": 6}}
+{"ts": 1790202911.0986, "iso": "19:35:11", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 440, "y": 278, "confidence": 0.999}}
+{"ts": 1790202911.199, "iso": "19:35:11", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 443, "y": 279, "confidence": 0.953}}
+{"ts": 1790202911.2991, "iso": "19:35:11", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 445, "y": 279, "confidence": 0.993}}
+{"ts": 1790202911.3996, "iso": "19:35:11", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 447, "y": 279, "confidence": 0.888}}
+{"ts": 1790202911.4999, "iso": "19:35:11", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 449, "y": 279, "confidence": 0.974}}
+{"ts": 1790202911.5999, "iso": "19:35:11", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 451, "y": 279, "confidence": 0.927}}
+{"ts": 1790202911.6174, "iso": "19:35:11", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "aumentada", "confidence": 0.937, "page": 1, "line": 2}}
+{"ts": 1790202911.6345, "iso": "19:35:11", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 1, "x1": 40, "x2": 560, "y": 105, "color": "cyan"}}
+{"ts": 1790202911.7005, "iso": "19:35:11", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 453, "y": 279, "confidence": 0.85}}
+{"ts": 1790202911.8006, "iso": "19:35:11", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 455, "y": 278, "confidence": 0.928}}
+{"ts": 1790202911.9007, "iso": "19:35:11", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 457, "y": 278, "confidence": 0.883}}
+{"ts": 1790202912.0013, "iso": "19:35:12", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 459, "y": 277, "confidence": 0.986}}
+{"ts": 1790202912.1014, "iso": "19:35:12", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 461, "y": 276, "confidence": 0.948}}
+{"ts": 1790202912.2018, "iso": "19:35:12", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 463, "y": 274, "confidence": 0.863}}
+{"ts": 1790202912.2267, "iso": "19:35:12", "type": "TTS_SPEAK", "thread": "TTSThread", "data": {"text": "EDDIE detectó texto", "rate": 165, "engine": "pyttsx3"}}
+{"ts": 1790202912.2367, "iso": "19:35:12", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "gaze", "confidence": 0.812, "page": 1, "line": 8}}
+{"ts": 1790202912.3023, "iso": "19:35:12", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 465, "y": 273, "confidence": 0.916}}
+{"ts": 1790202912.4028, "iso": "19:35:12", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 467, "y": 271, "confidence": 0.969}}
+{"ts": 1790202912.5032, "iso": "19:35:12", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 469, "y": 269, "confidence": 0.896}}
+{"ts": 1790202912.6033, "iso": "19:35:12", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 471, "y": 267, "confidence": 0.896}}
+{"ts": 1790202912.6658, "iso": "19:35:12", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "aumentada", "confidence": 0.781, "page": 1, "line": 2}}
+{"ts": 1790202912.7037, "iso": "19:35:12", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 473, "y": 265, "confidence": 0.981}}
+{"ts": 1790202912.804, "iso": "19:35:12", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 475, "y": 263, "confidence": 0.895}}
+{"ts": 1790202912.9041, "iso": "19:35:12", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 477, "y": 260, "confidence": 0.863}}
+{"ts": 1790202912.9755, "iso": "19:35:12", "type": "HIGHLIGHT_APPLIED", "thread": "HighlightThread", "data": {"line": 7, "x1": 40, "x2": 560, "y": 375, "color": "cyan"}}
+{"ts": 1790202913.0046, "iso": "19:35:13", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 479, "y": 257, "confidence": 0.982}}
+{"ts": 1790202913.105, "iso": "19:35:13", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 481, "y": 255, "confidence": 0.997}}
+{"ts": 1790202913.2053, "iso": "19:35:13", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 483, "y": 252, "confidence": 0.878}}
+{"ts": 1790202913.2622, "iso": "19:35:13", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "lectura", "confidence": 0.773, "page": 1, "line": 1}}
+{"ts": 1790202913.3057, "iso": "19:35:13", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 485, "y": 249, "confidence": 0.999}}
+{"ts": 1790202913.4058, "iso": "19:35:13", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 487, "y": 245, "confidence": 0.859}}
+{"ts": 1790202913.506, "iso": "19:35:13", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 489, "y": 242, "confidence": 0.971}}
+{"ts": 1790202913.6063, "iso": "19:35:13", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 491, "y": 238, "confidence": 0.907}}
+{"ts": 1790202913.6947, "iso": "19:35:13", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "texto", "confidence": 0.855, "page": 1, "line": 8}}
+{"ts": 1790202913.7067, "iso": "19:35:13", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 493, "y": 235, "confidence": 0.935}}
+{"ts": 1790202913.8069, "iso": "19:35:13", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 495, "y": 231, "confidence": 0.906}}
+{"ts": 1790202913.9074, "iso": "19:35:13", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 497, "y": 228, "confidence": 0.889}}
+{"ts": 1790202914.008, "iso": "19:35:14", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 499, "y": 224, "confidence": 0.988}}
+{"ts": 1790202914.1081, "iso": "19:35:14", "type": "GAZE_UPDATE", "thread": "GazeThread", "data": {"x": 301, "y": 220, "confidence": 0.992}}
+{"ts": 1790202914.119, "iso": "19:35:14", "type": "OCR_WORD_DETECTED", "thread": "OCRThread", "data": {"word": "visión", "confidence": 0.765, "page": 1, "line": 5}}
+{"ts": 1790202914.1593, "iso": "19:35:14", "type": "SESSION_END", "thread": "MainThread", "data": {"duration_s": 20.11, "total_events": 258}}

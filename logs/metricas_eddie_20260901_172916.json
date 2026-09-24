@@ -1,0 +1,306 @@
+{
+  "metadata": {
+    "generated_at": "2026-09-01T17:29:16.768129",
+    "version": "EDDIE-Python-1.0",
+    "prototype": "mod07_logging_monitoring"
+  },
+  "summary": {
+    "session_duration_s": 0.12,
+    "total_cycles": 30,
+    "latency": {
+      "mean_ms": 4.066,
+      "stdev_ms": 1.468,
+      "max_ms": 6.032,
+      "min_ms": 1.564,
+      "cv": 0.3611,
+      "within_8_3ms_pct": 100.0
+    },
+    "eye_tracking": {
+      "total_fixations": 24,
+      "fixation_rate": 0.8,
+      "mean_fixation_duration_ms": 300
+    },
+    "gestures": {
+      "distribution": {
+        "point": 9,
+        "none": 4,
+        "scroll_down": 7,
+        "scroll_up": 7,
+        "open_hand": 3
+      },
+      "most_common": "point"
+    }
+  },
+  "raw_cycles": [
+    {
+      "timestamp": 1788298156.6503918,
+      "latency_ms": 5.711600000722683,
+      "gaze_x": 0.5560602655110332,
+      "gaze_y": 0.592017688009129,
+      "gesture": "point",
+      "ocr_words": 7,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6559432,
+      "latency_ms": 5.466000000524218,
+      "gaze_x": 0.42726849474153683,
+      "gaze_y": 0.5953053667162439,
+      "gesture": "none",
+      "ocr_words": 23,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6594872,
+      "latency_ms": 3.541899999618181,
+      "gaze_x": 0.4925723048555098,
+      "gaze_y": 0.41581537575591376,
+      "gesture": "scroll_down",
+      "ocr_words": 26,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6619987,
+      "latency_ms": 2.509400001144968,
+      "gaze_x": 0.49853602274177816,
+      "gaze_y": 0.5394266559021687,
+      "gesture": "scroll_up",
+      "ocr_words": 12,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6655076,
+      "latency_ms": 3.5030999988521216,
+      "gaze_x": 0.47464628110664314,
+      "gaze_y": 0.5941254406551503,
+      "gesture": "point",
+      "ocr_words": 18,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6705291,
+      "latency_ms": 5.018799998651957,
+      "gaze_x": 0.5287748167806106,
+      "gaze_y": 0.30997173668864647,
+      "gesture": "point",
+      "ocr_words": 11,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6725326,
+      "latency_ms": 2.001699998800177,
+      "gaze_x": 0.6571066983585759,
+      "gaze_y": 0.45117463105897015,
+      "gesture": "scroll_up",
+      "ocr_words": 6,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6760864,
+      "latency_ms": 3.552200001649908,
+      "gaze_x": 0.5530568684087329,
+      "gaze_y": 0.41859792045818156,
+      "gesture": "none",
+      "ocr_words": 23,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6814077,
+      "latency_ms": 5.319600000802893,
+      "gaze_x": 0.4671801409408848,
+      "gaze_y": 0.48658985062286114,
+      "gesture": "open_hand",
+      "ocr_words": 6,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6873922,
+      "latency_ms": 5.982500000754953,
+      "gaze_x": 0.5614453888778378,
+      "gaze_y": 0.48594524073992734,
+      "gesture": "scroll_down",
+      "ocr_words": 18,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.692021,
+      "latency_ms": 4.627000000255066,
+      "gaze_x": 0.6539326037441101,
+      "gaze_y": 0.3294264797034594,
+      "gesture": "point",
+      "ocr_words": 13,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6956353,
+      "latency_ms": 3.4970999986398965,
+      "gaze_x": 0.5002702891686303,
+      "gaze_y": 0.4176831183365138,
+      "gesture": "scroll_down",
+      "ocr_words": 12,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.6982408,
+      "latency_ms": 2.603599999929429,
+      "gaze_x": 0.4560677950281107,
+      "gaze_y": 0.4349226999545281,
+      "gesture": "scroll_down",
+      "ocr_words": 9,
+      "is_fixation": false
+    },
+    {
+      "timestamp": 1788298156.7038329,
+      "latency_ms": 5.590200000369805,
+      "gaze_x": 0.4041927477997632,
+      "gaze_y": 0.4921186093608546,
+      "gesture": "open_hand",
+      "ocr_words": 29,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.7064688,
+      "latency_ms": 2.6344999987486517,
+      "gaze_x": 0.5750232031957403,
+      "gaze_y": 0.5048156645101234,
+      "gesture": "scroll_up",
+      "ocr_words": 27,
+      "is_fixation": false
+    },
+    {
+      "timestamp": 1788298156.7101235,
+      "latency_ms": 3.6534000009851297,
+      "gaze_x": 0.666799869055608,
+      "gaze_y": 0.5974960899127689,
+      "gesture": "point",
+      "ocr_words": 17,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.7161334,
+      "latency_ms": 6.008299998939037,
+      "gaze_x": 0.6540618681026326,
+      "gaze_y": 0.3301662071090856,
+      "gesture": "open_hand",
+      "ocr_words": 30,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.717699,
+      "latency_ms": 1.564199999847915,
+      "gaze_x": 0.45306811727848884,
+      "gaze_y": 0.3662490752741573,
+      "gesture": "scroll_down",
+      "ocr_words": 9,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.7197137,
+      "latency_ms": 2.0136999992246274,
+      "gaze_x": 0.4425017278485909,
+      "gaze_y": 0.47530102662172397,
+      "gesture": "scroll_down",
+      "ocr_words": 29,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.722957,
+      "latency_ms": 3.241899999920861,
+      "gaze_x": 0.4797468248525443,
+      "gaze_y": 0.5021805730208619,
+      "gesture": "none",
+      "ocr_words": 10,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.7289896,
+      "latency_ms": 6.031500000972301,
+      "gaze_x": 0.4628474306239929,
+      "gaze_y": 0.48065815384811017,
+      "gesture": "scroll_up",
+      "ocr_words": 25,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.7327049,
+      "latency_ms": 3.149899999698391,
+      "gaze_x": 0.5282300507863991,
+      "gaze_y": 0.3664640736660775,
+      "gesture": "scroll_up",
+      "ocr_words": 13,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.7387068,
+      "latency_ms": 6.000699999276549,
+      "gaze_x": 0.648798234332405,
+      "gaze_y": 0.5573340499962254,
+      "gesture": "point",
+      "ocr_words": 23,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.7409883,
+      "latency_ms": 2.2800000006100163,
+      "gaze_x": 0.4578619765381874,
+      "gaze_y": 0.46219736249600313,
+      "gesture": "point",
+      "ocr_words": 19,
+      "is_fixation": false
+    },
+    {
+      "timestamp": 1788298156.7461913,
+      "latency_ms": 5.1925999996456085,
+      "gaze_x": 0.5020576155913582,
+      "gaze_y": 0.4824777036188287,
+      "gesture": "scroll_down",
+      "ocr_words": 27,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.7481976,
+      "latency_ms": 2.0046999998157844,
+      "gaze_x": 0.40408556133756424,
+      "gaze_y": 0.47143562171186654,
+      "gesture": "none",
+      "ocr_words": 28,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.7525222,
+      "latency_ms": 4.322800001318683,
+      "gaze_x": 0.6365872206213368,
+      "gaze_y": 0.5552209268682418,
+      "gesture": "scroll_up",
+      "ocr_words": 15,
+      "is_fixation": false
+    },
+    {
+      "timestamp": 1788298156.7575068,
+      "latency_ms": 4.983200000424404,
+      "gaze_x": 0.5572017549592849,
+      "gaze_y": 0.3272667280400202,
+      "gesture": "point",
+      "ocr_words": 9,
+      "is_fixation": false
+    },
+    {
+      "timestamp": 1788298156.7635372,
+      "latency_ms": 6.029100000887411,
+      "gaze_x": 0.46932644079628943,
+      "gaze_y": 0.4050432519025242,
+      "gesture": "scroll_up",
+      "ocr_words": 29,
+      "is_fixation": true
+    },
+    {
+      "timestamp": 1788298156.7674847,
+      "latency_ms": 3.945800001019961,
+      "gaze_x": 0.383511025759382,
+      "gaze_y": 0.5541552416240575,
+      "gesture": "point",
+      "ocr_words": 17,
+      "is_fixation": false
+    }
+  ]
+}

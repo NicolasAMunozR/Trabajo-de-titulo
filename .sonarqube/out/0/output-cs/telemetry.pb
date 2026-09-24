@@ -1,0 +1,1 @@
+€RaC:\Users\nicol\OneDrive\Documentos\GitHub\Trabajo-de-titulo\EDDIE-2023\ModuloLog\ModuloLog.csproj¢netstandard2.0ò	CSharp7_3

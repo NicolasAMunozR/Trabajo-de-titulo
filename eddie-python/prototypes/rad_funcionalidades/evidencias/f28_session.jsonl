@@ -1,0 +1,8 @@
+{"ts": 0.0, "type": "SESSION_START", "data": {"session": "sess_001"}}
+{"ts": 0.12, "type": "GAZE_DWELL", "data": {"x": 320, "y": 240, "ms": 520}}
+{"ts": 0.45, "type": "OCR_COMPLETE", "data": {"chars": 342, "lang": "spa"}}
+{"ts": 0.78, "type": "HIGHLIGHT_APPLIED", "data": {"page": 1, "rect": [10, 80, 400, 110]}}
+{"ts": 1.1, "type": "TRANSLATION_REQUEST", "data": {"word": "aumentada", "lang": "en"}}
+{"ts": 1.35, "type": "TTS_SPEAK", "data": {"text": "augmented", "engine": "pyttsx3"}}
+{"ts": 1.6, "type": "PLUGIN_LOADED", "data": {"plugin": "OllamaProvider"}}
+{"ts": 1.9, "type": "SESSION_END", "data": {"duration": 1.9}}

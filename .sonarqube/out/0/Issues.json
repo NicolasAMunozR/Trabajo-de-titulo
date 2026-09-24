@@ -1,0 +1,211 @@
+{
+  "$schema": "http://json.schemastore.org/sarif-1.0.0",
+  "version": "1.0.0",
+  "runs": [
+    {
+      "tool": {
+        "name": "Compilador de Microsoft (R) Visual C#",
+        "version": "5.6.0.0",
+        "fileVersion": "5.6.0-2.26230.102 (caa81fa4971f74880cdab61990cb1b11420939ec)",
+        "semanticVersion": "5.6.0",
+        "language": "es-ES"
+      },
+      "results": [
+        {
+          "ruleId": "S6669",
+          "level": "warning",
+          "message": "Rename this field '_Target' to match the regular expression '^_?[Ll]og(ger)?$'.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/ModuloLog/StandardLogging.cs",
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 24,
+                  "endLine": 15,
+                  "endColumn": 31
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S6669",
+          "level": "warning",
+          "message": "Rename this property 'Target' to match the regular expression '^_?[Ll]og(ger)?$'.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/ModuloLog/StandardLogging.cs",
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 23,
+                  "endLine": 17,
+                  "endColumn": 29
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S2292",
+          "level": "warning",
+          "message": "Make this an auto-implemented property and remove its backing field.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/ModuloLog/StandardLogging.cs",
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 23,
+                  "endLine": 17,
+                  "endColumn": 29
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S927",
+          "level": "warning",
+          "message": "Rename parameter 'directory' to 'name' to match the interface declaration.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/ModuloLog/StandardLogging.cs",
+                "region": {
+                  "startLine": 37,
+                  "startColumn": 44,
+                  "endLine": 37,
+                  "endColumn": 53
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S927",
+          "level": "warning",
+          "message": "Rename parameter 'name' to 'directory' to match the interface declaration.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/ModuloLog/StandardLogging.cs",
+                "region": {
+                  "startLine": 37,
+                  "startColumn": 62,
+                  "endLine": 37,
+                  "endColumn": 66
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S1075",
+          "level": "warning",
+          "message": "Remove this hardcoded path-delimiter.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/ModuloLog/StandardLogging.cs",
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 76,
+                  "endLine": 39,
+                  "endColumn": 80
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        }
+      ],
+      "rules": {
+        "S1075": {
+          "id": "S1075",
+          "shortDescription": "URIs should not be hardcoded",
+          "fullDescription": "Hard-coding a URI makes it difficult to test a program for a variety of reasons:",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-1075",
+          "properties": {
+            "category": "Minor Code Smell",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "SonarWay"
+            ]
+          }
+        },
+        "S2292": {
+          "id": "S2292",
+          "shortDescription": "Trivial properties should be auto-implemented",
+          "fullDescription": "Trivial properties, which include no logic but setting and getting a backing field should be converted to auto-implemented properties, yielding cleaner and more readable code.",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-2292",
+          "properties": {
+            "category": "Minor Code Smell",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "TestSourceScope",
+              "SonarWay"
+            ]
+          }
+        },
+        "S6669": {
+          "id": "S6669",
+          "shortDescription": "Logger field or property name should comply with a naming convention",
+          "fullDescription": "Sharing some naming conventions is a key point to make it possible for a team to efficiently collaborate. This rule checks that the logger field or property name matches a provided regular expression.",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-6669",
+          "properties": {
+            "category": "Minor Code Smell",
+            "isEnabledByDefault": false,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "SonarWay"
+            ]
+          }
+        },
+        "S927": {
+          "id": "S927",
+          "shortDescription": "Parameter names should match base declaration and other partial definitions",
+          "fullDescription": "Parameters are part of the method signature and its identity.",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-927",
+          "properties": {
+            "category": "Critical Code Smell",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "TestSourceScope",
+              "SonarWay"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

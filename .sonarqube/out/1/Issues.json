@@ -1,0 +1,303 @@
+{
+  "$schema": "http://json.schemastore.org/sarif-1.0.0",
+  "version": "1.0.0",
+  "runs": [
+    {
+      "tool": {
+        "name": "Compilador de Microsoft (R) Visual C#",
+        "version": "5.6.0.0",
+        "fileVersion": "5.6.0-2.26230.102 (caa81fa4971f74880cdab61990cb1b11420939ec)",
+        "semanticVersion": "5.6.0",
+        "language": "es-ES"
+      },
+      "results": [
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/ICommentsPD.cs",
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 7,
+                  "endLine": 4,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresDP.cs",
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 7,
+                  "endLine": 4,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresDP.cs",
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 7,
+                  "endLine": 5,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresDP.cs",
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 7,
+                  "endLine": 6,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresDP.cs",
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 7,
+                  "endLine": 7,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresDP.cs",
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 7,
+                  "endLine": 8,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresPD.cs",
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 7,
+                  "endLine": 4,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresPD.cs",
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 7,
+                  "endLine": 5,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresPD.cs",
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 7,
+                  "endLine": 6,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresPD.cs",
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 7,
+                  "endLine": 7,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresPD.cs",
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 7,
+                  "endLine": 8,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Emgu' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IPageMarkerPD.cs",
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 7,
+                  "endLine": 4,
+                  "endColumn": 11
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Mat' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/ICommentsPD.cs",
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 56,
+                  "endLine": 13,
+                  "endColumn": 59
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Mat' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IPageMarkerPD.cs",
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 27,
+                  "endLine": 9,
+                  "endColumn": 30
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CS0246",
+          "level": "error",
+          "message": "El nombre del tipo o del espacio de nombres 'Mat' no se encontró (¿falta una directiva using o una referencia de ensamblado?)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///C:/Users/nicol/OneDrive/Documentos/GitHub/Trabajo-de-titulo/EDDIE-2023/InterfacesModuloConsistencia/IFiguresPD.cs",
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 28,
+                  "endLine": 15,
+                  "endColumn": 31
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "rules": {
+        "CS0246": {
+          "id": "CS0246",
+          "defaultLevel": "error",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS0246)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry",
+              "NotConfigurable"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
