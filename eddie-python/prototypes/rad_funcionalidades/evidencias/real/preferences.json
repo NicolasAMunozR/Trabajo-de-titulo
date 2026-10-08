@@ -1,0 +1,14 @@
+{
+  "language": "en",
+  "theme": "dark",
+  "minimize_on_capture": true,
+  "hotkey_start": "CTRL+SHIFT+R",
+  "hotkey_stop": "CTRL+SHIFT+S",
+  "last_project_id": "PROJ-001",
+  "window_geometry": {
+    "width": 1280,
+    "height": 720,
+    "x": 100,
+    "y": 100
+  }
+}

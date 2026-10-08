@@ -1,0 +1,38 @@
+{
+  "proyectos": [
+    {
+      "id": "PROJ-001",
+      "nombre": "Estudio Lectura Aumentada EDDIE v2.0",
+      "fecha_creacion": "2026-10-06 12:04:30",
+      "bloqueado": false,
+      "participantes": [
+        {
+          "id": "PART-01",
+          "nombre": "Sujeto Alfa",
+          "edad": 24,
+          "bloqueado": false
+        }
+      ],
+      "protocolos": [
+        {
+          "id": "PROT-101",
+          "nombre": "Protocolo de Rastreo Gaze & Highlight",
+          "bloqueado": true,
+          "actividades": [
+            "1. Lectura libre de documento PDF durante 5 min",
+            "2. Destacar renglón clave con resaltador físico",
+            "3. Consultar enciclopedia de término en pantalla"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PROJ-002",
+      "nombre": "Evaluación UX Laboratorio InTeractiOn",
+      "fecha_creacion": "2026-10-06 12:04:30",
+      "bloqueado": true,
+      "participantes": [],
+      "protocolos": []
+    }
+  ]
+}

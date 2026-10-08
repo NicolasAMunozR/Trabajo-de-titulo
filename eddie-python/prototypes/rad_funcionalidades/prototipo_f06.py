@@ -163,7 +163,7 @@ while True:
     elif key == ord('s'):
         out = EVID / "f06_handskin.png"
         cv2.imwrite(str(out), result)
-        print(f"[GUARDADO] {out}")
+        print(f"GUARDADO: {out}")
 
 cap.release()
 cv2.destroyAllWindows()

@@ -97,8 +97,8 @@ while True:
         cv2.imwrite(str(out), frame_saved)
         out2= EVID/"f07_homografia_camara.png"
         cv2.imwrite(str(out2), display)
-        print(f"[GUARDADO] {out}")
-        print(f"[GUARDADO] {out2}")
+        print(f"GUARDADO: {out}")
+        print(f"GUARDADO: {out2}")
 
 cap.release(); cv2.destroyAllWindows()
 print("F07 COMPLETADO\n")

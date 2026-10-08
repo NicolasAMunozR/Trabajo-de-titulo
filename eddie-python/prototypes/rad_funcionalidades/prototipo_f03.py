@@ -12,10 +12,54 @@ import cv2
 import numpy as np
 import time
 import pathlib
-import pytesseract
+import shutil
+import subprocess
 import sys
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+try:
+    import pytesseract
+except ImportError:
+    print("pytesseract no está instalado. Instalándolo...")
+    subprocess.run([sys.executable, "-m", "pip", "install", "pytesseract"], check=True)
+    import pytesseract
+
+
+def ensure_tesseract_installed():
+    """Verifica si Tesseract está instalado y lo instala si hace falta."""
+    candidates = [
+        shutil.which("tesseract"),
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+    ]
+
+    for candidate in candidates:
+        if candidate and pathlib.Path(candidate).exists():
+            return candidate
+
+    print("Tesseract no está instalado. Intentando instalarlo...")
+
+    installer_commands = [
+        ["winget", "install", "--id", "UB-Mannheim.TesseractOCR", "--accept-source-agreements", "--accept-package-agreements", "-e"],
+        ["choco", "install", "tesseract", "-y"],
+    ]
+
+    for cmd in installer_commands:
+        if shutil.which(cmd[0]):
+            try:
+                subprocess.run(cmd, check=True)
+                for candidate in candidates:
+                    if candidate and pathlib.Path(candidate).exists():
+                        return candidate
+            except Exception as exc:
+                print(f"No se pudo instalar con {cmd[0]}: {exc}")
+
+    print("No se pudo instalar Tesseract automáticamente.")
+    print("Instálalo manualmente desde: https://github.com/UB-Mannheim/tesseract/wiki")
+    raise RuntimeError("Tesseract no está disponible en el sistema.")
+
+
+TESSERACT_PATH = ensure_tesseract_installed()
+pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 
 EVID = pathlib.Path(__file__).parent / "evidencias" / "real"
 EVID.mkdir(parents=True, exist_ok=True)
@@ -162,7 +206,7 @@ while True:
     if key == ord('s'):
         out = EVID / "f03_ocr.png"
         cv2.imwrite(str(out), combined)
-        print(f"[GUARDADO] {out}")
+        print(f"GUARDADO: {out}")
 
 cap.release()
 cv2.destroyAllWindows()

@@ -145,7 +145,7 @@ try:
 
     out = EVID / "f25_tts.png"
     cv2.imwrite(str(out), canvas)
-    print(f"\n[GUARDADO] {out}")
+    print(f"\nGUARDADO: {out}")
     print("Presiona cualquier tecla para cerrar")
     cv2.waitKey(0)
     cv2.destroyAllWindows()

@@ -1,40 +1,16 @@
 """
-================================================================================
-PROYECTO EDDIE (Python Migration) - Prototipo RAD F14
-================================================================================
-Función: Búsqueda y Mapeo de Coordenadas QuadPoints en PDF Real
-Equivalente C# Legacy: ModuloConsistenciaDatos / DigitalDocSync.cs
-Tecnología: PyMuPDF (fitz) + OpenCV
-
-Características Operativas:
-1. Documento PDF Real:
-   - Trabaja sobre un documento PDF real del repositorio:
-     'Informe Seminario Observaciones resueltas signed rg.pdf' (22 páginas reales).
-   - Permite navegar por todas las páginas del PDF (teclas N / P).
-2. Búsqueda Interactiva por Teclado:
-   - El usuario puede ESCRIBIR cualquier término de búsqueda en tiempo real directamente en la interfaz.
-   - Soporta borrado (Backspace), espacios y actualización instantánea.
-3. Extracción y Retorno de Coordenadas QuadPoints:
-   - Para cada coincidencia en el PDF real, extrae y muestra:
-     * Bounding Box: [x0, y0, x1, y1] en puntos tipográficos (pt).
-     * QuadPoints: 8 coordenadas exactas [x_tl, y_tl, x_tr, y_tr, x_bl, y_bl, x_br, y_br].
-     * Dimensiones: Ancho (W) x Alto (H) y texto exacto de la región.
-4. Inyección de Anotaciones Highlight en el PDF Real:
-   - Inserta anotaciones de resaltado con QuadPoints nativos en el archivo PDF en disco.
-5. Vista Dual en Tiempo Real:
-   - Panel Izquierdo: Vista Proyector Simulada (luz de realce proyectada sobre el libro físico).
-   - Panel Central: Inspector Digital del PDF con los 4 vértices del QuadPoint (TL, TR, BL, BR).
-   - Panel Derecho: Consola de telemetría de coordenadas y caja de entrada de texto interactiva.
-
+Prototipo F14 Búsqueda y Mapeo de Coordenadas QuadPoints en PDF Real
+Permite navegar por todas las páginas del PDF (teclas N / P).
+El usuario puede escribir cualquier término de búsqueda en tiempo real directamente en la interfaz.
+Panel Izquierdo: Vista Proyector Simulada.
+Panel Central: Inspector Digital del PDF con los 4 vértices del QuadPoint (TL, TR, BL, BR).
+Panel Derecho: Consola de telemetría de coordenadas y caja de entrada de texto interactiva.
 Controles:
-  ESCRIBIR LETRAS : Escribir cualquier palabra para buscarla en el PDF en tiempo real
-  BACKSPACE       : Borrar caracteres del término de búsqueda
   N / P           : Página Siguiente / Página Anterior en el PDF real
   CLIC IZQUIERDO  : Hacer clic sobre cualquier palabra del PDF para seleccionarla
   O               : Abrir el PDF real modificado en el visor del sistema (Adobe Reader/Edge)
   S               : Guardar captura de evidencia PNG
   Q / ESC         : Salir
-================================================================================
 """
 
 import os
@@ -70,11 +46,11 @@ if PDF_ORIGINAL_PATH is None:
     if pdf_files:
         PDF_ORIGINAL_PATH = pdf_files[0]
     else:
-        print("  [ERROR] No se encontró ningún archivo PDF real en el repositorio.")
+        print("No se encontró ningún archivo PDF real en el repositorio.")
         sys.exit(1)
 
-PDF_OUTPUT_PATH = EVID_DIR / "f14_real_pdf_quadpoints_synced.pdf"
-PDF_BACKUP_PATH = EVID_DIR / "f14_real_pdf_quadpoints_synced.pdf.bac"
+PDF_OUTPUT_PATH = EVID_DIR / "f14_synced.pdf"
+PDF_BACKUP_PATH = EVID_DIR / "f14_synced.pdf.bac"
 
 def buscar_y_aplicar_quadpoints(pdf_path, search_term, page_num=5, color=(1.0, 0.9, 0.0)):
     """
@@ -132,7 +108,6 @@ def buscar_y_aplicar_quadpoints(pdf_path, search_term, page_num=5, color=(1.0, 0
     return matches_data, total_pages, (page_w, page_h)
 
 def renderizar_pagina_real(pdf_path, page_num=5, dpi=120):
-    """Renderiza la página del PDF real a imagen OpenCV BGR."""
     doc = fitz.open(str(pdf_path))
     try:
         page_num = max(0, min(len(doc) - 1, page_num))
@@ -170,9 +145,9 @@ def obtener_palabra_en_coordenada(pdf_path, page_num, click_pt):
 def abrir_pdf_visor(path):
     try:
         os.startfile(str(path))
-        print(f"  [ABIERTO EN VISOR] {path.name}")
+        print(f"ABIERTO EN VISOR {path.name}")
     except Exception as e:
-        print(f"  [!] No se pudo abrir visor: {e}")
+        print(f"No se pudo abrir visor: {e}")
 
 # Variables de interacción
 mouse_click_pt = None
@@ -183,18 +158,15 @@ def on_mouse(event, x, y, flags, param):
 
 def main():
     global mouse_click_pt
-    print("=" * 75)
-    print("  EDDIE Python – F14: Búsqueda y Mapeo de QuadPoints en PDF Real")
-    print(f"  Documento Real: {PDF_ORIGINAL_PATH.name}")
-    print("  Módulo Legacy C#: ModuloConsistenciaDatos / DigitalDocSync.cs")
-    print("=" * 75)
+    print("F14: Búsqueda y Mapeo de QuadPoints en PDF Real")
+    print(f"Documento: {PDF_ORIGINAL_PATH.name}")
 
     current_page = 5  # Página 6 (índice 5: Sección de plugins y arquitectura de EDDIE)
     search_input = "EDDIE"  # Término inicial por defecto
 
-    cv2.namedWindow("EDDIE – F14 QuadPoints & Projector View", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("EDDIE – F14 QuadPoints & Projector View", 1420, 800)
-    cv2.setMouseCallback("EDDIE – F14 QuadPoints & Projector View", on_mouse)
+    cv2.namedWindow("F14 QuadPoints & Projector View", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("F14 QuadPoints & Projector View", 1420, 800)
+    cv2.setMouseCallback("F14 QuadPoints & Projector View", on_mouse)
 
     matches, total_pages, (pdf_w, pdf_h) = buscar_y_aplicar_quadpoints(PDF_ORIGINAL_PATH, search_input, current_page)
     abrir_pdf_visor(PDF_OUTPUT_PATH)
@@ -202,11 +174,11 @@ def main():
     last_search = search_input
     last_page = current_page
 
-    print(f"\n  [INICIO] Página {current_page + 1}/{total_pages} | Búsqueda: '{search_input}' -> {len(matches)} coincidencias")
+    print(f"\nPágina {current_page + 1}/{total_pages}, Búsqueda: '{search_input}', {len(matches)} coincidencias")
     for m in matches:
         qp = m["quadpoints"]
-        print(f"    * Match #{m['id']}: Box=[{m['rect'][0]:.1f}, {m['rect'][1]:.1f}, {m['rect'][2]:.1f}, {m['rect'][3]:.1f}] pt")
-        print(f"      QuadPoints: TL=({qp[0]:.1f},{qp[1]:.1f}) TR=({qp[2]:.1f},{qp[3]:.1f}) BL=({qp[4]:.1f},{qp[5]:.1f}) BR=({qp[6]:.1f},{qp[7]:.1f})")
+        print(f"Match #{m['id']}: Box=[{m['rect'][0]:.1f}, {m['rect'][1]:.1f}, {m['rect'][2]:.1f}, {m['rect'][3]:.1f}] pt")
+        print(f"QuadPoints: TL=({qp[0]:.1f},{qp[1]:.1f}) TR=({qp[2]:.1f},{qp[3]:.1f}) BL=({qp[4]:.1f},{qp[5]:.1f}) BR=({qp[6]:.1f},{qp[7]:.1f})")
 
     while True:
         # Reejecutar búsqueda si cambió el término o la página
@@ -262,7 +234,7 @@ def main():
                         cv2.FONT_HERSHEY_SIMPLEX, 0.36, (0, 0, 220), 1)
 
         cv2.rectangle(inspector_view, (0, 0), (w - 1, h - 1), (0, 220, 100), 2)
-        cv2.putText(inspector_view, "[INSPECTOR DIGITAL DEL PDF REAL]", (15, 25),
+        cv2.putText(inspector_view, "INSPECTOR DIGITAL DEL PDF", (15, 25),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 180, 80), 2)
         cv2.putText(inspector_view, "Bounding Boxes [x0,y0,x1,y1] y QuadPoints (pt)", (15, 45),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.38, (80, 80, 80), 1)
@@ -282,14 +254,14 @@ def main():
                 clicked_word, _ = obtener_palabra_en_coordenada(PDF_ORIGINAL_PATH, current_page, (click_pdf_x, click_pdf_y))
                 if clicked_word:
                     search_input = clicked_word
-                    print(f"  [CLIC EN PDF] Palabra seleccionada: '{search_input}'")
+                    print(f"CLIC EN PDF Palabra seleccionada: '{search_input}'")
             mouse_click_pt = None
 
         # 5. PANEL DE TELEMETRÍA Y ENTRADA DE TEXTO
         panel_w = 460
         panel = np.full((h, panel_w, 3), 24, dtype=np.uint8)
 
-        cv2.putText(panel, "F14: DigitalDocSync (PDF Real)", (15, 28),
+        cv2.putText(panel, "F14: DigitalDocSync", (15, 28),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.62, (0, 220, 100), 2)
         cv2.putText(panel, f"Doc: {PDF_ORIGINAL_PATH.name[:38]}...", (15, 50),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.36, (180, 180, 180), 1)
@@ -344,15 +316,13 @@ def main():
 
         # Controles
         cv2.rectangle(panel, (10, h - 105), (panel_w - 10, h - 10), (45, 45, 45), -1)
-        cv2.putText(panel, "CONTROLES:", (18, h - 85), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (0, 220, 100), 1)
-        cv2.putText(panel, "ESCRIBIR: Buscar cualquier palabra directamente", (18, h - 68), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (220, 220, 220), 1)
         cv2.putText(panel, "N / P   : Cambiar de pagina en el PDF real", (18, h - 52), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (0, 220, 255), 1)
         cv2.putText(panel, "CLIC    : Seleccionar palabra en el documento", (18, h - 36), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (200, 200, 200), 1)
         cv2.putText(panel, "O: Abrir PDF | S: Guardar | Q/ESC: Salir", (18, h - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (150, 150, 150), 1)
 
         # 6. Unir y mostrar todo
         combined_view = np.hstack([projector_view, inspector_view, panel])
-        cv2.imshow("EDDIE – F14 QuadPoints & Projector View", combined_view)
+        cv2.imshow("F14 QuadPoints & Projector View", combined_view)
 
         key = cv2.waitKey(40) & 0xFF
 
@@ -361,17 +331,17 @@ def main():
         elif key == ord('o'):
             abrir_pdf_visor(PDF_OUTPUT_PATH)
         elif key == ord('s'):
-            out_path = EVID_DIR / "real_f14_quadpoints_sync.png"
+            out_path = EVID_DIR / "f14_quadpoints_sync.png"
             cv2.imwrite(str(out_path), combined_view)
-            print(f"  [GUARDADO] Evidencia: {out_path.name}")
+            print(f"GUARDADO: {out_path.name}")
         elif key == ord('n') or key == ord('N'):
             if current_page < total_pages - 1:
                 current_page += 1
-                print(f"  [PAGINA] Siguiente -> {current_page + 1}")
+                print(f"PAGINA Siguiente: {current_page + 1}")
         elif key == ord('p') or key == ord('P'):
             if current_page > 0:
                 current_page -= 1
-                print(f"  [PAGINA] Anterior -> {current_page + 1}")
+                print(f"PAGINA Anterior: {current_page + 1}")
         elif key == 8:  # Backspace
             if len(search_input) > 0:
                 search_input = search_input[:-1]
@@ -380,7 +350,7 @@ def main():
             search_input += char
 
     cv2.destroyAllWindows()
-    print("  ✓ F14 Finalizado exitosamente.\n")
+    print("F14 COMPLETADO\n")
 
 if __name__ == "__main__":
     main()

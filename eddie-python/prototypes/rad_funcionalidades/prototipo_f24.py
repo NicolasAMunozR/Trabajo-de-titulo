@@ -197,20 +197,20 @@ def ejecutar_comando(comando):
         return
 
     if accion == "salir":
-        print("  [ACCION] Saliendo del demo.")
+        print("ACCION: Saliendo del demo.")
         raise SystemExit(0)
 
     if accion == "buscar_web":
         query = urllib.parse.quote_plus(texto)
         url = f"https://www.google.com/search?q={query}"
-        print(f"[ACCION] Abriendo búsqueda web: {url}")
+        print(f"ACCION: Abriendo búsqueda web: {url}")
         webbrowser.open(url)
         return
 
     if accion == "traducir":
         query = urllib.parse.quote_plus(texto)
         url = f"https://translate.google.com/?sl=es&tl=en&text={query}"
-        print(f"[ACCION] Abriendo traductor: {url}")
+        print(f"ACCION: Abriendo traductor: {url}")
         webbrowser.open(url)
         return
 
@@ -218,7 +218,7 @@ def ejecutar_comando(comando):
         pdfs = sorted(p for p in pathlib.Path(__file__).resolve().parent.iterdir() if p.suffix.lower() == ".pdf")
         if pdfs:
             pdf = pdfs[0]
-            print(f"[ACCION] Abriendo PDF: {pdf}")
+            print(f"ACCION: Abriendo PDF: {pdf}")
             try:
                 os.startfile(str(pdf))
             except Exception:
@@ -246,7 +246,7 @@ def main():
             print("Comando vacío. Finalizando.")
             return
 
-    print(f"\n[COMANDO DETECTADO] {texto}")
+    print(f"\nCOMANDO DETECTADO: {texto}")
 
     comando = interpretar_comando(texto)
     ejecutar_comando(comando)

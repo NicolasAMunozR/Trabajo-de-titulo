@@ -1,6 +1,5 @@
 """
-Prototipo F27 Highlight Digital sobre cámara (proyección)
-=============================================================
+Prototipo F27 Highlight Digital sobre cámara
 Captura frames. Cuando el ratón
 se detiene sobre una línea de texto, EDDIE proyecta una
 banda de highlight semitransparente sobre esa zona.
@@ -97,7 +96,7 @@ while True:
     elif key == ord('s'):
         out = EVID/"f27_highlight.png"
         cv2.imwrite(str(out), result)
-        print(f"  [GUARDADO] {out}")
+        print(f"GUARDADO: {out}")
 
 cap.release()
 cv2.destroyAllWindows()

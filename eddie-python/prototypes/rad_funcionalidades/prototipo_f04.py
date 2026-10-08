@@ -68,7 +68,7 @@ while True:
                     (rect[0]+5, rect[1]-10), cv2.FONT_HERSHEY_SIMPLEX,
                     0.6, (0, 220, 80), 2)
     else:
-        cv2.putText(result, "Buscando página/libro...", (8, 30),
+        cv2.putText(result, "Buscando pagina/libro...", (8, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 180, 255), 2)
 
     # Mostrar mapa de bordes pequeño en esquina
@@ -80,7 +80,7 @@ while True:
 
     cv2.putText(result, "S=guardar  Q=salir",
                 (8, result.shape[0]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (200,200,200), 1)
-    cv2.imshow("F04 Detección de Página", result)
+    cv2.imshow("F04 Detección de Pagina", result)
 
     key = cv2.waitKey(30) & 0xFF
     if key == ord('q') or key == 27:
@@ -88,7 +88,7 @@ while True:
     if key == ord('s'):
         out = EVID / "f04_pagina.png"
         cv2.imwrite(str(out), result)
-        print(f"[GUARDADO] {out}")
+        print(f"GUARDADO: {out}")
 
 cap.release()
 cv2.destroyAllWindows()

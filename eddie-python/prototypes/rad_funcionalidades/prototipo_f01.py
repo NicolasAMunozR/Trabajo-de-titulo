@@ -167,7 +167,7 @@ while True:
         out = EVID / f"f01_camera.png"
         cv2.imwrite(str(out), frame)
         saved = out
-        print(f"  [GUARDADO] {out}")
+        print(f"GUARDADO: {out}")
         if elapsed >= DURATION:
             break
 

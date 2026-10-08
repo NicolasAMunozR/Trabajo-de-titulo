@@ -1,26 +1,10 @@
 """
-================================================================================
-PROYECTO EDDIE (Python Migration) - Prototipo RAD F16
-================================================================================
-Función: Sincronización Bidireccional de Notas Adhesivas (Post-It / Comentarios)
-Equivalente C# Legacy: ConsistencyLibraryCommentsPD / CommentsPD.cs & CommentsDP.cs
-Tecnología: OpenCV + Tesseract OCR + PyMuPDF (fitz)
-
-Características Operativas:
-1. Documento PDF Real:
-   - Trabaja sobre el PDF real 'Informe Seminario Observaciones resueltas signed rg.pdf'.
-   - Permite navegar entre páginas con N / P.
-2. Sincronización Física -> Digital (Notas en papel a PDF digital):
-   - Transmisión en vivo desde DroidCam / Webcam enfocando el área de trabajo.
-   - Detecta notas escritas en papel físico o Post-Its amarillos mediante segmentación HSV y contornos.
-   - Recorta la nota física y aplica Tesseract OCR para extraer el texto manuscrito/impreso.
-   - Inyecta automáticamente la nota en el PDF digital real en disco como anotación tipo 'Text/Note' y estampa visual.
-3. Sincronización Digital -> Física (PDF digital a Proyección sobre papel):
-   - Cuando el usuario hace clic en el documento digital o agrega una nota digital, esta se
-     PROYECTA INMEDIATAMENTE SOBRE EL PAPEL FÍSICO en la Vista Proyector Simulada.
-4. Persistencia en Disco y Visor:
-   - Mantiene el archivo PDF real sincronizado con copias de seguridad (.bac) y permite abrirlo en Adobe Reader/Edge.
-
+Prototipo F16 Sincronización Bidireccional de Notas Adhesivas (Post-It / Comentarios)
+Permite navegar entre páginas con N / P.
+Detecta notas escritas en papel físico o Post-Its amarillos mediante segmentación HSV y contornos.
+Recorta la nota física y aplica Tesseract OCR para extraer el texto manuscrito/impreso.
+Inyecta automáticamente la nota en el PDF digital real en disco como anotación tipo 'Text/Note' y estampa visual.
+Cuando el usuario hace clic en el documento digital o agrega una nota digital, esta se PROYECTA INMEDIATAMENTE SOBRE EL PAPEL FÍSICO en la Vista Proyector Simulada.
 Controles:
   MOSTRAR NOTA EN CÁMARA : Colocar nota/papel frente a la cámara para detección
   C                      : Capturar nota física detectada, aplicar OCR e inyectar al PDF real
@@ -30,7 +14,6 @@ Controles:
   O                      : Abrir el PDF real sincronizado en el visor del sistema
   S                      : Guardar captura de evidencia PNG
   Q / ESC                : Salir
-================================================================================
 """
 
 import os
@@ -67,8 +50,8 @@ if PDF_ORIGINAL_PATH is None:
     pdf_files = list(WORKSPACE_DIR.glob("*.pdf"))
     PDF_ORIGINAL_PATH = pdf_files[0] if pdf_files else None
 
-PDF_OUTPUT_PATH = EVID_DIR / "f16_real_pdf_postit_synced.pdf"
-PDF_BACKUP_PATH = EVID_DIR / "f16_real_pdf_postit_synced.pdf.bac"
+PDF_OUTPUT_PATH = EVID_DIR / "f16_synced.pdf"
+PDF_BACKUP_PATH = EVID_DIR / "f16_synced.pdf.bac"
 
 # Registro de notas de sesión [(page_idx, x_pdf, y_pdf, texto, color_rgb, origen)]
 NOTAS_SESION = [
@@ -141,9 +124,9 @@ def renderizar_pagina_real(pdf_path, page_num=5, dpi=115):
 def abrir_pdf_visor(path):
     try:
         os.startfile(str(path))
-        print(f"  [ABIERTO EN VISOR] {path.name}")
+        print(f"ABIERTO EN VISOR {path.name}")
     except Exception as e:
-        print(f"  [!] No se pudo abrir visor: {e}")
+        print(f"No se pudo abrir visor: {e}")
 
 # Variables de interacción
 mouse_click_coord = None
@@ -154,11 +137,8 @@ def on_mouse(event, x, y, flags, param):
 
 def main():
     global mouse_click_coord
-    print("=" * 75)
-    print("  EDDIE Python – F16: Sincronización Bidireccional de Post-Its (Físico <-> Digital)")
-    print(f"  Documento Real: {PDF_ORIGINAL_PATH.name}")
-    print("  Módulo Legacy C#: ConsistencyLibraryCommentsPD / CommentsPD.cs & CommentsDP.cs")
-    print("=" * 75)
+    print("F16: Sincronización Bidireccional de Post-Its (Físico <-> Digital)")
+    print(f"Documento: {PDF_ORIGINAL_PATH.name}")
 
     inicializar_pdf_salida()
     current_page = 5  # Página 6 (índice 5)
@@ -172,16 +152,16 @@ def main():
                 c = cv2.VideoCapture(idx, backend)
                 if c.isOpened():
                     cap = c
-                    print(f"  [+] Cámara detectada en índice {idx} (MSMF/ANY) para escaneo de notas físicas")
+                    print(f"Cámara detectada en índice {idx} para escaneo de notas físicas")
                     break
                 c.release()
             except Exception:
                 pass
         if cap: break
 
-    cv2.namedWindow("EDDIE – F16 Sincronizacion de Post-Its (Bidireccional)", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("EDDIE – F16 Sincronizacion de Post-Its (Bidireccional)", 1420, 800)
-    cv2.setMouseCallback("EDDIE – F16 Sincronizacion de Post-Its (Bidireccional)", on_mouse)
+    cv2.namedWindow("F16 Sincronizacion de Post-Its (Bidireccional)", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("F16 Sincronizacion de Post-Its (Bidireccional)", 1420, 800)
+    cv2.setMouseCallback("F16 Sincronizacion de Post-Its (Bidireccional)", on_mouse)
 
     abrir_pdf_visor(PDF_OUTPUT_PATH)
 
@@ -220,9 +200,9 @@ def main():
                         cv2.FONT_HERSHEY_SIMPLEX, 0.38, (10, 10, 10), 1)
 
         cv2.rectangle(projector_view, (0, 0), (w - 1, h - 1), (0, 180, 255), 2)
-        cv2.putText(projector_view, "[VISTA PROYECTOR (SOBRE PAPEL)]", (15, 25),
+        cv2.putText(projector_view, "VISTA PROYECTOR (SOBRE PAPEL)", (15, 25),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 140, 220), 2)
-        cv2.putText(projector_view, f"Notas digitales proyectadas sobre el libro | Pagina {current_page + 1}/{total_pages}", (15, 45),
+        cv2.putText(projector_view, f"Notas digitales proyectadas sobre el libro, Pagina {current_page + 1}/{total_pages}", (15, 45),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.38, (80, 80, 80), 1)
 
         # 3. Procesar Clic en el PDF digital para crear nota digital y proyectarla
@@ -234,7 +214,7 @@ def main():
                 nueva_nota = f"Nota digital #{len(NOTAS_SESION) + 1} en ({int(rel_x)}, {int(rel_y)}) pt"
                 NOTAS_SESION.append((current_page, rel_x, rel_y, nueva_nota, (0.5, 0.9, 0.3), "DIGITAL_CLICK"))
                 sincronizar_todas_las_notas_al_pdf()
-                print(f"  [✓ NOTA DIGITAL CREADA] Posición: ({int(rel_x)}, {int(rel_y)}) pt -> Proyectada sobre el papel")
+                print(f"NOTA DIGITAL CREADA Posición: ({int(rel_x)}, {int(rel_y)}) pt -> Proyectada sobre el papel")
             mouse_click_coord = None
 
         # 4. VISTA DE CÁMARA (Físico -> Digital: Detección de Notas Escritas en Papel)
@@ -277,7 +257,7 @@ def main():
                             break
 
                 cv2.rectangle(camera_view, (0, 0), (w - 1, h - 1), (0, 220, 100), 2)
-                cv2.putText(camera_view, "[FEED CAMARA CENITAL (DROIDCAM)]", (15, 25),
+                cv2.putText(camera_view, "FEED CAMARA CENITAL (DROIDCAM)", (15, 25),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 220, 100), 2)
                 cv2.putText(camera_view, "Muestra nota escrita en papel para extraer con OCR", (15, 45),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.38, (200, 200, 200), 1)
@@ -326,7 +306,6 @@ def main():
 
         # Controles
         cv2.rectangle(panel, (10, h - 105), (panel_w - 10, h - 10), (45, 45, 45), -1)
-        cv2.putText(panel, "CONTROLES:", (18, h - 85), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (0, 220, 100), 1)
         cv2.putText(panel, "C       : Capturar nota fisica de camara + OCR -> PDF", (18, h - 68), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (0, 220, 255), 1)
         cv2.putText(panel, "CLIC    : Crear nota digital (se proyecta sobre papel)", (18, h - 52), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (220, 220, 220), 1)
         cv2.putText(panel, "N / P   : Cambiar de pagina en el PDF real", (18, h - 36), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (180, 180, 180), 1)
@@ -334,53 +313,57 @@ def main():
 
         # 6. Unir y mostrar todo
         combined_view = np.hstack([camera_view, projector_view, panel])
-        cv2.imshow("EDDIE – F16 Sincronizacion de Post-Its (Bidireccional)", combined_view)
+        cv2.imshow("F16 Sincronizacion de Post-Its (Bidireccional)", combined_view)
 
         key = cv2.waitKey(30) & 0xFF
 
         if key == ord('q') or key == 27:
             break
-        elif key == ord('c') and last_detected_crop is not None and last_detected_box is not None:
-            # Extracción OCR de la nota física con Tesseract
-            try:
-                gray_crop = cv2.cvtColor(last_detected_crop, cv2.COLOR_BGR2GRAY)
-                blur_crop = cv2.GaussianBlur(gray_crop, (3, 3), 0)
-                _, bw_crop = cv2.threshold(blur_crop, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-                ocr_text = pytesseract.image_to_string(bw_crop, lang="spa+eng", config="--psm 6").strip()
-            except Exception:
-                ocr_text = ""
+        elif key == ord('c'):
+            if last_detected_crop is not None and last_detected_box is not None:
+                # Extracción OCR de la nota física con Tesseract
+                try:
+                    gray_crop = cv2.cvtColor(last_detected_crop, cv2.COLOR_BGR2GRAY)
+                    blur_crop = cv2.GaussianBlur(gray_crop, (3, 3), 0)
+                    _, bw_crop = cv2.threshold(blur_crop, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+                    ocr_text = pytesseract.image_to_string(bw_crop, lang="spa+eng", config="--psm 6").strip()
+                except Exception:
+                    ocr_text = ""
 
-            if not ocr_text:
-                ocr_text = f"Nota física #{len(NOTAS_SESION) + 1} capturada por cámara"
+                if not ocr_text:
+                    ocr_text = f"Nota física #{len(NOTAS_SESION) + 1} capturada por cámara"
 
-            bx, by, bw_b, bh_b = last_detected_box
-            pdf_x = (bx * orig_w) / w
-            pdf_y = (by * orig_h) / h
-            NOTAS_SESION.append((current_page, pdf_x, pdf_y, ocr_text, (1.0, 0.85, 0.1), "CAMARA_OCR"))
-            sincronizar_todas_las_notas_al_pdf()
-            print(f"  [✓ POST-IT FÍSICO CAPTURADO] OCR: \"{ocr_text}\" -> Inyectado en ({pdf_x:.1f}, {pdf_y:.1f}) pt del PDF")
+                bx, by, bw_b, bh_b = last_detected_box
+                pdf_x = (bx * orig_w) / w
+                pdf_y = (by * orig_h) / h
+
+                NOTAS_SESION.append((current_page, pdf_x, pdf_y, ocr_text, (1.0, 0.85, 0.1), "CAMARA_OCR"))
+                sincronizar_todas_las_notas_al_pdf()
+                print(f"POST-IT FÍSICO CAPTURADO OCR: \"{ocr_text}\" -> Inyectado en ({pdf_x:.1f}, {pdf_y:.1f}) pt del PDF")
+            else:
+                print("No se detecta ninguna nota física en el feed de la cámara. Coloca una nota frente a la cámara.")
         elif key == ord('n') or key == ord('N'):
             if current_page < total_pages - 1:
                 current_page += 1
-                print(f"  [PAGINA] Siguiente -> {current_page + 1}")
+                print(f"PAGINA Siguiente {current_page + 1}")
         elif key == ord('p') or key == ord('P'):
             if current_page > 0:
                 current_page -= 1
-                print(f"  [PAGINA] Anterior -> {current_page + 1}")
+                print(f"PAGINA Anterior {current_page + 1}")
         elif key == ord('r'):
             inicializar_pdf_salida()
             NOTAS_SESION.clear()
-            print("  [REINICIADO] Notas eliminadas del PDF.")
+            print("REINICIADO Notas eliminadas del PDF.")
         elif key == ord('o'):
             abrir_pdf_visor(PDF_OUTPUT_PATH)
         elif key == ord('s'):
-            out_path = EVID_DIR / "real_f16_postit_sync.png"
+            out_path = EVID_DIR / "f16_postit_sync.png"
             cv2.imwrite(str(out_path), combined_view)
-            print(f"  [GUARDADO] Evidencia: {out_path.name}")
+            print(f"GUARDADO: {out_path.name}")
 
     if cap: cap.release()
     cv2.destroyAllWindows()
-    print("  ✓ F16 Finalizado exitosamente.\n")
+    print("F16 COMPLETADO.\n")
 
 if __name__ == "__main__":
     main()

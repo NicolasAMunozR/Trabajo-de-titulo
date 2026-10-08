@@ -1,0 +1,680 @@
+=== PAGE 39 ===
+su robusta arquitectura basada en plugins, y Streamlabs OBS, que combina la robustez
+técnica de OBS con una interfaz moderna en Electron.
+• React: Es una biblioteca de JavaScript diseñada para facilitar la creación de interfaces de
+usuario mediante componentes modulares reutilizables. Cada componente administra su
+propio estado, permitiendo interfaces complejas e interactivas de forma ordenada y eficiente
+(Meta Platforms, s.f.). React satisface los criterios de modularidad y extensibilidad, y su
+extensa comunidad proporciona soporte, documentación, y librerías diversas. Para MO,
+React ofrece la ventaja de poder construir fácilmente interfaces modernas y adaptables que
+simplifican la visualización y manejo de datos multimodales.
+• Python:
+Como se mencionó anteriormente, Python cumple con todos los criterios
+fundamentales (multiplataforma, modularidad, extensibilidad y comunidad activa) (Python,
+s.f.). Su uso en MO se orienta principalmente al análisis y gestión de datos, la comunicación
+con dispositivos externos y el procesamiento estadístico. Si bien una de sus principales
+desventajas es la dificultad para construir interfaces visuales modernas mediante sus
+bibliotecas gráficas tradicionales, esta limitación se resuelve integrando Electron y React
+para la creación de interfaces visuales modernas. La efectividad de Python en sistemas
+similares se ve respaldada por herramientas como OpenSignals, orientada a la captura
+y análisis de bioseñales, y Sublime Text, un editor de código que utiliza una arquitectura
+extensible basada en plugins desarrollados en Python.
+Estas aplicaciones validan su
+capacidad para operar en contextos exigentes y modulares como el que plantea MO.
+3.4 PROTOTIPADO
+En esta sección se presentan los prototipos elaborados, cada prototipo fue concebido como
+una iteración que buscó cumplir con objetivos específicos, siempre orientados a satisfacer los
+requisitos funcionales y no funcionales definidos en la sección anterior. Mientras que el primer
+prototipo tuvo como propósito principal validar la viabilidad técnica de la solución planteada, los
+siguientes prototipos se enfocaron en incrementar gradualmente las capacidades de la aplicación,
+permitiendo su evolución controlada hasta alcanzar el producto final.
+Cabe destacar que,
+al finalizar cada iteración correspondiente a un prototipo funcional
+(excluyendo el primero), se llevó a cabo un proceso de documentación y validación conforme
+a la metodología establecida. Este proceso incluyó el registro de los cambios implementados, así
+como la documentación tanto en el código como en el repositorio fuente de la aplicación y los
+plugins desarrollados.
+29
+
+
+=== PAGE 40 ===
+A continuación, se describen los prototipos construidos, detallando para cada uno sus objetivos,
+funcionalidades implementadas y principales resultados.
+3.4.1 Primer prototipo: Replicación de funcionalidades críticas
+El primer prototipo tuvo como objetivo principal determinar la viabilidad técnica de replicar las
+funcionalidades esenciales de MO utilizando las nuevas tecnologías seleccionadas: Electron con
+React para la interfaz de usuario y Python para la capa de captura. Antes de continuar con el
+desarrollo del sistema completo, era fundamental verificar que los conceptos clave del sistema
+original, como la arquitectura modular basada en plugins, la captura de datos multimodales,
+la comunicación y la visualización podían ser implementadas con éxito en el nuevo entorno
+tecnológico.
+La Tabla 3.3 presenta un resumen de este prototipo, sus objetivos, una descripción general y los
+requisitos funcionales y no funcionales abordados.
+Tabla 3.3: Primer prototipo - Replicación de funcionalidades críticas.
+ID Prototipo
+P-01
+Nombre
+Replicación de funcionalidades críticas
+Objetivos
+Validar la viabilidad técnica de la nueva arquitectura.
+Implementar un sistema de plugins en captura y visualización.
+Replicar funcionalidades esenciales de MO utilizando Electron,
+React y Python.
+Descripción
+Prototipo orientado a la validación temprana de la arquitectura
+mediante la construcción de plugins básicos para la captura de
+eventos de mouse, teclado y video, así como la visualización de
+estos datos en tiempo real. Se implementó comunicación HTTP,
+sockets, gestión de procesos y un menú System Tray.
+Requisitos Funcionales
+RF-22, RF-33, RF-36, RF-50, RF-51, RF-52, RF-53, RF-54,
+RF-55
+Requisitos No
+Funcionales
+RNF-01, RNF-02, RNF-05, RNF-06
+Fuente: Elaboración propia, 2025.
+Este prototipo se desarrolló mediante un conjunto de incrementos rápidos, priorizando la
+construcción funcional por sobre la calidad del código, las buenas prácticas de diseño o la
+apariencia visual. El enfoque estuvo centrado en obtener resultados tempranos que permitieran
+tomar decisiones informadas.
+En primer lugar, se validó la comunicación entre Electron y Python, logrando establecer sin
+inconvenientes un canal de interacción utilizando el protocolo HTTP. Esta comunicación sentó
+30
+
+
+=== PAGE 41 ===
+las bases para la separación de responsabilidades entre la visualización y la captura de datos.
+Posteriormente, se implementó la arquitectura de plugins en Python para la captura de datos.
+Para demostrar esta capacidad, se desarrollaron plugins que permitieron capturar eventos básicos
+como la posición del mouse, las pulsaciones del teclado y la captura de video. Estos plugins
+fueron diseñados para ser integrados en tiempo de ejecución, replicando así la característica de
+extensibilidad de MO.
+En paralelo, se llevó a cabo la implementación de la arquitectura de plugins en Electron con
+React para la visualización de datos. Se crearon varios plugins de visualización que permitieron
+desplegar la información capturada en tiempo real. Específicamente se mostró el texto escrito
+mediante eventos de teclado, la posición actual del cursor del mouse, y una vista en miniatura de
+la ventana de captura de video (Figuras 3.1 y 3.2). Esto permitió validar que el sistema demostró
+ser capaz de presentar múltiples flujos de información simultáneamente, tal como lo hacía la
+versión original.
+Figura 3.1: Primer prototipo - Plugins de teclado y mouse.
+Fuente: Elaboración propia, 2025.
+31
+
+
+=== PAGE 42 ===
+Figura 3.2: Primer prototipo - Plugin de video.
+Fuente: Elaboración propia, 2025.
+Otro aspecto relevante abordado en este prototipo fue el trabajo con procesos. Demostrando
+que el sistema era capaz de abrir y cerrar procesos de forma controlada, específicamente con
+un plugin que levantaba un navegador para realizar una captura de video al iniciar la captura de
+datos y cerrándolo automáticamente al detener la captura (Figura 3.3).
+Figura 3.3: Primer prototipo - Procesos.
+Fuente: Elaboración propia, 2025.
+Asimismo, se implementó un mecanismo para la captura y visualización de mensajes mediante
+32
+
+
+=== PAGE 43 ===
+sockets, lo que permitió validar la capacidad de interactuar con dispositivos remotos a través de la
+red. Para ello, se construyó un plugin de captura en Python encargado de abrir un socket, recibir
+mensajes y cerrarlo al finalizar la captura. Paralelamente, un plugin de visualización en Electron
+permitía mostrar estos mensajes en pantalla. En la figura 3.4 se muestra una prueba de esta
+característica, probada con la aplicación para celular "UDP Sender Receiver".
+Figura 3.4: Primer prototipo - Comunicación.
+Fuente: Elaboración propia, 2025.
+Finalmente, se incorporó la bandeja del sistema (System Tray) en la aplicación, permitiendo
+acceder a acciones rápidas como iniciar o detener una captura sin necesidad de abrir la interfaz
+principal (Figura 3.5).
+Figura 3.5: Primer prototipo - System Tray.
+Fuente: Elaboración propia, 2025.
+33
+
+
+=== PAGE 44 ===
+Este primer prototipo permitió confirmar que las funcionalidades críticas del sistema original
+podían ser replicadas y que el proyecto contaba con una base tecnológica sólida para continuar
+su desarrollo.
+3.4.2 Segundo prototipo: Implementación del módulo de organización
+El segundo prototipo corresponde a una iteración concreta dentro del desarrollo de MO, cuyo
+objetivo fue la construcción e integración del módulo de organización. A diferencia del primer
+prototipo, cuyo foco estuvo en la validación técnica general, en esta iteración se desarrolló un
+conjunto de funcionalidades que forman parte de la aplicación final, siguiendo un enfoque iterativo
+conforme a la metodología RAD explicada anteriormente.
+Este prototipo estuvo precedido por la elaboración de mockups en Figma, los cuales guiaron el
+diseño de la interfaz de usuario durante el desarrollo, permitiendo mantener la consistencia visual
+y funcional a lo largo de las diferentes vistas de la aplicación. La Tabla 3.4 presenta un resumen
+estructurado de este segundo prototipo.
+Tabla 3.4: Segundo prototipo - Implementación del módulo de organización.
+ID Prototipo
+P-02
+Nombre
+Implementación del módulo de organización
+Objetivos
+Permitir la gestión de proyectos, participantes y protocolos de
+investigación.
+Descripción
+Iteración enfocada en la creación e integración del módulo de
+organización dentro de MO, permitiendo a los usuarios
+gestionar proyectos de investigación, participantes y protocolos
+asociados. Se implementaron tanto las interfaces gráficas como
+la lógica de negocio y almacenamiento.
+Requisitos Funcionales
+RF-01 al RF-20
+Requisitos No
+Funcionales
+RNF-01, RNF-02, RNF-04
+Fuente: Elaboración propia, 2025.
+Esta versión integró un conjunto de funcionalidades que permiten a los usuarios gestionar
+proyectos de investigación, participantes y protocolos asociados, consolidando así las bases del
+módulo de organización de MO.
+En primer lugar, se implementaron las acciones relacionadas con la gestión de proyectos. Los
+usuarios pueden crear, editar, eliminar y visualizar proyectos de investigación (Figuras 3.6,
+3.7, 3.8, 3.9, 3.11 y 3.10). Para cada proyecto se habilitó además la posibilidad de bloquear
+34
+
+
+=== PAGE 45 ===
+o desbloquear su edición, previniendo modificaciones o eliminaciones accidentales, como se
+muestra en la Figura 3.12.
+Figura 3.6: Segundo prototipo - Vista general.
+Fuente: Elaboración propia, 2025.
+Figura 3.7: Segundo prototipo - Acciones para un proyecto.
+Fuente: Elaboración propia, 2025.
+35
+
+
+=== PAGE 46 ===
+Figura 3.8: Segundo prototipo - Crear proyecto.
+Fuente: Elaboración propia, 2025.
+Figura 3.9: Segundo prototipo - Actualizar proyecto.
+Fuente: Elaboración propia, 2025.
+Figura 3.10: Segundo prototipo - Ver información de un proyecto.
+Fuente: Elaboración propia, 2025.
+36
+
+
+=== PAGE 47 ===
+Figura 3.11: Segundo prototipo - Eliminar proyecto.
+Fuente: Elaboración propia, 2025.
+Figura 3.12: Segundo prototipo - Eliminar proyecto bloqueado.
+Fuente: Elaboración propia, 2025.
+En segundo lugar, se desarrolló la gestión de participantes, permitiendo crear, editar, eliminar y
+visualizar participantes asociados a los proyectos (Figuras 3.13, 3.14 y 3.15). Al igual que los
+proyectos, los participantes pueden ser bloqueados para resguardar la integridad de sus datos y
+prevenir cambios no deseados.
+Figura 3.13: Segundo prototipo - Agregar participante a un proyecto.
+Fuente: Elaboración propia, 2025.
+37
+
+
+=== PAGE 48 ===
+Figura 3.14: Segundo prototipo - Actualizar participante.
+Fuente: Elaboración propia, 2025.
+Figura 3.15: Segundo prototipo - Ver información de un participante.
+Fuente: Elaboración propia, 2025.
+Asimismo, se incorporó la gestión de protocolos de investigación, funcionalidad solicitada durante
+el desarrollo por el profesor guía proveniente del trabajo de Polanco Berrios (2019) para ser
+integrada en esta iteración. Esta característica permite a los usuarios crear protocolos, definir
+actividades dentro de ellos, eliminarlos cuando sea necesario, y ejecutar protocolos siguiendo la
+secuencia de actividades establecida (Figuras 3.16, 3.17, 3.18, 3.19, 3.20, 3.21 y 3.22). De igual
+forma, se añadió la capacidad de bloquear o desbloquear los protocolos para evitar su edición
+una vez validados.
+38
+
+
+=== PAGE 49 ===
+Figura 3.16: Segundo prototipo - Agregar protocolo a un proyecto.
+Fuente: Elaboración propia, 2025.
+Figura 3.17: Segundo prototipo - Agregar actividad a un protocolo.
+Fuente: Elaboración propia, 2025.
+39
+
+
+=== PAGE 50 ===
+Figura 3.18: Segundo prototipo - Actualizar protocolo.
+Fuente: Elaboración propia, 2025.
+Figura 3.19: Segundo prototipo - Información de un protocolo.
+Fuente: Elaboración propia, 2025.
+40
+
+
+=== PAGE 51 ===
+Figura 3.20: Segundo prototipo - Protocolo en ejecución 1.
+Fuente: Elaboración propia, 2025.
+Figura 3.21: Segundo prototipo - Protocolo en ejecución 2.
+Fuente: Elaboración propia, 2025.
+41
+
+
+=== PAGE 52 ===
+Figura 3.22: Segundo prototipo - Protocolo en ejecución 3.
+Fuente: Elaboración propia, 2025.
+Este prototipo permitió establecer las bases funcionales necesarias para la gestión de proyectos,
+participantes y protocolos dentro de MO, habilitando por primera vez la ejecución de estos flujos
+de trabajo de forma completa. La versión fue lanzada utilizando un instalador básico provisto por
+Electron y fue probado en Windows 11 y en Linux Ubuntu 24, este último mediante una máquina
+virtual ejecutada con VirtualBox.
+3.4.3 Tercer prototipo: Implementación del módulo de captura y gestión de plugins
+El tercer prototipo aborda dos aspectos fundamentales del sistema:
+por un lado, la imple-
+mentación del módulo de captura de datos y, por otro, la creación del sistema de gestión de
+plugins en el backend, orientado a la extensión de funcionalidades que en este caso concreto
+apoyaran a la creación de plugins de captura.
+En este prototipo se amplió el alcance del sistema para incluir la ejecución de captura de datos,
+gestión de sesiones de captura, y administración de plugins que funcionan en la capa de la API.
+En la Tabla 3.5 se presenta un resumen estructurado de este tercer prototipo.
+42
+
+
+=== PAGE 53 ===
+Tabla 3.5: Tercer prototipo - Implementación del módulo de captura y gestión de plugins.
+ID Prototipo
+P-03
+Nombre
+Implementación del módulo de captura y gestión de plugins
+Objetivos
+Desarrollar el módulo de captura de datos.
+Implementar un sistema de gestión de plugins en la API.
+Incorporar los primeros plugins de captura (pantalla, teclado,
+mouse).
+Descripción
+Iteración enfocada en la integración de la funcionalidad de
+captura de datos mediante plugins configurables, la gestión de
+plugins dentro de la aplicación y la creación de plugins de
+pantalla, teclado y mouse.
+Requisitos Funcionales
+RF-22 al RF-30, RF-33 al RF-39 y RF-50 a RF-52
+Requisitos No
+Funcionales
+RNF-01, RNF-02, RNF-04, RNF-05
+Fuente: Elaboración propia, 2025.
+La primera línea de trabajo se centró en la construcción de un sistema de gestión de plugins,
+permitiendo a los usuarios administrar extensiones que amplían las capacidades del sistema.
+A través de una nueva interfaz, los usuarios pueden agregar, visualizar, eliminar y obtener
+información detallada de los plugins instalados (Figuras 3.23, 3.24 y 3.25). Estas características
+se enfocaron exclusivamente en plugins para la API.
+Figura 3.23: Tercer prototipo - Agregar plugin.
+Fuente: Elaboración propia, 2025.
+43
+
+
+=== PAGE 54 ===
+Figura 3.24: Tercer prototipo - Plugins instalados.
+Fuente: Elaboración propia, 2025.
+Figura 3.25: Tercer prototipo - Información de un Plugin.
+Fuente: Elaboración propia, 2025.
+En segundo lugar, se introdujo un nuevo módulo de captura, el cual permite a los usuarios iniciar,
+pausar, reanudar y detener sesiones de captura mediante el sistema de plugins (Figuras 3.26,
+3.27 y 3.28). Para cada proyecto, se habilitó la posibilidad de definir configuraciones específicas
+44
+
+
+=== PAGE 55 ===
+por plugin de captura, facilitando la personalización de parámetros como por ejemplo la resolución
+de video, el codec a utilizar o las opciones de registro de eventos de teclado o mouse.
+Figura 3.26: Tercer prototipo - Vista general.
+Fuente: Elaboración propia, 2025.
+Figura 3.27: Tercer prototipo - Capturando.
+Fuente: Elaboración propia, 2025.
+45
+
+
+=== PAGE 56 ===
+Figura 3.28: Tercer prototipo - Fuentes de captura.
+Fuente: Elaboración propia, 2025.
+Las sesiones de captura realizadas pueden ser gestionadas desde la aplicación, permitiendo
+ver un listado de sesiones pasadas, inspeccionar metadatos asociados a cada sesión o eliminar
+registros no deseados (Figuras 3.29, 3.30 y 3.31). Esta funcionalidad sentó las bases para la
+gestión integral de los datos observacionales que se recolectan mediante MO.
+Figura 3.29: Tercer prototipo - Listado de sesiones.
+Fuente: Elaboración propia, 2025.
+Figura 3.30: Tercer prototipo - Eliminar sesión.
+Fuente: Elaboración propia, 2025.
+46
+
+
+=== PAGE 57 ===
+Figura 3.31: Tercer prototipo - Información de sesión.
+Fuente: Elaboración propia, 2025.
+Dentro de esta iteración, se crearon los primeros plugins reales de captura para ser utilizados en
+el sistema:
+• Plugin de captura de pantalla: Permite grabar contenido de pantalla en video, soportando
+múltiples pantallas, diferentes resoluciones, tasas de cuadros por segundo configurables
+y selección de codecs de video. El resultado de cada sesión de captura se almacena en
+archivos de video en formato .avi o .mp4 (Figura 3.33).
+• Plugin de captura de teclado: Permite registrar eventos de teclado, incluyendo presiones
+y liberaciones de teclas, con la posibilidad de reconstruir los mensajes escritos. Los eventos
+se almacenan en archivos estructurados en formato .json para su análisis posterior (Figuras
+3.34 y 3.35).
+• Plugin de captura de mouse: Permite capturar movimientos, clics y desplazamientos
+47
+
+
+=== PAGE 58 ===
+de scroll del mouse. Al igual que el plugin de teclado, genera archivos .json con datos
+detallados de cada evento (Figuras 3.36 y 3.37).
+Figura 3.32: Tercer prototipo - Archivos capturados.
+Fuente: Elaboración propia, 2025.
+Figura 3.33: Tercer prototipo - Configuración de plugin de captura de pantalla.
+Fuente: Elaboración propia, 2025.
+48
+
+
+=== PAGE 59 ===
+Figura 3.34: Tercer prototipo - Configuración de plugin de captura de teclado.
+Fuente: Elaboración propia, 2025.
+Figura 3.35: Tercer prototipo - Archivo resultante captura de teclado.
+Fuente: Elaboración propia, 2025.
+49
+
+
+=== PAGE 60 ===
+Figura 3.36: Tercer prototipo - Configuración de plugin de captura del mouse.
+Fuente: Elaboración propia, 2025.
+Figura 3.37: Tercer prototipo - Archivo resultante captura del mouse.
+Fuente: Elaboración propia, 2025.
+Cada uno de estos plugins fue empaquetado como un archivo .zip e integrado mediante el sistema
+de carga de plugins dentro de MO, lo que permitió validar la extensibilidad y modularidad del
+sistema.
+Este prototipo amplió las capacidades funcionales de MO, permitiendo por primera vez realizar
+50
+
+
+=== PAGE 61 ===
+la captura de datos mediante un enfoque flexible y basado en plugins, sentando las bases para
+futuras integraciones con dispositivos y fuentes de datos externas.
+3.4.4 Cuarto prototipo: Implementación del módulo de visualización y gestión de plugins
+en la interfaz
+El cuarto prototipo corresponde a la incorporación del modulo de visualización que permite la
+reproducción de sesiones capturadas, junto con el desarrollo de un sistema de gestión de plugins
+desde la interfaz grafica (UI). Esta iteración se enfocó en habilitar la revisión visual de datos
+multimodales, al mismo tiempo que fortaleció la extensibilidad de la aplicación desde el lado del
+frontend. La Tabla 3.6 presenta un resumen estructurado de este cuarto prototipo.
+Tabla 3.6: Cuarto prototipo - Implementación del módulo de visualización y gestión de plugins en
+la interfaz.
+ID Prototipo
+P-04
+Nombre
+Implementación del módulo de visualización y gestión de
+plugins en la interfaz
+Objetivos
+Desarrollar el módulo de visualización para la reproducción de
+sesiones capturadas.
+Implementar el sistema de gestión de plugins desde la interfaz
+gráfica.
+Crear los primeros plugins de visualización (Playback Plugins).
+Descripción
+Iteración enfocada en la incorporación de un módulo de
+visualización flexible y extensible, junto con un sistema de
+gestión de plugins desde la UI. Se desarrollaron los primeros
+plugins de reproducción y se reorganizó la interfaz para mejorar
+la navegación y el acceso a las funciones del sistema.
+Requisitos Funcionales
+RF-42 a RF-49 y RF-53 a RF-55
+Requisitos No
+Funcionales
+RNF-01, RNF-02, RNF-04, RNF-05, RNF-06
+Fuente: Elaboración propia, 2025.
+En primer lugar, se implementó un sistema de gestión de plugins directamente en la interfaz
+de usuario, permitiendo a los usuarios realizar acciones como agregar, eliminar, visualizar y
+obtener información detallada de los plugins instalados. A partir de esta iteración, los plugins se
+agrupan por tipo (en este caso Capture Plugins y Playback Plugins) facilitando así la organización
+y administración dentro de la aplicación como se observa en la Figura 3.38.
+51
+
+
+=== PAGE 62 ===
+Figura 3.38: Cuarto prototipo - Plugins instalados.
+Fuente: Elaboración propia, 2025.
+La gestión de plugins se complementó con la introducción de un sistema de configuración por
+proyecto, permitiendo a los usuarios definir y personalizar tanto plugins de captura como plugins
+de reproducción (visualización). Los usuarios pueden agregar, ocultar/mostrar, editar y eliminar
+estas configuraciones de forma independiente por cada proyecto (Figuras 3.39 y 3.40).
+Figura 3.39: Cuarto prototipo - Cambio de tipo de configuración.
+Fuente: Elaboración propia, 2025.
+52
+
+
+=== PAGE 63 ===
+Figura 3.40: Cuarto prototipo - Acciones configuración de "Playback Views".
+Fuente: Elaboración propia, 2025.
+En segundo lugar, se desarrolló e integró el módulo de visualización, el cual permite la
+reproducción de sesiones previamente capturadas dentro de la aplicación.
+Este módulo se
+diseñó en base a la gestión de plugins de la UI mencionada anteriormente, permitiendo extender
+fácilmente los tipos de datos que pueden ser visualizados en el futuro, preservando así esta
+característica de MO al igual que el tercer prototipo.
+Durante esta iteración se crearon los primeros Playback Plugins para la visualización de sesiones:
+• Plugin de visualización de video: Permite mostrar los videos capturados durante una
+sesión de captura (Figura 3.41).
+• Plugin de visualización de texto (teclado): Muestra los mensajes escritos a lo largo de la
+sesión, reconstruidos a partir de los datos capturados por el plugin de teclado (Figura 3.41).
+• Plugin de visualización de mouse: Visualiza los movimientos y eventos del mouse durante
+la sesión, mostrando las coordenadas y la posición del cursor (Figura 3.41).
+El sistema de reproducción fue diseñado para ser flexible y centrado en la experiencia del usuario.
+Permite controlar la reproducción de las sesiones capturadas mediante acciones globales, como
+pausar, reanudar o desplazarse a través de la línea de tiempo. Estos controles afectan de manera
+conjunta a todos los Playback Plugins activos, los cuales se sincronizan con el estado global de
+la reproducción para asegurar que la visualización de los distintos flujos de datos se mantenga
+alineada en todo momento (Figura 3.41).
+53
+
+
+=== PAGE 64 ===
+Figura 3.41: Cuarto prototipo - Vista de reproducción de sesiones capturadas.
+Fuente: Elaboración propia, 2025.
+Además, los usuarios pueden organizar los plugins de visualización dentro de un espacio de
+trabajo dinámico, en el que es posible arrastrar, redimensionar, ocultar o abrir los plugins
+en ventanas independientes, ajustando la interfaz según las preferencias o necesidades de
+visualización de los datos.
+La aplicación conserva automáticamente la configuración de este
+espacio para futuras sesiones. En la Figura 3.42 se puede observar un cambio en el espacio de
+trabajo con respecto a la Figura 3.41. Por otro lado la Figura 3.43 muestra la característica de
+abrir en una ventana independiente una vista.
+54
+
+
+=== PAGE 65 ===
+Figura 3.42: Cuarto prototipo - Redimensión y cambio de espacio de trabajo.
+Fuente: Elaboración propia, 2025.
+Figura 3.43: Cuarto prototipo - Ventana independiente en la reproducción de sesiones.
+Fuente: Elaboración propia, 2025.
+En paralelo, la interfaz de usuario fue reorganizada con el objetivo de optimizar la navegación
+y el acceso a las distintas secciones de la aplicación. Se reestructuró el flujo de trabajo entre
+proyectos, participantes, configuraciones de plugins y protocolos, mientras que la gestión de
+sesiones de captura y reproducción se trasladó a una página específica (Figura 3.44), y los
+55
+
+
+=== PAGE 66 ===
+controles de captura y protocolos se consolidaron en una sección dedicada dentro del panel
+inferior (Figura 3.45).
+Figura 3.44: Cuarto prototipo - Sesiones disponibles.
+Fuente: Elaboración propia, 2025.
+Figura 3.45: Cuarto prototipo - Sección de controles.
+Fuente: Elaboración propia, 2025.
+Este prototipo permitió consolidar las capacidades de MO al integrar un módulo de visualización
+completo con controles globales de reproducción, mejorar la gestión de plugins desde la interfaz
+y habilitar un entorno flexible para la revisión visual de sesiones capturadas.
+56
+
+
+=== PAGE 67 ===
+3.4.5 Quinto prototipo: Preferencias de usuario y ajustes de la aplicación
+El quinto prototipo se centró en incorporar una serie de opciones de configuración orientadas
+a personalizar el comportamiento de la aplicación, mejorar la experiencia de uso y mantener la
+continuidad del entorno de trabajo entre sesiones. Un resumen se presenta en la Tabla 3.7.
+Tabla 3.7: Quinto prototipo - Preferencias de usuario y ajustes de la aplicación.
+ID Prototipo
+P-05
+Nombre
+Preferencias de usuario y ajustes de la aplicación
+Objetivos
+Incorporar una sección de ajustes para personalizar el
+comportamiento general de la aplicación.
+Permitir el cambio de idioma entre español e inglés.
+Implementar teclas de acceso rápido para acciones de captura.
+Guardar el tamaño y posición de la ventana principal entre
+sesiones.
+Agregar opciones para minimizar/restaurar la aplicación durante
+la captura.
+Integrar control de captura desde la bandeja del sistema.
+Descripción
+Iteración centrada en el desarrollo de una sección de ajustes
+desde la cual el usuario puede personalizar aspectos clave del
+comportamiento de la aplicación. Se implementaron funciones
+de persistencia visual, selección de idioma, atajos de teclado, y
+preferencias para el flujo de captura de datos.
+Requisitos Funcionales
+RF-21, RF-31, RF-32, RF-40, RF-41
+Requisitos No
+Funcionales
+RNF-01, RNF-02, RNF-03, RNF-04
+Fuente: Elaboración propia, 2025.
+En esta iteración se añadió un sistema de persistencia del estado de la ventana principal, que
+guarda su tamaño y posición al cerrar la aplicación, restaurándolos automáticamente al volver a
+abrirla. Esto permite retomar el trabajo en un entorno familiar, sin necesidad de reconfigurar la
+ventana en cada uso.
+También se incorporó una integración con la bandeja del sistema (system tray), que permite
+ejecutar acciones como iniciar, pausar, reanudar o detener una captura sin necesidad de abrir la
+interfaz completa (Figuras 3.46 y 3.47).
+57
+
+
+=== PAGE 68 ===
+Figura 3.46: Quinto prototipo - System tray 1.
+Fuente: Elaboración propia, 2025.
+Figura 3.47: Quinto prototipo - System tray 2.
+Fuente: Elaboración propia, 2025.
+Por otro lado, se agregó una sección de ajustes accesible desde la interfaz principal (Figura 3.48).
+Esta vista permite a los usuarios cambiar el idioma de la aplicación entre español e inglés. Esta
+funcionalidad se aplica a toda la interfaz principal de MO y también está disponible para ser
+utilizada por los plugins desarrollados para la aplicación, tanto en la interfaz como en la API
+(Figura 3.49).
+58
+
+
+=== PAGE 69 ===
+Figura 3.48: Quinto prototipo - Sección de ajustes.
+Fuente: Elaboración propia, 2025.
+Figura 3.49: Quinto prototipo - Vista principal en español.
+Fuente: Elaboración propia, 2025.
+Dentro de esta misma sección es posible modificar diversas configuraciones generales. Una de
+ellas es la opción para minimizar automáticamente la aplicación al iniciar una captura y restaurarla
+59
+
+
+=== PAGE 70 ===
+al finalizarla, lo que evita que la interfaz interfiera con la sesión de captura. Además, se incorporó
+una opción para que la ejecución del protocolo de investigación comience automáticamente al
+iniciar una captura y finalice al detenerla, lo que facilita acciones recurrentes durante el uso de la
+aplicación.
+En esta versión también se agregó la posibilidad de configurar teclas de acceso rápido (hotkeys)
+para las acciones de captura. Los atajos definidos por el usuario se almacenan y conservan entre
+sesiones, ofreciendo una forma rápida y directa de operar la aplicación.
+Todas estas configuraciones se almacenan automáticamente en un archivo preferences.json
+al cerrar la aplicación, garantizando que las preferencias del usuario sean persistentes entre
+sesiones (Figura 3.50). Dentro de este archivo, como se observa, también se persiste el contexto
+de trabajo, recordando el último proyecto, participante y protocolo seleccionados. Esto permite
+retomar el trabajo en el mismo estado en que fue dejado, sin necesidad de repetir configuraciones
+manuales.
+Figura 3.50: Quinto prototipo - Archivo para almacenar preferencias.
+Fuente: Elaboración propia, 2025.
+60
+
+
+=== PAGE 71 ===
+3.4.6 Sexto prototipo: Instalador de MO y conjunto de plugins
+Este prototipo se enfocó en la implementación de un instalador gráfico que automatiza el proceso
+de instalación del núcleo de MO y de un conjunto de plugins seleccionados. Esta iteración da
+cumplimiento directo al objetivo específico: “Implementar un instalador para el núcleo de MO y el
+conjunto de plugins existentes”. El instalador permite a los usuarios:
+• Elegir los plugins que desean instalar (Figura 3.51).
+• Seleccionar el directorio de instalación (Figura 3.52).
+• Confirmar la finalización del proceso con la opción de ejecutar MO al finalizar (Figura 3.53).
+Estas funcionalidades se resumen en la Tabla 3.8, que presenta los objetivos, descripción y
+requerimientos abordados durante esta iteración.
+Figura 3.51: Sexto prototipo - Selección de plugins a instalar.
+Fuente: Elaboración propia, 2025.
+61
+
+
+=== PAGE 72 ===
+Figura 3.52: Sexto prototipo - Elección del directorio de instalación.
+Fuente: Elaboración propia, 2025.
+Figura 3.53: Sexto prototipo - Instalación finalizada.
+Fuente: Elaboración propia, 2025.
+62
+
+
+=== PAGE 73 ===
+Tabla 3.8: Sexto prototipo - Instalador de MO y el conjunto de plugins.
+ID Prototipo
+P-06
+Nombre
+Instalador del núcleo y conjunto de plugins
+Objetivos
+Desarrollar un instalador que incluya el núcleo de MO y un
+conjunto inicial de plugins.
+Permitir la selección de plugins a instalar.
+Permitir la elección del directorio de instalación.
+Ejecutar MO automáticamente al finalizar la instalación.
+Descripción
+Iteración centrada en crear un instalador gráfico para la
+distribución de MO. Incluye funcionalidades para elegir plugins,
+definir ruta de instalación y ejecutar la aplicación tras completar
+el proceso. Este instalador facilita la instalación del sistema en
+entornos reales.
+Requisitos Funcionales
+RF-22
+Requisitos No
+Funcionales
+RNF-01, RNF-02
+Fuente: Elaboración propia, 2025.
+3.5 RESUMEN
+Para finalizar, la Tabla 3.9 presenta un resumen de los requerimientos funcionales abordados
+por cada prototipo, mientras que la Tabla 3.10 sintetiza los requerimientos no funcionales
+considerados durante su desarrollo.
+Estas tablas permiten observar de forma global cómo
+cada iteración contribuyó al cumplimiento progresivo de los requerimientos establecidos para el
+sistema.
+Tabla 3.9: Resumen de requerimientos funcionales cubiertos por prototipo.
+P-01
+P-02
+P-03
+P-04
+P-05
+P-06
+RF-01 al RF-20
+X
+RF-21
+X
+RF-22
+X
+X
+X
+RF-23 al RF-30
+X
+RF-31
+X
+RF-32
+X
+RF-33 al RF-39
+X
+X
+RF-40
+X
+RF-41
+X
+RF-42 al RF-49
+X
+RF-50 al RF-52
+X
+X
+RF-53 al RF-55
+X
+X
+Fuente: Elaboración propia, 2025.
+63
+
+

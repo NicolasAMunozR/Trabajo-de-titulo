@@ -1,28 +1,11 @@
 """
-================================================================================
-PROYECTO EDDIE (Python Migration) - Prototipo RAD F15
-================================================================================
-Función: Sincronización de Resaltados (Subrayado en Papel Físico -> PDF Digital)
-Equivalente C# Legacy: ModuloVisualizacionDatos / HighlightTool.cs & PageMarkerPD.cs
-Tecnología: OpenCV + PyMuPDF (fitz)
-
-Características Operativas:
-1. Documento PDF Real:
-   - Trabaja sobre el PDF real 'Informe Seminario Observaciones resueltas signed rg.pdf'.
-   - Permite navegar entre páginas (N / P).
-2. Detección de Subrayado / Resaltado Físico por Cámara (Físico -> Digital):
-   - Transmisión en vivo desde DroidCam / Webcam enfocando el papel.
-   - Cuando el usuario SUBRAYA O RESALTA en el papel físico (con resaltador fluorescente
-     amarillo, verde, naranja o lápiz de color), la cámara detecta el trazo en HSV.
-   - Mapea la posición vertical y horizontal del trazo físico hacia la línea de texto
-     correspondiente en el PDF digital real.
-   - INYECTA AUTOMÁTICAMENTE la anotación Highlight en el archivo PDF digital en disco.
-3. Vista Proyector Simulada (Digital -> Físico):
-   - Muestra cómo el proyector proyecta la banda de luz de realce sobre el libro físico.
-   - El ratón también permite simular el movimiento ocular de lectura (Gaze tracking).
-4. Persistencia en Disco y Visor:
-   - Guarda el archivo PDF real modificado con backup (.bac) y lo abre en Adobe Reader/Edge.
-
+Prototipo F15 Sincronización de Resaltados (Subrayado en Papel Físico a PDF Digital)
+Permite navegar entre páginas (N / P).
+Transmisión en vivo desde DroidCam / Webcam enfocando el papel.
+Cuando el usuario SUBRAYA O RESALTA en el papel físico (con resaltador fluorescente amarillo, verde, naranja o lápiz de color), la cámara detecta el trazo en HSV.
+Mapea la posición vertical y horizontal del trazo físico hacia la línea de texto correspondiente en el PDF digital real.
+Muestra cómo el proyector proyecta la banda de luz de realce sobre el libro físico.
+El ratón también permite simular el movimiento ocular de lectura (Gaze tracking).
 Controles:
   SUBRAYAR EN PAPEL : Subrayar con resaltador/lápiz frente a la cámara (se refleja en el PDF)
   C                 : Forzar captura manual de trazo detectado por la cámara
@@ -32,7 +15,6 @@ Controles:
   O                 : Abrir el PDF real sincronizado en el visor del sistema
   S                 : Guardar captura de evidencia PNG
   Q / ESC           : Salir
-================================================================================
 """
 
 import os
@@ -66,8 +48,8 @@ if PDF_ORIGINAL_PATH is None:
     pdf_files = list(WORKSPACE_DIR.glob("*.pdf"))
     PDF_ORIGINAL_PATH = pdf_files[0] if pdf_files else None
 
-PDF_OUTPUT_PATH = EVID_DIR / "f15_real_pdf_highlight_synced.pdf"
-PDF_BACKUP_PATH = EVID_DIR / "f15_real_pdf_highlight_synced.pdf.bac"
+PDF_OUTPUT_PATH = EVID_DIR / "f15_synced.pdf"
+PDF_BACKUP_PATH = EVID_DIR / "f15_synced.pdf.bac"
 
 # Rangos HSV para resaltadores fluorescentes (Amarillo, Verde, Naranja)
 HIGHLIGHTER_HSV = {
@@ -157,9 +139,9 @@ def renderizar_pagina_real(pdf_path, page_num=5, dpi=115):
 def abrir_pdf_visor(path):
     try:
         os.startfile(str(path))
-        print(f"  [ABIERTO EN VISOR] {path.name}")
+        print(f"ABIERTO EN VISOR {path.name}")
     except Exception as e:
-        print(f"  [!] No se pudo abrir visor: {e}")
+        print(f"No se pudo abrir visor: {e}")
 
 # Variables de interacción
 mouse_y_pos = 200
@@ -173,11 +155,8 @@ def on_mouse(event, x, y, flags, param):
 
 def main():
     global mouse_y_pos, mouse_clicked
-    print("=" * 75)
-    print("  EDDIE Python – F15: Sincronización de Resaltados (Papel Físico -> PDF Real)")
-    print(f"  Documento Real: {PDF_ORIGINAL_PATH.name}")
-    print("  Módulo Legacy C#: ModuloVisualizacionDatos / HighlightTool.cs")
-    print("=" * 75)
+    print("F15: Sincronización de Resaltados (Papel Físico a PDF Real)")
+    print(f"Documento: {PDF_ORIGINAL_PATH.name}")
 
     inicializar_pdf_salida()
     current_page = 5  # Página 6 (Arquitectura y plugins de EDDIE)
@@ -190,16 +169,16 @@ def main():
                 c = cv2.VideoCapture(idx, backend)
                 if c.isOpened():
                     cap = c
-                    print(f"  [+] Cámara detectada en índice {idx} (MSMF/ANY) para escaneo físico")
+                    print(f"Cámara detectada en índice {idx} para escaneo físico")
                     break
                 c.release()
             except Exception:
                 pass
         if cap: break
 
-    cv2.namedWindow("EDDIE – F15 Highlight Sync (Fisico -> Digital)", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("EDDIE – F15 Highlight Sync (Fisico -> Digital)", 1420, 800)
-    cv2.setMouseCallback("EDDIE – F15 Highlight Sync (Fisico -> Digital)", on_mouse)
+    cv2.namedWindow("F15 Highlight Sync (Fisico a Digital)", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("F15 Highlight Sync (Fisico a Digital)", 1420, 800)
+    cv2.setMouseCallback("F15 Highlight Sync (Fisico a Digital)", on_mouse)
 
     abrir_pdf_visor(PDF_OUTPUT_PATH)
 
@@ -247,9 +226,9 @@ def main():
                         cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 140, 220), 1)
 
         cv2.rectangle(projector_view, (0, 0), (w - 1, h - 1), (0, 180, 255), 2)
-        cv2.putText(projector_view, "[VISTA PROYECTOR SIMULADA]", (15, 25),
+        cv2.putText(projector_view, "VISTA PROYECTOR SIMULADA", (15, 25),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 140, 220), 2)
-        cv2.putText(projector_view, f"Haz de luz sobre el papel fisico | Pagina {current_page + 1}/{total_pages}", (15, 45),
+        cv2.putText(projector_view, f"Haz de luz sobre el papel fisico, Pagina {current_page + 1}/{total_pages}", (15, 45),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.38, (80, 80, 80), 1)
 
         # Clic para fijar highlight en el PDF real desde el proyector
@@ -258,7 +237,7 @@ def main():
             txt = closest_line["text"]
             aplicar_highlight_en_linea_pdf(current_page, r_pdf, txt)
             HIGHLIGHTS_APLICADOS.append((current_page, r_pdf, txt, "PROYECTOR_GAZE"))
-            print(f"  [✓ HIGHLIGHT FIJADO] Línea: \"{txt[:35]}...\" -> Sincronizada en PDF")
+            print(f"HIGHLIGHT FIJADO, Línea: \"{txt[:35]}...\" Sincronizada en PDF")
             mouse_clicked = False
 
         # 3. VISTA DE CÁMARA (Detección de Resaltado Físico sobre el Papel)
@@ -304,7 +283,7 @@ def main():
                         break
 
                 cv2.rectangle(camera_view, (0, 0), (w - 1, h - 1), (0, 220, 100), 2)
-                cv2.putText(camera_view, "[FEED CAMARA CENITAL (DROIDCAM)]", (15, 25),
+                cv2.putText(camera_view, "FEED CAMARA CENITAL", (15, 25),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 220, 100), 2)
                 cv2.putText(camera_view, "Subraya en el papel para sincronizar hacia el PDF", (15, 45),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.38, (200, 200, 200), 1)
@@ -312,14 +291,14 @@ def main():
             camera_view = np.full((h, w, 3), 30, dtype=np.uint8)
             cv2.putText(camera_view, "MODO EMULACION DE CAMARA", (15, 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 180, 255), 2)
-            cv2.putText(camera_view, "Conecta DroidCam para deteccion de subrayado fisico", (15, 60),
+            cv2.putText(camera_view, "Conecta para deteccion de subrayado fisico", (15, 60),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.4, (180, 180, 180), 1)
 
         # 4. PANEL DE TELEMETRÍA Y ESTADO
         panel_w = 460
         panel = np.full((h, panel_w, 3), 24, dtype=np.uint8)
 
-        cv2.putText(panel, "F15: HighlightTool (PDF Real)", (15, 28),
+        cv2.putText(panel, "F15: HighlightTool", (15, 28),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.62, (0, 220, 100), 2)
         cv2.putText(panel, f"Doc: {PDF_ORIGINAL_PATH.name[:38]}...", (15, 50),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.36, (180, 180, 180), 1)
@@ -342,7 +321,7 @@ def main():
                         cv2.FONT_HERSHEY_SIMPLEX, 0.34, (100, 255, 100), 1)
         else:
             cv2.rectangle(panel, (15, 110), (panel_w - 15, 175), (35, 35, 35), -1)
-            cv2.putText(panel, "Buscando trazo de resaltador en papel...", (22, 145),
+            cv2.putText(panel, "Buscando trazo de resaltador en papel", (22, 145),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.36, (180, 180, 180), 1)
 
         # Registro de highlights sincronizados
@@ -371,7 +350,6 @@ def main():
 
         # Controles
         cv2.rectangle(panel, (10, h - 105), (panel_w - 10, h - 10), (45, 45, 45), -1)
-        cv2.putText(panel, "CONTROLES:", (18, h - 85), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (0, 220, 100), 1)
         cv2.putText(panel, "C       : Sincronizar trazo fisico de camara a PDF", (18, h - 68), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (0, 220, 255), 1)
         cv2.putText(panel, "CLIC    : Fijar Highlight actual desde proyector", (18, h - 52), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (220, 220, 220), 1)
         cv2.putText(panel, "N / P   : Cambiar de pagina en el PDF real", (18, h - 36), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (180, 180, 180), 1)
@@ -379,40 +357,43 @@ def main():
 
         # 5. Unir y mostrar todo
         combined_view = np.hstack([camera_view, projector_view, panel])
-        cv2.imshow("EDDIE – F15 Highlight Sync (Fisico -> Digital)", combined_view)
+        cv2.imshow("F15 Highlight Sync (Fisico a Digital)", combined_view)
 
         key = cv2.waitKey(30) & 0xFF
 
         if key == ord('q') or key == 27:
             break
-        elif key == ord('c') and last_detected_line is not None:
-            r_pdf = last_detected_line["rect"]
-            txt = last_detected_line["text"]
-            aplicar_highlight_en_linea_pdf(current_page, r_pdf, txt)
-            HIGHLIGHTS_APLICADOS.append((current_page, r_pdf, txt, "CAMARA_FISICA"))
-            print(f"  [✓ TRAZO FÍSICO SINCRONIZADO] Línea: \"{txt[:35]}...\" -> Añadida a {PDF_OUTPUT_PATH.name}")
+        elif key == ord('c'):
+            if last_detected_line is not None:
+                r_pdf = last_detected_line["rect"]
+                txt = last_detected_line["text"]
+                aplicar_highlight_en_linea_pdf(current_page, r_pdf, txt)
+                HIGHLIGHTS_APLICADOS.append((current_page, r_pdf, txt, "CAMARA_FISICA"))
+                print(f"TRAZO FÍSICO SINCRONIZADO, Línea: \"{txt[:35]}\" Añadida a {PDF_OUTPUT_PATH.name}")
+            else:
+                print("No se detecta trazo de resaltador en el feed de la cámara física.")
         elif key == ord('n') or key == ord('N'):
             if current_page < total_pages - 1:
                 current_page += 1
-                print(f"  [PAGINA] Siguiente -> {current_page + 1}")
+                print(f"PAGINA Siguiente {current_page + 1}")
         elif key == ord('p') or key == ord('P'):
             if current_page > 0:
                 current_page -= 1
-                print(f"  [PAGINA] Anterior -> {current_page + 1}")
+                print(f"PAGINA Anterior {current_page + 1}")
         elif key == ord('r'):
             inicializar_pdf_salida()
             HIGHLIGHTS_APLICADOS.clear()
-            print("  [REINICIADO] Documento PDF restablecido al estado original.")
+            print("REINICIADO: Documento PDF restablecido al estado original.")
         elif key == ord('o'):
             abrir_pdf_visor(PDF_OUTPUT_PATH)
         elif key == ord('s'):
-            out_path = EVID_DIR / "real_f15_highlight_sync.png"
+            out_path = EVID_DIR / "f15_highlight_sync.png"
             cv2.imwrite(str(out_path), combined_view)
-            print(f"  [GUARDADO] Evidencia: {out_path.name}")
+            print(f"GUARDADO: {out_path.name}")
 
     if cap: cap.release()
     cv2.destroyAllWindows()
-    print("  ✓ F15 Finalizado exitosamente.\n")
+    print("F15 COMPLETADO.\n")
 
 if __name__ == "__main__":
     main()

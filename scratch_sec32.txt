@@ -1,0 +1,198 @@
+=== PAGE 34 ===
+"Visualization Plugin Camera" y "Web Browse Activity Visualization", relacionados con la
+gestión de librerías externas.
+3.1.2.3 Plugins de Análisis
+Los plugins de análisis, presentaron los siguientes problemas:
+• La principal barrera fue la ausencia generalizada de plugins ya compilados o la falta de las
+librerías necesarias para su compilación, lo que en la práctica impide su uso por parte de
+un usuario final.
+• En aquellos casos donde se logró compilar un plugin manualmente, se constató su
+incompatibilidad con las versiones más recientes. Específicamente, en la versión con el
+módulo Comunicación, la aplicación experimentaba un fallo crítico durante el inicio al intentar
+cargar estos plugins, con un error originado en la clase PluginRegistry.
+• El plugin "Facial Analysis" no pudo ser probado funcionalmente debido a que su operación
+dependía de una clave de API para el servicio externo Kairos, el cual ya no se encuentra
+disponible bajo las mismas condiciones que al momento de su desarrollo.
+• Al igual que en el caso de los plugins de visualización, se produjeron fallos con la nueva
+interfaz desarrollada, presentando errores relacionados con JavaFX.
+3.1.3 Conclusión
+En síntesis, el diagnóstico realizado confirma que la evolución no controlada del núcleo de MO
+ha provocado una inconsistencia crítica en su ecosistema de extensiones. Las incompatibilidades
+identificadas no son casos aislados, sino síntomas de un problema sistémico que compromete los
+principios de modularidad y escalabilidad de la plataforma. El estado actual, caracterizado por la
+inoperatividad casi total de los plugins de visualización y análisis en las versiones más recientes,
+justifica y orienta técnicamente la necesidad de una actualización integral del núcleo de MO, que
+permita restaurar la coherencia arquitectónica y asegurar la sostenibilidad del sistema a largo
+plazo.
+24
+
+
+=== PAGE 35 ===
+3.2 CAPTURA DE REQUERIMIENTOS
+El proceso de captura de requerimientos para la actualización del núcleo de Multimodal Observer
+(MO) se llevó a cabo mediante un enfoque multifacético, diseñado para asegurar una cobertura
+completa y actualizada de las necesidades del proyecto.
+Este proceso no solo se centró
+en la consolidación de funcionalidades previas, sino también en la incorporación de nuevas
+características y en la alineación con el estado del arte de herramientas similares. A continuación,
+se detallan las etapas y fuentes de información utilizadas.
+En primera instancia, se realizó una revisión de los requerimientos funcionales y no funcionales
+que fueron recopilados durante el desarrollo de la versión original de la aplicación (Gutiér-
+rez Gálvez, 2016). De este documento se extrajeron los requerimientos iniciales que definieron el
+propósito y alcance del sistema original. Esto permitió establecer una línea base de las funcional-
+idad que debían ser mantenidas, mejoradas o reevaluadas en la nueva versión.
+Adicionalmente, se integraron directrices y aspectos clave mencionados por el profesor guía a
+lo largo del desarrollo del proyecto. Entre ellas, se destacó como un requerimiento prioritario
+e indispensable la integración de los protocolos de investigación del Wizard desarrollado por
+Polanco Berrios (2019), ubicándolo dentro del módulo de organización de la herramienta.
+Con el objetivo de asegurar la competitividad y relevancia de la herramienta, se llevó a cabo un
+análisis de aplicaciones destacadas en el estado del arte, tales como OBS (Open Broadcaster
+Software), NoldusHub y OpenSignals.
+Este estudio permitió identificar características, flujos
+de trabajo y paradigmas de interacción en el dominio de la captura y visualización de datos
+multimodales. Los hallazgos de este análisis no solo inspiraron la implementación de ciertos
+requerimientos, sino que también aportaron una perspectiva valiosa sobre aspectos en el diseño
+de la interfaz y la arquitectura del sistema.
+Finalmente, todos los requisitos recopilados de las fuentes mencionadas fueron reescritos con el
+propósito de unificar el lenguaje, eliminar ambigüedades y asegurar que cada requisito estuviera
+definido de manera clara, concisa y verificable, facilitando así las posteriores fases de diseño,
+desarrollo y pruebas del sistema.
+3.2.1 Requerimientos funcionales
+A continuación, en la Tabla 3.1, se presenta un resumen de los requerimientos funcionales
+identificados para el sistema. Estos definen las capacidades y operaciones específicas que MO
+debe ser capaz de realizar. La tabla sintetiza la cantidad de requerimientos por módulo junto con
+25
+
+
+=== PAGE 36 ===
+algunos ejemplos representativos, con el fin de proporcionar una visión clara y organizada del
+comportamiento esperado de la aplicación. Para una descripción completa de cada requerimiento
+y su historia de usuario asociada, revisar el Apéndice A.
+Tabla 3.1: Resumen de requerimientos funcionales por módulo.
+Módulo
+Cantidad
+de RF
+Ejemplos de Requerimientos
+Organización
+21
+Crear, editar, eliminar y proteger proyectos, partici-
+pantes y protocolos de investigación.
+Núcleo
+11
+Agregar, eliminar y configurar plugins; mantener
+configuración de ventanas; cambiar el idioma de la
+aplicación.
+Captura
+9
+Iniciar, pausar, reanudar y detener capturas; visu-
+alizar información de sesiones capturadas; configu-
+rar teclas rápidas.
+Visualización
+8
+Reproducir sesiones; configurar la visualización por
+plugin; mover, ocultar o abrir plugins de reproduc-
+ción en ventanas independientes.
+Plugin de captura
+3
+Capturar eventos del teclado, mouse y pantalla.
+Plugin de reproducción
+3
+Visualizar datos de teclado, mouse y video cap-
+turado.
+Total
+55
+Fuente: Elaboración propia, 2025.
+3.2.2 Requerimientos no funcionales
+En la Tabla 3.2 se especifican los requerimientos no funcionales que rigen al sistema. En su
+mayoría, estos derivan de los establecidos en la implementación original de la herramienta.
+Tabla 3.2: Requerimientos NO Funcionales.
+ID
+Requerimiento No Funcional
+RNF-01
+El sistema debe ser multiplataforma
+RNF-02
+El sistema debe ser modular y extensible, permitiendo la integración de
+nuevas funcionalidades y módulos
+RNF-03
+Se debe soportar la incorporación de nuevos idiomas a la aplicación
+RNF-04
+Se debe incluir documentación para los desarrolladores, incluyendo guías
+sobre la creación e integración de plugins o módulos
+RNF-05
+El sistema debe permitir agregar plugins en tiempo de ejecución
+RNF-06
+Los datos capturados se deben mostrar de manera consistente y sincronizada
+Fuente: Adaptado de Gutiérrez Gálvez (2016).
+26
+
+
+=== PAGE 37 ===
+3.3 FACTIBILIDAD TÉCNICA
+Antes de proceder a realizar la actualización mediante una migración de las tecnologías usadas
+en la versión original de MO, se realizó un análisis de factibilidad técnica para seleccionar el
+conjunto de herramientas y tecnologías más adecuadas para la migración y actualización del
+núcleo de MO. Esta sección describe las tecnologías seleccionadas, justifica la elección frente a
+otras alternativas y valida la arquitectura propuesta a través de casos de éxito consolidados en la
+industria.
+3.3.1 Criterios para la Selección Tecnológica
+La elección de tecnologías para actualizar MO buscó principalmente mantener las características
+clave de MO: ser multiplataforma, modular y extensible. Una característica esencial de MO es
+su capacidad de ejecutarse en múltiples sistemas operativos, como Windows, macOS y Linux,
+permitiendo a distintos usuarios acceder fácilmente a la aplicación sin restricciones.
+Otro criterio importante fue contar con comunidades activas y grandes en torno a estas
+tecnologías. Esto garantiza acceso a documentación, ejemplos, librerías disponibles y soporte
+técnico constante, facilitando así el desarrollo y mantenimiento del sistema en el largo plazo.
+Además, era fundamental que las tecnologías elegidas permitieran desarrollar una aplicación
+modular y fácilmente extensible. Esto implica separar claramente la interfaz gráfica de la lógica
+interna, facilitando la incorporación de nuevas funcionalidades mediante plugins y garantizando
+que MO pueda adaptarse fácilmente a futuros requerimientos.
+Por último, se buscó seleccionar tecnologías ya validadas en aplicaciones exitosas, lo cual
+garantiza que estas herramientas sean confiables y efectivas en contextos reales similares al
+que enfrenta MO.
+3.3.2 Tecnologías Evaluadas y Comparación
+Durante la evaluación de tecnologías para migrar MO, se consideraron varias opciones:
+• Desarrollo basado en OBS Studio:
+OBS Studio es una aplicación robusta para
+captura audiovisual y streaming, construida principalmente en C. Cumple bien con ser
+multiplataforma y tiene una arquitectura modular y extensible a través de plugins. También
+27
+
+
+=== PAGE 38 ===
+cuenta con una buena documentación.
+Sin embargo, su enfoque es muy específico
+hacia transmisiones en vivo y no hacia la captura y manejo de distintos tipos de datos
+multimodales, limitando su uso en contextos más amplios como los que enfrenta MO.
+Además, la curva de aprendizaje sería alta, al requerir entender profundamente la lógica
+interna de OBS.
+• Python con bibliotecas gráficas: Python cumple completamente con ser multiplataforma,
+modular y extensible, con una comunidad activa y gran cantidad de documentación
+disponible (Python, s.f.). Además cuenta con una gran cantidad de paquetes enfocados en
+análisis de datos y manejo de dispositivos externos, lo cual es ideal para las funcionalidades
+clave de MO. Sin embargo, las bibliotecas gráficas más comunes como Tkinter y PyQt
+producen interfaces menos modernas y atractivas. Además, trabajar con estas herramientas
+gráficas es menos habitual, complicando el desarrollo visual de plugins.
+• Tauri: Tauri, basado en Rust, cumple con ser multiplataforma y ofrece un rendimiento
+superior en comparación a tecnologías como Electron, con menor consumo de recursos
+(Tauri, 2024; Yegulalp, 2024). No obstante, su principal desventaja es la menor madurez
+y una comunidad menos desarrollada, dificultando el acceso a documentación, ejemplos y
+soporte. A pesar de esto, Tauri podría ser una alternativa viable en el futuro si se busca
+mejorar el rendimiento y reducir el consumo de recursos.
+3.3.3 Tecnologías Seleccionadas y Justificación
+Las tecnologías finalmente elegidas fueron Electron, React y Python, porque combinadas
+cumplen todos los criterios clave definidos.
+• Electron:
+Es un framework basado en Chromium que permite crear aplicaciones de
+escritorio multiplataforma usando tecnologías web comunes como HTML, CSS y JavaScript.
+Actúa como un contenedor que ejecuta la interfaz de usuario como una ventana nativa
+en Windows, macOS y Linux, cumpliendo así con el requisito de multiplataforma (OpenJS
+Foundation, s.f.). Electron tiene una comunidad amplia, documentación abundante y facilita
+una arquitectura modular y extensible.
+Su ventaja clave para MO radica en la facilidad
+de desarrollar interfaces visuales modernas e interactivas, aprovechando tecnologías web
+ampliamente utilizadas. Sin embargo, una desventaja relevante es que puede consumir más
+recursos debido a su dependencia en Chromium (Yegulalp, 2024). Por otro lado, algunas
+aplicaciones conocidas que respaldan la eficacia de Electron son Visual Studio Code, con
+28
+
+

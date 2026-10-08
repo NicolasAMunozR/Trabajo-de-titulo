@@ -96,7 +96,7 @@ while True:
     elif key == ord('s'):
         out = EVID/"f09_mouse.png"
         cv2.imwrite(str(out), canvas)
-        print(f"[GUARDADO] {out}")
+        print(f"GUARDADO: {out}")
 
 cv2.destroyAllWindows()
 print(f"Total eventos registrados: {len(events_log)}")

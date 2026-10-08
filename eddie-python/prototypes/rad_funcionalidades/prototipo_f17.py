@@ -1,29 +1,11 @@
 """
-================================================================================
-PROYECTO EDDIE (Python Migration) - Prototipo RAD F17
-================================================================================
-Función: Sincronización de Figuras Geométricas (PDF Digital -> Proyección sobre Papel)
-Equivalente C# Legacy: ConsistencyLibraryFiguresPD / FiguresPD.cs & FiguresDP.cs
-Tecnología: OpenCV + PyMuPDF (fitz)
-
-Características Operativas:
-1. Documento PDF Real:
-   - Trabaja sobre el PDF real 'Informe Seminario Observaciones resueltas signed rg.pdf'.
-   - Permite navegar entre páginas con N / P.
-2. Dibujo y Extracción en PDF Digital -> Proyección sobre Papel Físico:
-   - El usuario dibuja o extrae círculos, rectángulos y líneas sobre el PDF digital.
-   - Las figuras SE PROYECTAN INMEDIATAMENTE SOBRE LA VISTA DEL PAPEL FÍSICO con efecto
-     de haz de luz vectorial luminoso (Halo).
-   - Se inyectan vectorialmente en el archivo PDF digital en disco (draw_rect, draw_circle, draw_line).
-3. Detección Física por Cámara (Físico -> Digital):
-   - La cámara cenital detecta figuras dibujadas a mano en papel (rectángulos, círculos, triángulos)
-     mediante aproximación poligonal (approxPolyDP) y la fórmula de circularidad:
-       Circularidad = (4 * PI * Area) / (Perímetro ^ 2)
-     (Fórmula exacta de FiguresPD.cs).
-   - Permite transferir las figuras detectadas en papel hacia el PDF digital con la tecla 'C'.
-4. Persistencia en Disco y Visor:
-   - Guarda el PDF real modificado con backup (.bac) y permite abrirlo en Adobe Reader/Edge.
-
+Prototipo F17 Sincronización de Figuras Geométricas (PDF Digital a Proyección sobre Papel)
+Permite navegar entre páginas con N / P.
+El usuario dibuja o extrae círculos, rectángulos y líneas sobre el PDF digital.
+Las figuras SE PROYECTAN INMEDIATAMENTE SOBRE LA VISTA DEL PAPEL FÍSICO con efecto de haz de luz vectorial luminoso (Halo).
+Se inyectan vectorialmente en el archivo PDF digital (draw_rect, draw_circle, draw_line).
+La cámara cenital detecta figuras dibujadas a mano en papel (rectángulos, círculos, triángulos)
+Permite transferir las figuras detectadas en papel hacia el PDF digital con la tecla 'C'.
 Controles:
   1 / 2 / 3      : Seleccionar herramienta: 1=Rectángulo, 2=Círculo, 3=Línea de guía
   ARRASTRAR RATÓN: Dibujar figura sobre el PDF (se proyecta de inmediato sobre el papel)
@@ -33,7 +15,6 @@ Controles:
   O              : Abrir el PDF real modificado en el visor del sistema
   S              : Guardar captura de evidencia PNG
   Q / ESC        : Salir
-================================================================================
 """
 
 import os
@@ -68,8 +49,8 @@ if PDF_ORIGINAL_PATH is None:
     pdf_files = list(WORKSPACE_DIR.glob("*.pdf"))
     PDF_ORIGINAL_PATH = pdf_files[0] if pdf_files else None
 
-PDF_OUTPUT_PATH = EVID_DIR / "f17_real_pdf_figuras_synced.pdf"
-PDF_BACKUP_PATH = EVID_DIR / "f17_real_pdf_figuras_synced.pdf.bac"
+PDF_OUTPUT_PATH = EVID_DIR / "f17_figuras.pdf"
+PDF_BACKUP_PATH = EVID_DIR / "f17_figuras.pdf.bac"
 
 # Lista de figuras sincronizadas [(page_idx, tipo, params, color_rgb, origen)]
 FIGURAS_SESION = [
@@ -140,9 +121,9 @@ def renderizar_pagina_real(pdf_path, page_num=5, dpi=115):
 def abrir_pdf_visor(path):
     try:
         os.startfile(str(path))
-        print(f"  [ABIERTO EN VISOR] {path.name}")
+        print(f"ABIERTO EN VISOR {path.name}")
     except Exception as e:
-        print(f"  [!] No se pudo abrir visor: {e}")
+        print(f"No se pudo abrir visor: {e}")
 
 # Variables de interacción mouse para dibujo vectorial
 mouse_drag_start = None
@@ -164,12 +145,9 @@ def on_mouse(event, x, y, flags, param):
 
 def main():
     global mouse_drag_start, mouse_drag_end, is_drawing, herramienta_actual
-    print("=" * 75)
-    print("  EDDIE Python – F17: Sincronización de Figuras (PDF Digital -> Proyección sobre Papel)")
-    print(f"  Documento Real: {PDF_ORIGINAL_PATH.name}")
-    print("  Módulo Legacy C#: ConsistencyLibraryFiguresPD / FiguresPD.cs & FiguresDP.cs")
-    print("=" * 75)
-
+    print("F17: Sincronización de Figuras (PDF Digital a Proyección sobre Papel)")
+    print(f"Documento: {PDF_ORIGINAL_PATH.name}")
+    
     inicializar_pdf_salida()
     current_page = 5  # Página 6 (índice 5)
     sincronizar_todas_las_figuras_al_pdf()
@@ -182,16 +160,16 @@ def main():
                 c = cv2.VideoCapture(idx, backend)
                 if c.isOpened():
                     cap = c
-                    print(f"  [+] Cámara detectada en índice {idx} (MSMF/ANY) para escaneo geométrico")
+                    print(f"Cámara detectada en índice {idx} para escaneo geométrico")
                     break
                 c.release()
             except Exception:
                 pass
         if cap: break
 
-    cv2.namedWindow("EDDIE – F17 Sincronizacion de Figuras Geometricas", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("EDDIE – F17 Sincronizacion de Figuras Geometricas", 1420, 800)
-    cv2.setMouseCallback("EDDIE – F17 Sincronizacion de Figuras Geometricas", on_mouse)
+    cv2.namedWindow("F17 Sincronizacion de Figuras Geometricas", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("F17 Sincronizacion de Figuras Geometricas", 1420, 800)
+    cv2.setMouseCallback("F17 Sincronizacion de Figuras Geometricas", on_mouse)
 
     abrir_pdf_visor(PDF_OUTPUT_PATH)
 
@@ -266,15 +244,15 @@ def main():
                             FIGURAS_SESION.append((current_page, "LINE", (pdf_x0, pdf_y0, pdf_x1, pdf_y1), (0.0, 0.7, 0.2), "DIGITAL_GUIA"))
 
                         sincronizar_todas_las_figuras_al_pdf()
-                        print(f"  [✓ FIGURA VECTORIAL SINCRONIZADA] {herramienta_actual} -> Inyectada al PDF y proyectada sobre papel")
+                        print(f"FIGURA VECTORIAL SINCRONIZADA {herramienta_actual} Inyectada al PDF y proyectada sobre papel")
 
                     mouse_drag_start = None
                     mouse_drag_end = None
 
         cv2.rectangle(projector_view, (0, 0), (w - 1, h - 1), (0, 180, 255), 2)
-        cv2.putText(projector_view, "[VISTA PROYECTOR (SOBRE PAPEL)]", (15, 25),
+        cv2.putText(projector_view, "VISTA PROYECTOR (SOBRE PAPEL)", (15, 25),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 140, 220), 2)
-        cv2.putText(projector_view, f"Figuras proyectadas sobre libro | Herramienta: {herramienta_actual}", (15, 45),
+        cv2.putText(projector_view, f"Figuras proyectadas sobre libro, Herramienta: {herramienta_actual}", (15, 45),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.38, (80, 80, 80), 1)
 
         # 3. VISTA DE CÁMARA (Detección de Figuras Físicas en Papel: FiguresPD.cs)
@@ -324,7 +302,7 @@ def main():
                                         cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 220, 100), 1)
 
                 cv2.rectangle(camera_view, (0, 0), (w - 1, h - 1), (0, 220, 100), 2)
-                cv2.putText(camera_view, "[FEED CAMARA CENITAL (DROIDCAM)]", (15, 25),
+                cv2.putText(camera_view, "FEED CAMARA CENITAL (DROIDCAM)", (15, 25),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 220, 100), 2)
                 cv2.putText(camera_view, "Clasificacion de figuras en papel (Presiona 'C')", (15, 45),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.38, (200, 200, 200), 1)
@@ -339,7 +317,7 @@ def main():
         panel_w = 460
         panel = np.full((h, panel_w, 3), 24, dtype=np.uint8)
 
-        cv2.putText(panel, "F17: FiguresPD (PDF Real)", (15, 28),
+        cv2.putText(panel, "F17: FiguresPD", (15, 28),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.62, (0, 220, 100), 2)
         cv2.putText(panel, f"Doc: {PDF_ORIGINAL_PATH.name[:38]}...", (15, 50),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.36, (180, 180, 180), 1)
@@ -381,7 +359,6 @@ def main():
 
         # Controles
         cv2.rectangle(panel, (10, h - 105), (panel_w - 10, h - 10), (45, 45, 45), -1)
-        cv2.putText(panel, "CONTROLES:", (18, h - 85), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (0, 220, 100), 1)
         cv2.putText(panel, "1/2/3   : 1=Rectangulo, 2=Circulo, 3=Linea", (18, h - 68), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (0, 220, 255), 1)
         cv2.putText(panel, "ARRASTRAR: Dibujar figura (se proyecta sobre papel)", (18, h - 52), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (220, 220, 220), 1)
         cv2.putText(panel, "C       : Exportar figuras de camara -> PDF", (18, h - 36), cv2.FONT_HERSHEY_SIMPLEX, 0.33, (0, 255, 200), 1)
@@ -389,7 +366,7 @@ def main():
 
         # 5. Unir y mostrar todo
         combined_view = np.hstack([camera_view, projector_view, panel])
-        cv2.imshow("EDDIE – F17 Sincronizacion de Figuras Geometricas", combined_view)
+        cv2.imshow("F17 Sincronizacion de Figuras Geometricas", combined_view)
 
         key = cv2.waitKey(30) & 0xFF
 
@@ -397,50 +374,53 @@ def main():
             break
         elif key == ord('1'):
             herramienta_actual = "RECT"
-            print("  [HERRAMIENTA] 1: Rectángulo ROI seleccionado")
+            print("HERRAMIENTA 1: Rectángulo ROI seleccionado")
         elif key == ord('2'):
             herramienta_actual = "CIRCLE"
-            print("  [HERRAMIENTA] 2: Círculo de fijación ocular seleccionado")
+            print("HERRAMIENTA 2: Círculo de fijación ocular seleccionado")
         elif key == ord('3'):
             herramienta_actual = "LINE"
-            print("  [HERRAMIENTA] 3: Línea de lectura seleccionada")
-        elif key == ord('c') and detected_figures_cam:
-            for fig_t, pars, col in detected_figures_cam:
-                if fig_t == "RECT":
-                    rx0, ry0, rx1, ry1 = pars
-                    px0, px1 = (rx0 * orig_w) / w, (rx1 * orig_w) / w
-                    py0, py1 = (ry0 * orig_h) / h, (ry1 * orig_h) / h
-                    FIGURAS_SESION.append((current_page, "RECT", (px0, py0, px1, py1), col, "CAMARA_FISICA"))
-                elif fig_t == "CIRCLE":
-                    cx, cy, r = pars
-                    pcx = (cx * orig_w) / w
-                    pcy = (cy * orig_h) / h
-                    pr  = (r * orig_w) / w
-                    FIGURAS_SESION.append((current_page, "CIRCLE", (pcx, pcy, pr), col, "CAMARA_FISICA"))
-            sincronizar_todas_las_figuras_al_pdf()
-            print(f"  [✓ FIGURAS DE CÁMARA SINCRONIZADAS] {len(detected_figures_cam)} figuras inyectadas en la página {current_page + 1} del PDF")
+            print("HERRAMIENTA 3: Línea de lectura seleccionada")
+        elif key == ord('c'):
+            if detected_figures_cam:
+                for fig_t, pars, col in detected_figures_cam:
+                    if fig_t == "RECT":
+                        rx0, ry0, rx1, ry1 = pars
+                        px0, px1 = (rx0 * orig_w) / w, (rx1 * orig_w) / w
+                        py0, py1 = (ry0 * orig_h) / h, (ry1 * orig_h) / h
+                        FIGURAS_SESION.append((current_page, "RECT", (px0, py0, px1, py1), col, "CAMARA_FISICA"))
+                    elif fig_t == "CIRCLE":
+                        cx, cy, r = pars
+                        pcx = (cx * orig_w) / w
+                        pcy = (cy * orig_h) / h
+                        pr  = (r * orig_w) / w
+                        FIGURAS_SESION.append((current_page, "CIRCLE", (pcx, pcy, pr), col, "CAMARA_FISICA"))
+                sincronizar_todas_las_figuras_al_pdf()
+                print(f"FIGURAS FÍSICAS DE CÁMARA SINCRONIZADAS {len(detected_figures_cam)} figuras inyectadas en la página {current_page + 1} del PDF")
+            else:
+                print("No se detectan figuras geométricas en el feed de la cámara. Dibuja o muestra una figura frente a la cámara.")
         elif key == ord('n') or key == ord('N'):
             if current_page < total_pages - 1:
                 current_page += 1
-                print(f"  [PAGINA] Siguiente -> {current_page + 1}")
+                print(f"PAGINA Siguiente -> {current_page + 1}")
         elif key == ord('p') or key == ord('P'):
             if current_page > 0:
                 current_page -= 1
-                print(f"  [PAGINA] Anterior -> {current_page + 1}")
+                print(f"PAGINA Anterior -> {current_page + 1}")
         elif key == ord('r'):
             inicializar_pdf_salida()
             FIGURAS_SESION.clear()
-            print("  [REINICIADO] Figuras eliminadas del PDF.")
+            print("REINICIADO Figuras eliminadas del PDF.")
         elif key == ord('o'):
             abrir_pdf_visor(PDF_OUTPUT_PATH)
         elif key == ord('s'):
             out_path = EVID_DIR / "real_f17_figuras_sync.png"
             cv2.imwrite(str(out_path), combined_view)
-            print(f"  [GUARDADO] Evidencia: {out_path.name}")
+            print(f"GUARDADO: {out_path.name}")
 
     if cap: cap.release()
     cv2.destroyAllWindows()
-    print("  ✓ F17 Finalizado exitosamente.\n")
+    print("F17 COMPLETADO.\n")
 
 if __name__ == "__main__":
     main()

@@ -65,7 +65,7 @@ while True:
     if key == ord('s'):
         out = EVID / "f02_binarizacion.png"
         cv2.imwrite(str(out), combined)
-        print(f"  [GUARDADO] {out}")
+        print(f"GUARDADO: {out}")
         cv2.putText(combined, "GUARDADO!", (combined.shape[1]//2 - 60, combined.shape[0]//2),
                     cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 3)
         cv2.imshow("F02 Binarización", combined)
