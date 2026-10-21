@@ -14,11 +14,17 @@ import os
 import json
 import tempfile
 import pytest
+import pymupdf
 
 # Asegurar que el directorio raíz del proyecto esté en el path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from contracts.plugin_base import PluginBase
+from contracts.i_camera_frame_consumer import ICameraFrameConsumer
+from contracts.i_camera_sensor import ICameraSensor
+from contracts.i_cycle_result_consumer import ICycleResultConsumer
+from contracts.i_eye_tracker import GazePoint
+from plugins.consistency_plugin import ConsistencyPlugin
 from orchestrator.plugin_loader import PluginLoader
 from orchestrator.orchestrator_core import OrchestratorCore
 
@@ -66,6 +72,94 @@ class _PluginReleaseException(PluginBase):
     def initialize(self, config): return True
     def execute(self): return {'status': 'ok'}
     def release(self): raise RuntimeError("Error forzado en release")
+
+
+class _DependencySensor(ICameraSensor):
+    def __init__(self):
+        self.frame = None
+        self.initialized = False
+
+    @property
+    def name(self): return "DependencySensor"
+    def initialize(self, config):
+        self.initialized = True
+        return True
+    def execute(self):
+        self.frame = "frame-from-sensor"
+        return {"frame_available": True}
+    def capture_frame(self):
+        return self.frame
+    def get_latest_frame(self):
+        return self.frame
+    def release(self):
+        self.initialized = False
+
+
+class _FrameConsumer(PluginBase, ICameraFrameConsumer):
+    def __init__(self):
+        self.sensor = None
+
+    @property
+    def name(self): return "FrameConsumer"
+    def set_camera_sensor(self, sensor):
+        self.sensor = sensor
+    def initialize(self, config):
+        return self.sensor is not None and self.sensor.initialized
+    def execute(self):
+        return {"frame": self.sensor.get_latest_frame()}
+    def release(self):
+        pass
+
+
+class _CycleOutput(PluginBase):
+    @property
+    def name(self): return "CycleOutput"
+    def initialize(self, config): return True
+    def execute(self): return {"sample": "ocr-result"}
+    def release(self): pass
+
+
+class _CycleResultConsumer(PluginBase, ICycleResultConsumer):
+    def __init__(self):
+        self.received = {}
+
+    @property
+    def name(self): return "CycleResultConsumer"
+    def initialize(self, config): return True
+    def consume_cycle_results(self, results): self.received = results
+    def execute(self): return {"received": self.received}
+    def release(self): pass
+
+
+class _PipelineOcr(PluginBase):
+    @property
+    def name(self): return "ImageProcessor"
+    def initialize(self, config): return True
+    def execute(self):
+        return {
+            "frame_size": {"width": 100, "height": 100},
+            "text_regions": [{
+                "text": "EDDIE", "confidence": 0.95,
+                "x": 20, "y": 20, "width": 20, "height": 10,
+            }],
+        }
+    def release(self): pass
+
+
+class _PipelineGaze(PluginBase):
+    @property
+    def name(self): return "EyeTracker"
+    def initialize(self, config): return True
+    def execute(self): return {"gaze": GazePoint(0.3, 0.25, 1.0)}
+    def release(self): pass
+
+
+class _PipelineGesture(PluginBase):
+    @property
+    def name(self): return "GesturePlugin"
+    def initialize(self, config): return True
+    def execute(self): return {"is_click": True}
+    def release(self): pass
 
 
 def make_config(plugins: list) -> str:
@@ -148,6 +242,141 @@ class TestPluginLoader:
 
 class TestOrchestratorInitialize:
 
+    def test_initializes_declared_sensor_before_consumer_and_shares_cycle_frame(self):
+        import tests.test_orchestrator as test_module
+        test_module.DependencySensor = _DependencySensor
+        test_module.FrameConsumer = _FrameConsumer
+
+        config_path = make_config([
+            {
+                "name": "FrameConsumer",
+                "class": "tests.test_orchestrator.FrameConsumer",
+                "enabled": True,
+                "dependencies": {"camera_sensor": "GestureCameraSensor"},
+                "config": {},
+            },
+            {
+                "name": "DependencySensor",
+                "class": "tests.test_orchestrator.DependencySensor",
+                "enabled": True,
+                "config": {},
+            },
+            {
+                "name": "GestureCameraSensor",
+                "class": "tests.test_orchestrator.DependencySensor",
+                "enabled": True,
+                "config": {},
+            },
+        ])
+        orch = OrchestratorCore(config_path)
+        try:
+            assert orch.initialize() is True
+            assert [plugin.name for plugin in orch.active_plugins] == [
+                "DependencySensor",
+                "FrameConsumer",
+                "DependencySensor",
+            ]
+            assert [plugin.instance_name for plugin in orch.active_plugins] == [
+                "GestureCameraSensor",
+                "FrameConsumer",
+                "DependencySensor",
+            ]
+
+            results = orch.execute_cycle()
+
+            assert results["GestureCameraSensor"]["frame_available"] is True
+            assert results["FrameConsumer"]["frame"] == "frame-from-sensor"
+        finally:
+            orch.release()
+            os.unlink(config_path)
+
+    def test_passes_prior_plugin_outputs_to_cycle_result_consumers(self):
+        import tests.test_orchestrator as test_module
+        test_module.CycleOutput = _CycleOutput
+        test_module.CycleResultConsumer = _CycleResultConsumer
+        config_path = make_config([
+            {
+                "name": "ConsistencyProvider",
+                "class": "tests.test_orchestrator.CycleResultConsumer",
+                "enabled": True,
+                "config": {},
+            },
+            {
+                "name": "ImageProcessor",
+                "class": "tests.test_orchestrator.CycleOutput",
+                "enabled": True,
+                "config": {},
+            },
+        ])
+        orch = OrchestratorCore(config_path)
+        try:
+            assert orch.initialize() is True
+            results = orch.execute_cycle()
+            assert results["ConsistencyProvider"]["received"] == {
+                "ImageProcessor": {"sample": "ocr-result"},
+            }
+        finally:
+            orch.release()
+            os.unlink(config_path)
+
+    def test_orchestrator_routes_ocr_gaze_and_gesture_into_pdf_annotation(self, tmp_path):
+        import tests.test_orchestrator as test_module
+        test_module.PipelineOcr = _PipelineOcr
+        test_module.PipelineGaze = _PipelineGaze
+        test_module.PipelineGesture = _PipelineGesture
+        pdf_path = tmp_path / "orchestrated.pdf"
+        document = pymupdf.open()
+        document.new_page().insert_text((72, 72), "EDDIE")
+        document.save(pdf_path)
+        document.close()
+        config_path = make_config([
+            {
+                "name": "ImageProcessor",
+                "class": "tests.test_orchestrator.PipelineOcr",
+                "enabled": True,
+                "config": {},
+            },
+            {
+                "name": "EyeTracker",
+                "class": "tests.test_orchestrator.PipelineGaze",
+                "enabled": True,
+                "config": {},
+            },
+            {
+                "name": "GesturePlugin",
+                "class": "tests.test_orchestrator.PipelineGesture",
+                "enabled": True,
+                "config": {},
+            },
+            {
+                "name": "ConsistencyProvider",
+                "class": "plugins.consistency_plugin.ConsistencyPlugin",
+                "enabled": True,
+                "config": {
+                    "pdf_path": str(pdf_path),
+                    "spatial_calibration": {
+                        "camera_page_corners": [
+                            [0, 0], [1, 0], [1, 1], [0, 1],
+                        ],
+                        "gaze_viewport": [0, 0, 1, 1],
+                    },
+                },
+            },
+        ])
+        orch = OrchestratorCore(config_path)
+        try:
+            assert orch.initialize() is True
+            results = orch.execute_cycle()
+            assert results["ConsistencyProvider"]["last_sync"]["status"] == "annotated"
+            assert results["ConsistencyProvider"]["last_sync"]["text"] == "EDDIE"
+        finally:
+            orch.release()
+            os.unlink(config_path)
+
+        saved_document = pymupdf.open(pdf_path)
+        assert len(list(saved_document[0].annots())) == 1
+        saved_document.close()
+
     def test_initialize_with_no_plugins(self):
         """Retorna False si no hay plugins en la configuración."""
         config_path = make_config([])
@@ -178,6 +407,8 @@ class TestOrchestratorInitialize:
 
         # El sistema debe inicializarse (al menos 1 plugin OK)
         assert result is True
+        assert orch.initialization_report["TestPluginOK"]["status"] == "initialized"
+        assert orch.initialization_report["TestPluginInitFail"]["status"] == "initialization_failed"
         # Solo el plugin OK debe estar activo
         assert len(orch.active_plugins) == 1
         assert orch.active_plugins[0].name == "TestPluginOK"
@@ -241,6 +472,8 @@ class TestOrchestratorExecute:
         assert results['TestPluginOK'] == {'status': 'ok', 'value': 42}
         # El plugin que crashea debe tener error registrado
         assert 'error' in results['TestPluginExecuteException']
+        assert orch.last_cycle_metrics["TestPluginOK"]["status"] == "ok"
+        assert orch.last_cycle_metrics["TestPluginExecuteException"]["status"] == "error"
 
     def test_execute_increments_cycle_count(self):
         """execute_cycle() incrementa el contador de ciclos."""

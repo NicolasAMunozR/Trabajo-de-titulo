@@ -9,8 +9,9 @@ Reemplaza:
   - PluginFramework/IFilter.cs (IPlugin con RunPlugin(VideoCapture))
 """
 from abc import abstractmethod
-from typing import Optional
 from dataclasses import dataclass
+from contracts.i_camera_frame_consumer import ICameraFrameConsumer
+from contracts.i_camera_sensor import CameraFrame
 from contracts.plugin_base import PluginBase
 
 
@@ -24,7 +25,7 @@ class GestureResult:
     is_click: bool = False  # True si el gesto debe interpretarse como un clic
 
 
-class IGesturePlugin(PluginBase):
+class IGesturePlugin(PluginBase, ICameraFrameConsumer):
     """
     Contrato para el módulo de reconocimiento gestual.
 
@@ -34,12 +35,12 @@ class IGesturePlugin(PluginBase):
     """
 
     @abstractmethod
-    def detect_gesture(self, frame: object) -> GestureResult:
+    def detect_gesture(self, frame: CameraFrame) -> GestureResult:
         """
         Analiza un frame y retorna el gesto detectado.
 
         Args:
-            frame: numpy.ndarray con el frame de la cámara de gestos.
+            frame: Frame BGR uint8 entregado por ICameraSensor.
 
         Returns:
             GestureResult: Resultado del reconocimiento.

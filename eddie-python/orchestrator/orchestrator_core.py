@@ -17,6 +17,9 @@ import logging
 import time
 from pathlib import Path
 from typing import Optional
+from contracts.i_camera_frame_consumer import ICameraFrameConsumer
+from contracts.i_camera_sensor import ICameraSensor
+from contracts.i_cycle_result_consumer import ICycleResultConsumer
 from contracts.plugin_base import PluginBase
 from orchestrator.plugin_loader import PluginLoader
 
@@ -57,6 +60,8 @@ class OrchestratorCore:
         self._is_running = False
         self._cycle_count = 0
         self._latency_history: list[float] = []
+        self._last_cycle_metrics: dict[str, dict] = {}
+        self._initialization_report: dict[str, dict] = {}
 
     # ─────────────────────────────────────────────
     # CICLO DE VIDA
@@ -87,33 +92,130 @@ class OrchestratorCore:
         # Cargar plugins (instanciar clases dinámicamente)
         raw_plugins = self._loader.load_all(plugins_config)
 
-        # Inicializar cada plugin con su configuración individual
-        for i, plugin_conf in enumerate(plugins_config):
-            # Buscar el plugin correspondiente en la lista cargada
-            plugin = next(
-                (p for p in raw_plugins if p.name == plugin_conf.get('name', '')),
-                None
-            )
-            if plugin is None:
-                continue
+        plugins_by_name = {plugin.instance_name: plugin for plugin in raw_plugins}
+        loaded_names = set(plugins_by_name)
+        config_by_name = {
+            plugin_conf.get("name"): plugin_conf
+            for plugin_conf in plugins_config
+        }
+        for plugin_conf in plugins_config:
+            plugin_name = plugin_conf.get("name", "UnknownPlugin")
+            if not plugin_conf.get("enabled", True):
+                self._initialization_report[plugin_name] = {
+                    "status": "disabled",
+                    "error": None,
+                }
+            elif plugin_name not in loaded_names:
+                self._initialization_report[plugin_name] = {
+                    "status": "load_failed",
+                    "error": "El plugin no se pudo cargar; revisa el log del PluginLoader.",
+                }
+            else:
+                self._initialization_report[plugin_name] = {
+                    "status": "pending",
+                    "error": None,
+                }
+        initialization_state: dict[str, str] = {}
 
-            plugin_config = plugin_conf.get('config', {})
+        def initialize_plugin(plugin_name: str) -> bool:
+            plugin = plugins_by_name.get(plugin_name)
+            plugin_conf = config_by_name.get(plugin_name)
+            if plugin is None or plugin_conf is None:
+                logger.error("Dependencia de plugin no disponible: %s", plugin_name)
+                self._initialization_report.setdefault(plugin_name, {
+                    "status": "dependency_unavailable",
+                    "error": "No se encontró entre los plugins cargados.",
+                })
+                return False
+
+            state = initialization_state.get(plugin_name)
+            if state == "initialized":
+                return True
+            if state == "failed":
+                return False
+            if state == "initializing":
+                logger.error("Dependencia circular detectada en el plugin %s.", plugin_name)
+                initialization_state[plugin_name] = "failed"
+                self._initialization_report[plugin_name] = {
+                    "status": "initialization_failed",
+                    "error": "Dependencia circular detectada.",
+                }
+                return False
+            initialization_state[plugin_name] = "initializing"
+
+            sensor_name = plugin_conf.get("dependencies", {}).get("camera_sensor")
+            if sensor_name:
+                sensor = plugins_by_name.get(sensor_name)
+                if not isinstance(sensor, ICameraSensor):
+                    logger.error(
+                        "[%s] requiere '%s' como ICameraSensor; dependencia ausente o incompatible.",
+                        plugin_name,
+                        sensor_name,
+                    )
+                    initialization_state[plugin_name] = "failed"
+                    self._initialization_report[plugin_name] = {
+                        "status": "dependency_failed",
+                        "error": f"'{sensor_name}' no implementa ICameraSensor.",
+                    }
+                    return False
+                if not isinstance(plugin, ICameraFrameConsumer):
+                    logger.error(
+                        "[%s] declara un sensor, pero no implementa ICameraFrameConsumer.",
+                        plugin_name,
+                    )
+                    initialization_state[plugin_name] = "failed"
+                    self._initialization_report[plugin_name] = {
+                        "status": "dependency_failed",
+                        "error": "No implementa ICameraFrameConsumer.",
+                    }
+                    return False
+                if not initialize_plugin(sensor_name):
+                    logger.error("[%s] omitido porque el sensor %s no está disponible.",
+                                 plugin_name, sensor_name)
+                    initialization_state[plugin_name] = "failed"
+                    self._initialization_report[plugin_name] = {
+                        "status": "dependency_failed",
+                        "error": f"El sensor '{sensor_name}' no se inicializó.",
+                    }
+                    return False
+                plugin.set_camera_sensor(sensor)
+
             try:
-                logger.info(f"Inicializando plugin: [{plugin.name}]")
-                success = plugin.initialize(plugin_config)
-                if success:
-                    self._plugins.append(plugin)
-                    # Marcar como inicializado internamente
-                    plugin._initialized = True
-                    logger.info(f"  ✓ [{plugin.name}] inicializado correctamente")
-                else:
-                    logger.warning(f"  ✗ [{plugin.name}] initialize() retornó False — plugin omitido")
-            except Exception as e:
-                # AISLAMIENTO DE FALLOS: capturamos la excepción del plugin,
-                # registramos el error, y continuamos con el siguiente.
+                logger.info("Inicializando plugin: [%s]", plugin.instance_name)
+                success = plugin.initialize(plugin_conf.get("config", {}))
+                if not success:
+                    logger.warning("[%s] initialize() retornó False — plugin omitido.",
+                                   plugin_name)
+                    initialization_state[plugin_name] = "failed"
+                    self._initialization_report[plugin_name] = {
+                        "status": "initialization_failed",
+                        "error": "initialize() retornó False.",
+                    }
+                    return False
+                self._plugins.append(plugin)
+                plugin._initialized = True
+                initialization_state[plugin_name] = "initialized"
+                self._initialization_report[plugin_name] = {
+                    "status": "initialized",
+                    "error": None,
+                }
+                logger.info(                "  ✓ [%s] inicializado correctamente", plugin_name)
+                return True
+            except Exception as exc:
                 logger.error(
-                    f"  ✗ [{plugin.name}] lanzó excepción en initialize(): {e} — plugin omitido"
+                    "  ✗ [%s] lanzó excepción en initialize(): %s — plugin omitido",
+                    plugin_name,
+                    exc,
                 )
+                initialization_state[plugin_name] = "failed"
+                self._initialization_report[plugin_name] = {
+                    "status": "initialization_failed",
+                    "error": str(exc),
+                }
+                return False
+
+        for plugin in raw_plugins:
+            initialize_plugin(plugin.instance_name)
 
         initialized_count = len(self._plugins)
         logger.info(f"Inicialización completa: {initialized_count}/{len(raw_plugins)} plugins activos")
@@ -132,27 +234,46 @@ class OrchestratorCore:
         """
         cycle_start = time.perf_counter()
         results = {}
+        metrics = {}
 
-        for plugin in self._plugins:
+        cycle_plugins = [
+            plugin for plugin in self._plugins
+            if not isinstance(plugin, ICycleResultConsumer)
+        ] + [
+            plugin for plugin in self._plugins
+            if isinstance(plugin, ICycleResultConsumer)
+        ]
+        for plugin in cycle_plugins:
             plugin_start = time.perf_counter()
+            status = "ok"
             try:
+                if isinstance(plugin, ICycleResultConsumer):
+                    plugin.consume_cycle_results(dict(results))
                 result = plugin.execute()
-                results[plugin.name] = result
+                results[plugin.instance_name] = result
+                if isinstance(result, dict) and result.get("error"):
+                    status = "error"
             except Exception as e:
                 # AISLAMIENTO DE FALLOS: un plugin que falla en execute()
                 # no detiene la ejecución de los demás plugins.
-                logger.error(f"[{plugin.name}] excepción en execute(): {e}")
-                results[plugin.name] = {'error': str(e)}
+                logger.error(f"[{plugin.instance_name}] excepción en execute(): {e}")
+                results[plugin.instance_name] = {'error': str(e)}
+                status = "error"
             finally:
                 plugin_ms = (time.perf_counter() - plugin_start) * 1000
+                metrics[plugin.instance_name] = {
+                    "status": status,
+                    "latency_ms": round(plugin_ms, 3),
+                }
                 if plugin_ms > MAX_LATENCY_MS:
                     logger.warning(
-                        f"[{plugin.name}] latencia alta: {plugin_ms:.2f} ms "
+                        f"[{plugin.instance_name}] latencia alta: {plugin_ms:.2f} ms "
                         f"(objetivo: ≤ {MAX_LATENCY_MS} ms)"
                     )
 
         # Latencia total del ciclo
         total_ms = (time.perf_counter() - cycle_start) * 1000
+        self._last_cycle_metrics = metrics
         self._latency_history.append(total_ms)
         self._cycle_count += 1
 
@@ -201,9 +322,9 @@ class OrchestratorCore:
         for plugin in reversed(self._plugins):
             try:
                 plugin.release()
-                logger.info(f"  ✓ [{plugin.name}] recursos liberados")
+                logger.info(f"  ✓ [{plugin.instance_name}] recursos liberados")
             except Exception as e:
-                logger.error(f"  ✗ [{plugin.name}] excepción en release(): {e}")
+                logger.error(f"  ✗ [{plugin.instance_name}] excepción en release(): {e}")
 
         self._plugins.clear()
         logger.info("OrchestratorCore terminado correctamente.")
@@ -252,3 +373,16 @@ class OrchestratorCore:
     def cycle_count(self) -> int:
         """Retorna el número total de ciclos ejecutados."""
         return self._cycle_count
+
+    @property
+    def last_cycle_metrics(self) -> dict[str, dict]:
+        """Per-plugin execution status and duration for the most recent cycle."""
+        return {name: dict(metric) for name, metric in self._last_cycle_metrics.items()}
+
+    @property
+    def initialization_report(self) -> dict[str, dict]:
+        """Configured plugin load and initialization outcomes."""
+        return {
+            name: dict(result)
+            for name, result in self._initialization_report.items()
+        }
