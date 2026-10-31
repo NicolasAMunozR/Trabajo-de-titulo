@@ -78,12 +78,21 @@ class PluginBase(ABC):
     @abstractmethod
     def name(self) -> str:
         """
-        Nombre único del plugin (identificador).
+        Nombre del tipo de plugin.
 
         Returns:
-            str: Nombre del plugin, ej: 'ImageProcessor', 'EyeTracker'.
+            str: Nombre del tipo, ej: 'ImageProcessorPlugin'.
         """
         pass
+
+    def set_instance_name(self, name: str) -> None:
+        """Assigns the unique identifier declared for this plugin instance."""
+        self._instance_name = name
+
+    @property
+    def instance_name(self) -> str:
+        """Returns the configured instance identifier, or the type name."""
+        return getattr(self, "_instance_name", self.name)
 
     @property
     def is_initialized(self) -> bool:

@@ -11,15 +11,16 @@ Reemplaza:
 Usa PyMuPDF (fitz) en lugar de iTextSharp.
 """
 from abc import abstractmethod
-from typing import Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from contracts.i_camera_sensor import CameraFrame
+from contracts.i_cycle_result_consumer import ICycleResultConsumer
 from contracts.plugin_base import PluginBase
 
 
 @dataclass
 class Annotation:
     """Representa una anotación en el documento."""
-    page_number: int        # Página del documento (1-indexed)
+    page_number: int       # Página del documento (1-indexed)
     x0: float              # Coordenada izquierda normalizada [0,1]
     y0: float              # Coordenada superior normalizada [0,1]
     x1: float              # Coordenada derecha normalizada [0,1]
@@ -28,7 +29,7 @@ class Annotation:
     content: str = ""      # Texto del comentario (si aplica)
 
 
-class IConsistencyProvider(PluginBase):
+class IConsistencyProvider(PluginBase, ICycleResultConsumer):
     """
     Contrato para la consistencia bidireccional físico-digital.
 
@@ -90,13 +91,14 @@ class IConsistencyProvider(PluginBase):
         pass
 
     @abstractmethod
-    def sync_physical_to_digital(self, frame: object, page_number: int) -> list:
+    def sync_physical_to_digital(self, frame: CameraFrame, page_number: int) -> list:
         """
-        Detecta anotaciones en el documento físico (desde cámara)
-        y las transfiere al PDF digital.
+        Detects physical pen marks from a camera frame and transfers them
+        to the digital PDF. This is distinct from calibrated OCR/gaze
+        selection, which is coordinated through consume_cycle_results().
 
         Args:
-            frame: numpy.ndarray con imagen del documento físico.
+            frame: Frame BGR uint8 capturado por ICameraSensor.
             page_number (int): Página actual del documento.
 
         Returns:

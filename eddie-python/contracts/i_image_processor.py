@@ -9,30 +9,21 @@ Reemplaza:
   - ModuloProcesamientoImagenes/CameraActivity.cs
 """
 from abc import abstractmethod
-from typing import Optional
+from contracts.i_camera_frame_consumer import ICameraFrameConsumer
+from contracts.i_camera_sensor import CameraFrame, ImageArray
 from contracts.plugin_base import PluginBase
 
 
-class IImageProcessor(PluginBase):
+class IImageProcessor(PluginBase, ICameraFrameConsumer):
     """
     Contrato para el procesador de imágenes y OCR.
 
-    Implementaciones deben capturar frames de cámara,
-    aplicar preprocesamiento y extraer texto mediante OCR.
+    Implementaciones procesan frames BGR entregados por un sensor y extraen
+    texto mediante OCR. La captura pertenece al contrato ICameraSensor.
     """
 
     @abstractmethod
-    def capture_frame(self) -> Optional[object]:
-        """
-        Captura un frame de la cámara configurada.
-
-        Returns:
-            numpy.ndarray | None: Frame capturado o None si falla.
-        """
-        pass
-
-    @abstractmethod
-    def preprocess(self, frame: object) -> object:
+    def preprocess(self, frame: CameraFrame) -> ImageArray:
         """
         Aplica preprocesamiento al frame para mejorar el OCR.
         (escala de grises, binarización, denoising)
@@ -46,7 +37,7 @@ class IImageProcessor(PluginBase):
         pass
 
     @abstractmethod
-    def extract_text(self, frame: object) -> str:
+    def extract_text(self, frame: ImageArray) -> str:
         """
         Aplica OCR al frame preprocesado y retorna el texto detectado.
 
@@ -56,6 +47,11 @@ class IImageProcessor(PluginBase):
         Returns:
             str: Texto detectado por el motor OCR.
         """
+        pass
+
+    @abstractmethod
+    def extract_text_with_regions(self, frame: ImageArray) -> dict:
+        """Return OCR text plus word boxes and confidence in frame pixels."""
         pass
 
     @abstractmethod

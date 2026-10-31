@@ -59,6 +59,7 @@ class IEyeTracker(PluginBase):
         Requerimiento del seminario: ≤ 8.3 ms para dispositivos 60Hz.
 
         Returns:
-            float: Latencia en milisegundos.
+            float: Latencia en milisegundos, o -1.0 si el dispositivo no
+            entrega un timestamp con el que se pueda calcular.
         """
         pass
