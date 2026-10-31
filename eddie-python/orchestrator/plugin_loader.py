@@ -116,6 +116,7 @@ class PluginLoader:
             
             plugin = self.load_plugin(class_path, config)
             if plugin is not None:
+                plugin.set_instance_name(name)
                 loaded_plugins.append(plugin)
             else:
                 logger.warning(
