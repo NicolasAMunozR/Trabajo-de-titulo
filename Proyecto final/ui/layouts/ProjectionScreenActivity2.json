@@ -1,0 +1,1582 @@
+{
+ "form": "ProjectionScreenActivity2",
+ "props": {
+  "timer1": {
+   "raw": "new System.Windows.Forms.Timer(this.components)"
+  },
+  "timer2": {
+   "raw": "new System.Windows.Forms.Timer(this.components)"
+  },
+  "AutoScaleDimensions": {
+   "raw": "new System.Drawing.SizeF(6F, 13F)"
+  },
+  "AutoScaleMode": "Font",
+  "BackColor": "#f8f5fa",
+  "ClientSize": [
+   1300,
+   740
+  ],
+  "FormBorderStyle": "None",
+  "Margin": {
+   "raw": "new System.Windows.Forms.Padding(2)"
+  },
+  "Name": "ProjectionScreenActivity2",
+  "Text": "AR"
+ },
+ "events": {
+  "FormClosing": "ProjectionScreenActivity_FormClosing",
+  "Load": "Form2_Load",
+  "MouseMove": "ProjectionScreenActivity2_MouseMove"
+ },
+ "controls": [
+  {
+   "name": "historyLogPanel",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#d0e9f2",
+    "BorderStyle": "FixedSingle",
+    "Location": [
+     12,
+     67
+    ],
+    "Size": [
+     262,
+     438
+    ],
+    "TabIndex": 153,
+    "Visible": false
+   },
+   "children": [
+    {
+     "name": "fl_busquedasRecientes",
+     "type": "FlowLayoutPanel",
+     "props": {
+      "AutoScroll": true,
+      "BackColor": "@ControlLightLight",
+      "BorderStyle": "FixedSingle",
+      "Location": [
+       3,
+       29
+      ],
+      "Size": [
+       251,
+       380
+      ],
+      "TabIndex": 0
+     }
+    },
+    {
+     "name": "label1",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 8.249999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       3,
+       10
+      ],
+      "Size": [
+       77,
+       13
+      ],
+      "TabIndex": 1,
+      "Text": "Recent search"
+     }
+    }
+   ]
+  },
+  {
+   "name": "syncPDFLabel",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 8.249999,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     902,
+     653
+    ],
+    "Size": [
+     29,
+     13
+    ],
+    "TabIndex": 150,
+    "Text": "X/Y",
+    "Visible": false
+   }
+  },
+  {
+   "name": "panel3",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#d0e9f2",
+    "BorderStyle": "FixedSingle",
+    "Location": [
+     12,
+     67
+    ],
+    "Size": [
+     262,
+     438
+    ],
+    "TabIndex": 149,
+    "Visible": false
+   },
+   "children": [
+    {
+     "name": "rtb_result_definicion_traduccion",
+     "type": "RichTextBox",
+     "props": {
+      "BorderStyle": "None",
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 14.25,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       14,
+       42
+      ],
+      "Size": [
+       237,
+       303
+      ],
+      "TabIndex": 0,
+      "Text": "",
+      "Visible": false
+     }
+    },
+    {
+     "name": "lbl_datoBuscado_trad_def",
+     "type": "Label",
+     "props": {
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 14.25,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       15,
+       10
+      ],
+      "Size": [
+       237,
+       24
+      ],
+      "TabIndex": 1,
+      "Text": "label1",
+      "TextAlign": "TopCenter",
+      "Visible": false
+     }
+    },
+    {
+     "name": "btn_leerDefinicionTraduccion",
+     "type": "ButtonAlt",
+     "props": {
+      "FlatAppearance.BorderSize": 0,
+      "FlatAppearance.MouseDownBackColor": "@Transparent",
+      "FlatAppearance.MouseOverBackColor": "@Transparent",
+      "FlatStyle": "Flat",
+      "Image": {
+       "resx": "btn_leerDefinicionTraduccion.Image"
+      },
+      "Location": [
+       14,
+       351
+      ],
+      "Size": [
+       81,
+       61
+      ],
+      "TabIndex": 130,
+      "UseVisualStyleBackColor": true,
+      "Visible": false
+     },
+     "events": {
+      "Click": "btn_leerDefinicionTraduccion_Click",
+      "MouseDown": "btn_leerDefinicionTraduccion_MouseDown",
+      "MouseEnter": "btn_leerDefinicionTraduccion_MouseEnter",
+      "MouseLeave": "btn_leerDefinicionTraduccion_MouseLeave",
+      "MouseUp": "btn_leerDefinicionTraduccion_MouseUp"
+     }
+    },
+    {
+     "name": "btn_cerrarVentanaIzquierda",
+     "type": "ButtonAlt",
+     "props": {
+      "FlatAppearance.BorderSize": 0,
+      "FlatAppearance.MouseDownBackColor": "@Transparent",
+      "FlatAppearance.MouseOverBackColor": "@Transparent",
+      "FlatStyle": "Flat",
+      "Image": {
+       "resx": "btn_cerrarVentanaIzquierda.Image"
+      },
+      "Location": [
+       170,
+       351
+      ],
+      "Size": [
+       81,
+       61
+      ],
+      "TabIndex": 4,
+      "UseVisualStyleBackColor": true,
+      "Visible": false
+     },
+     "events": {
+      "Click": "btn_cerrarVentanaIzquierda_Click",
+      "MouseDown": "btn_cerrarVentanaIzquierda_MouseDown",
+      "MouseEnter": "btn_cerrarVentanaIzquierda_MouseEnter",
+      "MouseLeave": "btn_cerrarVentanaIzquierda_MouseLeave",
+      "MouseUp": "btn_cerrarVentanaIzquierda_MouseUp"
+     }
+    }
+   ]
+  },
+  {
+   "name": "btnSearchPages2",
+   "type": "ButtonModified",
+   "props": {
+    "BackColor": "#1c9dec",
+    "FlatAppearance.BorderColor": "#1c9dec",
+    "FlatAppearance.BorderSize": 5,
+    "FlatAppearance.MouseDownBackColor": "#0057ca",
+    "FlatAppearance.MouseOverBackColor": "#00caca",
+    "FlatStyle": "Flat",
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 8.25,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "ForeColor": "#f8f5fa",
+    "Location": [
+     1063,
+     654
+    ],
+    "Size": [
+     68,
+     58
+    ],
+    "TabIndex": 148,
+    "Text": "Search Pages",
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "searchButton_Click"
+   }
+  },
+  {
+   "name": "backPageButton2",
+   "type": "ButtonModified",
+   "props": {
+    "BackColor": "#1c9dec",
+    "FlatAppearance.BorderColor": "#1c9dec",
+    "FlatAppearance.BorderSize": 5,
+    "FlatAppearance.MouseDownBackColor": "#0057ca",
+    "FlatAppearance.MouseOverBackColor": "#00caca",
+    "FlatStyle": "Flat",
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 8.25,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "ForeColor": "#f8f5fa",
+    "Location": [
+     899,
+     591
+    ],
+    "Size": [
+     68,
+     59
+    ],
+    "TabIndex": 147,
+    "Text": "<<",
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "backPagebutton_Click"
+   }
+  },
+  {
+   "name": "label2",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 16.0,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     509,
+     -4
+    ],
+    "Size": [
+     194,
+     26
+    ],
+    "TabIndex": 145,
+    "Text": "Captured content"
+   }
+  },
+  {
+   "name": "btn_turnOFF",
+   "type": "ButtonAlt",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "btn_turnOFF.Image"
+    },
+    "Location": [
+     1192,
+     2
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 141,
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "Click": "btn_turnOFF_Click",
+    "MouseDown": "btn_turnOFF_MouseDown",
+    "MouseEnter": "btn_turnOFF_MouseEnter",
+    "MouseLeave": "btn_turnOFF_MouseLeave",
+    "MouseUp": "btn_turnOFF_MouseUp"
+   }
+  },
+  {
+   "name": "nextPageButton2",
+   "type": "ButtonModified",
+   "props": {
+    "BackColor": "#1c9dec",
+    "FlatAppearance.BorderColor": "#1c9dec",
+    "FlatAppearance.BorderSize": 5,
+    "FlatAppearance.MouseDownBackColor": "#0057ca",
+    "FlatAppearance.MouseOverBackColor": "#00caca",
+    "FlatStyle": "Flat",
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 8.25,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "ForeColor": "#f8f5fa",
+    "Location": [
+     1063,
+     591
+    ],
+    "Size": [
+     68,
+     59
+    ],
+    "TabIndex": 144,
+    "Text": ">>",
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "nextPageButton_Click"
+   }
+  },
+  {
+   "name": "btn_sincronizadorPdf",
+   "type": "ButtonAlt",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Cursor": "Hand",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "btn_sincronizadorPdf.Image"
+    },
+    "Location": [
+     624,
+     531
+    ],
+    "Size": [
+     81,
+     65
+    ],
+    "TabIndex": 140,
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "Click": "btn_sincronizadorPdf_Click"
+   }
+  },
+  {
+   "name": "markButton",
+   "type": "ButtonModified",
+   "props": {
+    "BackColor": "#1c9dec",
+    "FlatAppearance.BorderColor": "#1c9dec",
+    "FlatAppearance.BorderSize": 5,
+    "FlatAppearance.MouseDownBackColor": "#0057ca",
+    "FlatAppearance.MouseOverBackColor": "#00caca",
+    "FlatStyle": "Flat",
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 8.25,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "ForeColor": "#f8f5fa",
+    "Location": [
+     1154,
+     656
+    ],
+    "Size": [
+     118,
+     57
+    ],
+    "TabIndex": 143,
+    "Text": "Hide caliibration marks",
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "Click": "button1_Click"
+   }
+  },
+  {
+   "name": "buttonComments",
+   "type": "Button",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "buttonComments.Image"
+    },
+    "Location": [
+     412,
+     629
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 134,
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "buttonComments_Click",
+    "MouseDown": "buttonComments_MouseDown",
+    "MouseEnter": "buttonComments_MouseEnter",
+    "MouseLeave": "buttonComments_MouseLeave",
+    "MouseUp": "buttonComments_MouseUp"
+   }
+  },
+  {
+   "name": "buttonMarker",
+   "type": "Button",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "buttonMarker.Image"
+    },
+    "Location": [
+     499,
+     629
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 133,
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "buttonMarker_Click",
+    "MouseDown": "buttonMarker_MouseDown",
+    "MouseEnter": "buttonMarker_MouseEnter",
+    "MouseLeave": "buttonMarker_MouseLeave",
+    "MouseUp": "buttonMarker_MouseUp"
+   }
+  },
+  {
+   "name": "Pages",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 8.249999,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     904,
+     697
+    ],
+    "Size": [
+     50,
+     13
+    ],
+    "TabIndex": 134,
+    "Text": "Pages :",
+    "Visible": false
+   }
+  },
+  {
+   "name": "buttonPDF",
+   "type": "Button",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "buttonPDF.Image"
+    },
+    "Location": [
+     673,
+     629
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 132,
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "buttonPDF_Click",
+    "MouseDown": "buttonPDF_MouseDown",
+    "MouseEnter": "buttonPDF_MouseEnter",
+    "MouseLeave": "buttonPDF_MouseLeave",
+    "MouseUp": "buttonPDF_MouseUp"
+   }
+  },
+  {
+   "name": "PagesLabel",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 9.75,
+     "bold": false,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     964,
+     698
+    ],
+    "Size": [
+     19,
+     16
+    ],
+    "TabIndex": 133,
+    "Text": "---",
+    "Visible": false
+   }
+  },
+  {
+   "name": "buttonFiguresPD",
+   "type": "Button",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "buttonFiguresPD.Image"
+    },
+    "Location": [
+     586,
+     629
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 131,
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "buttonFiguresPD_Click",
+    "MouseDown": "buttonFiguresPD_MouseDown",
+    "MouseEnter": "buttonFiguresPD_MouseEnter",
+    "MouseLeave": "buttonFiguresPD_MouseLeave",
+    "MouseUp": "buttonFiguresPD_MouseUp"
+   }
+  },
+  {
+   "name": "panel_log",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#d0e9f2",
+    "BorderStyle": "FixedSingle",
+    "Location": [
+     12,
+     67
+    ],
+    "Size": [
+     262,
+     438
+    ],
+    "TabIndex": 129
+   },
+   "children": [
+    {
+     "name": "groupBox1",
+     "type": "GroupBox",
+     "props": {
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 8.249999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       3,
+       3
+      ],
+      "Size": [
+       254,
+       434
+      ],
+      "TabIndex": 2,
+      "TabStop": false,
+      "Text": "PDF Content"
+     },
+     "events": {
+      "Enter": "groupBox1_Enter"
+     },
+     "children": [
+      {
+       "name": "buttonEliminarComentario2",
+       "type": "ButtonModified",
+       "props": {
+        "BackColor": "#1c9dec",
+        "FlatAppearance.BorderColor": "#1c9dec",
+        "FlatAppearance.BorderSize": 5,
+        "FlatAppearance.MouseDownBackColor": "#0057ca",
+        "FlatAppearance.MouseOverBackColor": "#00caca",
+        "FlatStyle": "Flat",
+        "Font": {
+         "family": "Microsoft Sans Serif",
+         "size": 8.25,
+         "bold": true,
+         "italic": false,
+         "underline": false
+        },
+        "ForeColor": "#f8f5fa",
+        "Location": [
+         90,
+         386
+        ],
+        "Size": [
+         152,
+         33
+        ],
+        "TabIndex": 146,
+        "Text": "Delete comment",
+        "UseVisualStyleBackColor": false
+       },
+       "events": {
+        "Click": "buttonEliminarComentario_Click"
+       }
+      },
+      {
+       "name": "buttonEliminarMarcador2",
+       "type": "ButtonModified",
+       "props": {
+        "BackColor": "#1c9dec",
+        "FlatAppearance.BorderColor": "#1c9dec",
+        "FlatAppearance.BorderSize": 5,
+        "FlatAppearance.MouseDownBackColor": "#0057ca",
+        "FlatAppearance.MouseOverBackColor": "#00caca",
+        "FlatStyle": "Flat",
+        "Font": {
+         "family": "Microsoft Sans Serif",
+         "size": 8.25,
+         "bold": true,
+         "italic": false,
+         "underline": false
+        },
+        "ForeColor": "#f8f5fa",
+        "Location": [
+         90,
+         213
+        ],
+        "Size": [
+         152,
+         33
+        ],
+        "TabIndex": 145,
+        "Text": "Delete bookmark",
+        "UseVisualStyleBackColor": false
+       },
+       "events": {
+        "Click": "buttonEliminarMarcador_Click"
+       }
+      },
+      {
+       "name": "comentariosPDF",
+       "type": "Label",
+       "props": {
+        "AutoSize": true,
+        "Font": {
+         "family": "Microsoft Sans Serif",
+         "size": 8.249999,
+         "bold": false,
+         "italic": false,
+         "underline": false
+        },
+        "Location": [
+         5,
+         232
+        ],
+        "Size": [
+         80,
+         13
+        ],
+        "TabIndex": 4,
+        "Text": "PDF Comments"
+       }
+      },
+      {
+       "name": "labelMarcadoresPDF",
+       "type": "Label",
+       "props": {
+        "AutoSize": true,
+        "Font": {
+         "family": "Microsoft Sans Serif",
+         "size": 8.249999,
+         "bold": false,
+         "italic": false,
+         "underline": false
+        },
+        "Location": [
+         2,
+         60
+        ],
+        "Size": [
+         83,
+         13
+        ],
+        "TabIndex": 3,
+        "Text": "PDF bookmarks"
+       }
+      },
+      {
+       "name": "listBox2",
+       "type": "ListBox",
+       "props": {
+        "FormattingEnabled": true,
+        "Location": [
+         8,
+         255
+        ],
+        "Size": [
+         235,
+         121
+        ],
+        "TabIndex": 2
+       }
+      },
+      {
+       "name": "listBox1",
+       "type": "ListBox",
+       "props": {
+        "FormattingEnabled": true,
+        "Location": [
+         6,
+         84
+        ],
+        "Size": [
+         237,
+         121
+        ],
+        "TabIndex": 1
+       }
+      },
+      {
+       "name": "checkBox1",
+       "type": "CheckBox",
+       "props": {
+        "AutoSize": true,
+        "Checked": true,
+        "CheckState": "Checked",
+        "Font": {
+         "family": "Microsoft Sans Serif",
+         "size": 8.249999,
+         "bold": false,
+         "italic": false,
+         "underline": false
+        },
+        "ForeColor": "#00003c",
+        "Location": [
+         8,
+         25
+        ],
+        "Size": [
+         114,
+         17
+        ],
+        "TabIndex": 0,
+        "Text": "Show/Hide figures",
+        "UseVisualStyleBackColor": true
+       },
+       "events": {
+        "CheckedChanged": "checkBox1_CheckedChanged"
+       }
+      }
+     ]
+    },
+    {
+     "name": "gb_busquedasRecientes",
+     "type": "GroupBox",
+     "props": {
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 8.25,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       4,
+       9
+      ],
+      "Size": [
+       253,
+       428
+      ],
+      "TabIndex": 0,
+      "TabStop": false
+     },
+     "events": {
+      "Enter": "gb_busquedasRecientes_Enter"
+     }
+    }
+   ]
+  },
+  {
+   "name": "searchTextBox",
+   "type": "TextBox",
+   "props": {
+    "Location": [
+     899,
+     668
+    ],
+    "Multiline": true,
+    "Size": [
+     162,
+     21
+    ],
+    "TabIndex": 131,
+    "Visible": false
+   }
+  },
+  {
+   "name": "btn_drawMenu",
+   "type": "ButtonAlt",
+   "props": {
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "btn_drawMenu.Image"
+    },
+    "Location": [
+     12,
+     2
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 16,
+    "UseVisualStyleBackColor": true
+   },
+   "events": {
+    "Click": "btn_drawMenu_Click",
+    "MouseDown": "btn_drawMenu_MouseDown",
+    "MouseEnter": "btn_drawMenu_MouseEnter",
+    "MouseLeave": "btn_drawMenu_MouseLeave",
+    "MouseUp": "btn_drawMenu_MouseUp"
+   }
+  },
+  {
+   "name": "btn_diccionario",
+   "type": "ButtonAlt",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "btn_diccionario.Image"
+    },
+    "Location": [
+     363,
+     604
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 123,
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "btn_diccionario_Click",
+    "MouseDown": "btn_diccionario_MouseDown",
+    "MouseEnter": "btn_diccionario_MouseEnter",
+    "MouseLeave": "btn_diccionario_MouseLeave",
+    "MouseUp": "btn_diccionario_MouseUp"
+   }
+  },
+  {
+   "name": "btn_imagen",
+   "type": "ButtonAlt",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "btn_imagen.Image"
+    },
+    "Location": [
+     710,
+     604
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 122,
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "btn_imagen_Click",
+    "MouseDown": "btn_imagen_MouseDown",
+    "MouseEnter": "btn_imagen_MouseEnter",
+    "MouseLeave": "btn_imagen_MouseLeave",
+    "MouseUp": "btn_imagen_MouseUp"
+   }
+  },
+  {
+   "name": "btn_video",
+   "type": "ButtonAlt",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "btn_video.Image"
+    },
+    "Location": [
+     624,
+     604
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 121,
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "btn_video_Click",
+    "MouseDown": "btn_video_MouseDown",
+    "MouseEnter": "btn_video_MouseEnter",
+    "MouseLeave": "btn_video_MouseLeave",
+    "MouseUp": "btn_video_MouseUp"
+   }
+  },
+  {
+   "name": "btn_enciclopedia",
+   "type": "ButtonAlt",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "btn_enciclopedia.Image"
+    },
+    "Location": [
+     537,
+     604
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 120,
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "btn_enciclopedia_Click",
+    "MouseDown": "btn_enciclopedia_MouseDown",
+    "MouseEnter": "btn_enciclopedia_MouseEnter",
+    "MouseLeave": "btn_enciclopedia_MouseLeave",
+    "MouseUp": "btn_enciclopedia_MouseUp"
+   }
+  },
+  {
+   "name": "syncButton",
+   "type": "Button",
+   "props": {
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "syncButton.Image"
+    },
+    "Location": [
+     973,
+     591
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 92,
+    "UseVisualStyleBackColor": true,
+    "Visible": false
+   },
+   "events": {
+    "Click": "syncPdfButton_Click",
+    "MouseDown": "syncButton_MouseDown",
+    "MouseEnter": "syncButton_MouseEnter",
+    "MouseLeave": "syncButton_MouseLeave",
+    "MouseUp": "syncButton_MouseUp"
+   }
+  },
+  {
+   "name": "btn_traductor",
+   "type": "ButtonAlt",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "btn_traductor.Image"
+    },
+    "Location": [
+     450,
+     604
+    ],
+    "Size": [
+     81,
+     61
+    ],
+    "TabIndex": 119,
+    "UseVisualStyleBackColor": false,
+    "Visible": false
+   },
+   "events": {
+    "Click": "btn_traductor_Click",
+    "MouseDown": "btn_traductor_MouseDown",
+    "MouseEnter": "btn_traductor_MouseEnter",
+    "MouseLeave": "btn_traductor_MouseLeave",
+    "MouseUp": "btn_traductor_MouseUp"
+   }
+  },
+  {
+   "name": "btn_buscarWeb",
+   "type": "ButtonAlt",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Cursor": "Hand",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "btn_buscarWeb.Image"
+    },
+    "Location": [
+     466,
+     531
+    ],
+    "Size": [
+     81,
+     65
+    ],
+    "TabIndex": 118,
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "Click": "btn_buscarWeb_Click"
+   }
+  },
+  {
+   "name": "panel2",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#d0e9f2",
+    "BorderStyle": "FixedSingle",
+    "Location": [
+     892,
+     67
+    ],
+    "Size": [
+     380,
+     518
+    ],
+    "TabIndex": 95,
+    "Visible": false
+   },
+   "children": [
+    {
+     "name": "btn_leerEnciclopedia",
+     "type": "ButtonAlt",
+     "props": {
+      "FlatAppearance.BorderSize": 0,
+      "FlatAppearance.CheckedBackColor": "@Transparent",
+      "FlatAppearance.MouseDownBackColor": "@Transparent",
+      "FlatAppearance.MouseOverBackColor": "@Transparent",
+      "FlatStyle": "Flat",
+      "Image": {
+       "resx": "btn_leerEnciclopedia.Image"
+      },
+      "Location": [
+       198,
+       444
+      ],
+      "Size": [
+       81,
+       61
+      ],
+      "TabIndex": 93,
+      "UseVisualStyleBackColor": true,
+      "Visible": false
+     },
+     "events": {
+      "Click": "btn_leerEnciclopedia_Click",
+      "MouseDown": "btn_leerEnciclopedia_MouseDown",
+      "MouseEnter": "btn_leerEnciclopedia_MouseEnter",
+      "MouseLeave": "btn_leerEnciclopedia_MouseLeave",
+      "MouseUp": "btn_leerEnciclopedia_MouseUp"
+     }
+    },
+    {
+     "name": "btn_nav_adelante",
+     "type": "ButtonAlt",
+     "props": {
+      "FlatAppearance.BorderSize": 0,
+      "FlatAppearance.CheckedBackColor": "@Transparent",
+      "FlatAppearance.MouseDownBackColor": "@Transparent",
+      "FlatAppearance.MouseOverBackColor": "@Transparent",
+      "FlatStyle": "Flat",
+      "Image": {
+       "resx": "btn_nav_adelante.Image"
+      },
+      "Location": [
+       98,
+       444
+      ],
+      "Size": [
+       81,
+       61
+      ],
+      "TabIndex": 7,
+      "UseVisualStyleBackColor": true,
+      "Visible": false
+     },
+     "events": {
+      "Click": "btn_nav_adelante_Click",
+      "MouseDown": "btn_nav_adelante_MouseDown",
+      "MouseEnter": "btn_nav_adelante_MouseEnter",
+      "MouseLeave": "btn_nav_adelante_MouseLeave",
+      "MouseUp": "btn_nav_adelante_MouseUp"
+     }
+    },
+    {
+     "name": "btn_nav_atras",
+     "type": "ButtonAlt",
+     "props": {
+      "FlatAppearance.BorderSize": 0,
+      "FlatAppearance.CheckedBackColor": "@Transparent",
+      "FlatAppearance.MouseDownBackColor": "@Transparent",
+      "FlatAppearance.MouseOverBackColor": "@Transparent",
+      "FlatStyle": "Flat",
+      "Image": {
+       "resx": "btn_nav_atras.Image"
+      },
+      "Location": [
+       8,
+       443
+      ],
+      "Size": [
+       81,
+       61
+      ],
+      "TabIndex": 6,
+      "UseVisualStyleBackColor": true,
+      "Visible": false
+     },
+     "events": {
+      "Click": "btn_nav_atras_Click",
+      "MouseDown": "btn_nav_atras_MouseDown",
+      "MouseEnter": "btn_nav_atras_MouseEnter",
+      "MouseLeave": "btn_nav_atras_MouseLeave",
+      "MouseUp": "btn_nav_atras_MouseUp"
+     }
+    },
+    {
+     "name": "btn_cerrarVentanaDerecha",
+     "type": "ButtonAlt",
+     "props": {
+      "FlatAppearance.BorderSize": 0,
+      "FlatAppearance.CheckedBackColor": "@Transparent",
+      "FlatAppearance.MouseDownBackColor": "@Transparent",
+      "FlatAppearance.MouseOverBackColor": "@Transparent",
+      "FlatStyle": "Flat",
+      "Image": {
+       "resx": "btn_cerrarVentanaDerecha.Image"
+      },
+      "Location": [
+       289,
+       444
+      ],
+      "Size": [
+       81,
+       61
+      ],
+      "TabIndex": 3,
+      "UseVisualStyleBackColor": true,
+      "Visible": false
+     },
+     "events": {
+      "Click": "btn_cerrarVentanaDerecha_Click",
+      "MouseDown": "btn_cerrarVentanaDerecha_MouseDown",
+      "MouseEnter": "btn_cerrarVentanaDerecha_MouseEnter",
+      "MouseLeave": "btn_cerrarVentanaDerecha_MouseLeave",
+      "MouseUp": "btn_cerrarVentanaDerecha_MouseUp"
+     }
+    },
+    {
+     "name": "lbl_PalabraBuscada",
+     "type": "Label",
+     "props": {
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 14.25,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       6,
+       5
+      ],
+      "Size": [
+       362,
+       36
+      ],
+      "TabIndex": 2,
+      "TextAlign": "MiddleCenter",
+      "Visible": false
+     }
+    },
+    {
+     "name": "panel_navegador",
+     "type": "Panel",
+     "props": {
+      "Location": [
+       6,
+       44
+      ],
+      "Size": [
+       365,
+       393
+      ],
+      "TabIndex": 5
+     },
+     "children": [
+      {
+       "name": "rtb_ResultadosWikipedia",
+       "type": "RichTextBox",
+       "props": {
+        "BackColor": "@Window",
+        "BorderStyle": "None",
+        "Font": {
+         "family": "Microsoft Sans Serif",
+         "size": 14.25,
+         "bold": false,
+         "italic": false,
+         "underline": false
+        },
+        "Location": [
+         0,
+         0
+        ],
+        "Size": [
+         365,
+         393
+        ],
+        "TabIndex": 2,
+        "Text": "",
+        "Visible": false
+       },
+       "events": {
+        "TextChanged": "rtb_ResultadosWikipedia_TextChanged"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "textImageButton",
+   "type": "Button",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Cursor": "Hand",
+    "FlatAppearance.BorderSize": 0,
+    "FlatAppearance.CheckedBackColor": "@Transparent",
+    "FlatAppearance.MouseDownBackColor": "@Transparent",
+    "FlatAppearance.MouseOverBackColor": "@Transparent",
+    "FlatStyle": "Flat",
+    "Image": {
+     "resx": "textImageButton.Image"
+    },
+    "Location": [
+     553,
+     533
+    ],
+    "Size": [
+     60,
+     60
+    ],
+    "TabIndex": 91,
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "Click": "button3_Click"
+   }
+  },
+  {
+   "name": "textBox1",
+   "type": "TextBox",
+   "props": {
+    "Location": [
+     441,
+     26
+    ],
+    "Multiline": true,
+    "Size": [
+     338,
+     38
+    ],
+    "TabIndex": 6
+   }
+  },
+  {
+   "name": "pictureBox4",
+   "type": "PictureBox",
+   "props": {
+    "Image": {
+     "resx": "pictureBox4.Image"
+    },
+    "Location": [
+     297,
+     570
+    ],
+    "Size": [
+     60,
+     60
+    ],
+    "SizeMode": "StretchImage",
+    "TabIndex": 87,
+    "TabStop": false
+   }
+  },
+  {
+   "name": "pictureBox5",
+   "type": "PictureBox",
+   "props": {
+    "Image": {
+     "resx": "pictureBox5.Image"
+    },
+    "Location": [
+     797,
+     570
+    ],
+    "Size": [
+     60,
+     60
+    ],
+    "SizeMode": "StretchImage",
+    "TabIndex": 88,
+    "TabStop": false
+   }
+  },
+  {
+   "name": "pictureBox3",
+   "type": "PictureBox",
+   "props": {
+    "Image": {
+     "resx": "pictureBox3.Image"
+    },
+    "Location": [
+     298,
+     20
+    ],
+    "Size": [
+     60,
+     60
+    ],
+    "SizeMode": "StretchImage",
+    "TabIndex": 86,
+    "TabStop": false
+   }
+  },
+  {
+   "name": "leftLinePanel",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     12,
+     502
+    ],
+    "Size": [
+     519,
+     206
+    ],
+    "TabIndex": 155
+   },
+   "children": [
+    {
+     "name": "rightLinePanel",
+     "type": "Panel",
+     "props": {
+      "BackColor": "@Black",
+      "Location": [
+       50,
+       502
+      ],
+      "Size": [
+       881,
+       206
+      ],
+      "TabIndex": 156
+     }
+    }
+   ]
+  },
+  {
+   "name": "rightLinePaper",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     537,
+     502
+    ],
+    "Size": [
+     356,
+     206
+    ],
+    "TabIndex": 157
+   },
+   "children": [
+    {
+     "name": "panel4",
+     "type": "Panel",
+     "props": {
+      "BackColor": "@Black",
+      "Location": [
+       50,
+       502
+      ],
+      "Size": [
+       881,
+       206
+      ],
+      "TabIndex": 156
+     }
+    }
+   ]
+  }
+ ],
+ "detached": [
+  {
+   "name": "components",
+   "type": "Container",
+   "props": {}
+  }
+ ],
+ "components": []
+}

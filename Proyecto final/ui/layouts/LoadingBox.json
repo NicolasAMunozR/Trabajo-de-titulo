@@ -1,0 +1,69 @@
+{
+ "form": "LoadingBox",
+ "props": {
+  "AutoScaleDimensions": {
+   "raw": "new System.Drawing.SizeF(6F, 13F)"
+  },
+  "AutoScaleMode": "Font",
+  "BackColor": "#f8f5fa",
+  "ClientSize": [
+   225,
+   257
+  ],
+  "FormBorderStyle": "None",
+  "Name": "LoadingBox",
+  "Text": "Form1",
+  "TopMost": true
+ },
+ "events": {},
+ "controls": [
+  {
+   "name": "label1",
+   "type": "Label",
+   "props": {
+    "Image": {
+     "resx": "label1.Image"
+    },
+    "Location": [
+     12,
+     9
+    ],
+    "Size": [
+     200,
+     200
+    ],
+    "TabIndex": 3
+   }
+  },
+  {
+   "name": "label2",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "IBM Plex Sans SemiBold",
+     "size": 32.25,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     5,
+     196
+    ],
+    "MaximumSize": [
+     900,
+     0
+    ],
+    "Size": [
+     219,
+     56
+    ],
+    "TabIndex": 2,
+    "Text": "Loading..."
+   }
+  }
+ ],
+ "detached": [],
+ "components": []
+}

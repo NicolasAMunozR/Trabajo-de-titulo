@@ -261,53 +261,53 @@ class OrchestratorCore:
 
     # Definición del método run() que ejecuta el loop principal del sistema, llamando a execute_cycle() en cada iteración y controlando la cantidad máxima de ciclos a ejecutar.
     def run(self, max_cycles: Optional[int] = None) -> None:
-        """
-         max_cycles (int | None): Número máximo de ciclos a ejecutar.
-                                     None = loop infinito hasta KeyboardInterrupt.
-        """
-        self._is_running = True
-        logger.info(f"Loop principal iniciado. Max ciclos: {max_cycles or 'infinito'}")
-
+        self._is_running = True           # Bandera para indicar que el loop principal está activo
+        logger.info(
+            f"Loop principal iniciado. Max ciclos: {max_cycles or 'infinito'}"
+        )
         try:
             cycle = 0
-            while self._is_running:
+            while self._is_running:        # Loop principal que ejecuta ciclos hasta que se alcance el máximo de ciclos o se interrumpa manualmente (Ctrl+C)
                 self.execute_cycle()
                 cycle += 1
 
                 if max_cycles is not None and cycle >= max_cycles:
-                    logger.info(f"Se alcanzó el máximo de {max_cycles} ciclos.")
+                    logger.info(
+                        f"Se alcanzó el máximo de {max_cycles} ciclos."
+                    )
                     break
-
         except KeyboardInterrupt:
-            logger.info("Interrupción del usuario (Ctrl+C). Deteniendo el sistema...")
+            logger.info(
+                "Interrupción del usuario (Ctrl+C). Deteniendo el sistema..."
+            )
         finally:
-            self._is_running = False
+            self._is_running = False       # Bandera para indicar que el loop principal ha terminado 
 
+    # Definición del método release() que libera los recursos de todos los plugins en orden inverso al de inicialización, registrando errores si algún plugin falla en release().
     def release(self) -> None:
         """
-        Fase 3: Libera recursos de todos los plugins en orden inverso.
-
-        Si un plugin falla en release(), el error se registra pero
-        el sistema continúa liberando los demás plugins.
+        Libera recursos de todos los plugins en orden inverso.
+        Si un plugin falla en release(), el error se registra pero el sistema continúa liberando los demás plugins.
         """
-        logger.info("Liberando recursos del sistema...")
-
-        # Orden inverso al de inicialización (como un stack LIFO)
+        logger.info(
+            "Liberando recursos del sistema..."
+        )
+        # Orden inverso al de inicialización
         for plugin in reversed(self._plugins):
             try:
                 plugin.release()
-                logger.info(f"   [{plugin.instance_name}] recursos liberados")
+                logger.info(
+                    f"{plugin.instance_name} recursos liberados"
+                )
             except Exception as e:
-                logger.error(f"   [{plugin.instance_name}] excepción en release(): {e}")
-
+                logger.error(
+                    f"{plugin.instance_name} excepción en release(): {e}"
+                )
         self._plugins.clear()
         logger.info("OrchestratorCore terminado correctamente.")
         self._print_latency_summary()
 
-    # ─────────────────────────────────────────────
-    # MÉTODOS AUXILIARES
-    # ─────────────────────────────────────────────
-
+    # Definición del método _load_config() que lee el archivo de configuración plugins.json y retorna la lista de plugins configurados.
     def _load_config(self) -> Optional[list]:
         """Lee el archivo plugins.json y retorna la lista de plugins."""
         try:
@@ -315,12 +315,17 @@ class OrchestratorCore:
                 data = json.load(f)
                 return data.get('plugins', [])
         except FileNotFoundError:
-            logger.error(f"Archivo de configuración no encontrado: {self.config_path}")
+            logger.error(
+                f"Archivo de configuración no encontrado: {self.config_path}"
+            )
             return None
         except json.JSONDecodeError as e:
-            logger.error(f"Error al parsear {self.config_path}: {e}")
+            logger.error(
+                f"Error al parsear {self.config_path}: {e}"
+            )
             return None
 
+    # Definición del método _print_latency_summary() que imprime un resumen de métricas de latencia de la sesión, incluyendo promedio, máximo y mínimo.
     def _print_latency_summary(self) -> None:
         """Imprime resumen de métricas de latencia de la sesión."""
         if not self._latency_history:
@@ -329,33 +334,32 @@ class OrchestratorCore:
         max_lat = max(self._latency_history)
         min_lat = min(self._latency_history)
         logger.info(
-            f"\n{'='*50}\n"
-            f"  RESUMEN DE LATENCIA ({self._cycle_count} ciclos)\n"
-            f"  Promedio: {avg:.2f} ms\n"
-            f"  Máxima:   {max_lat:.2f} ms\n"
-            f"  Mínima:   {min_lat:.2f} ms\n"
-            f"  Objetivo: ≤ {MAX_LATENCY_MS} ms\n"
-            f"{'='*50}"
+            f"\n\n"
+            f"Resumen de Latencia ({self._cycle_count} ciclos)\n"
+            f"Promedio: {avg:.2f} ms\n"
+            f"Máxima:   {max_lat:.2f} ms\n"
+            f"Mínima:   {min_lat:.2f} ms\n"
+            f"Objetivo: ≤ {MAX_LATENCY_MS} ms\n"
         )
 
+    # Definición de propiedades para exponer información del estado del orquestador y métricas de ejecución.
     @property
     def active_plugins(self) -> list:
-        """Retorna la lista de plugins actualmente activos."""
         return list(self._plugins)
 
+    # Definición de propiedad cycle_count que retorna el número total de ciclos ejecutados por el orquestador.
     @property
     def cycle_count(self) -> int:
-        """Retorna el número total de ciclos ejecutados."""
         return self._cycle_count
 
+    # Definición de propiedad last_cycle_metrics que retorna un diccionario con métricas de ejecución del último ciclo, incluyendo estado y latencia por plugin.
     @property
     def last_cycle_metrics(self) -> dict[str, dict]:
-        """Per-plugin execution status and duration for the most recent cycle."""
         return {name: dict(metric) for name, metric in self._last_cycle_metrics.items()}
 
+    # Definición de propiedad initialization_report que retorna un diccionario con los resultados de carga e inicialización de cada plugin, incluyendo estado y errores si los hubo.
     @property
     def initialization_report(self) -> dict[str, dict]:
-        """Configured plugin load and initialization outcomes."""
         return {
             name: dict(result)
             for name, result in self._initialization_report.items()

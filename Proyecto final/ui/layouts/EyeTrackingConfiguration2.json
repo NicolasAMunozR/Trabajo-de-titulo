@@ -1,0 +1,1018 @@
+{
+ "form": "EyeTrackingConfiguration2",
+ "props": {
+  "toolTipMouseControl": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "toolTipSaveData": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "toolTipBrowsePlugin": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "toolTipBrowseReticle": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "toolTipBrowseSaveFile": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "toolTip1": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "toolTip2": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "toolTip3": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "toolTip4": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "AutoScaleDimensions": {
+   "raw": "new System.Drawing.SizeF(6F, 13F)"
+  },
+  "AutoScaleMode": "Font",
+  "BackColor": "#cfe9f2",
+  "ClientSize": [
+   971,
+   500
+  ],
+  "DoubleBuffered": true,
+  "FormBorderStyle": "None",
+  "MaximizeBox": false,
+  "Name": "EyeTrackingConfiguration2",
+  "Text": "Configuración Rastreo Ocular"
+ },
+ "events": {
+  "Load": "Form1_Load"
+ },
+ "controls": [
+  {
+   "name": "buttonModified3",
+   "type": "ButtonModified",
+   "props": {
+    "BackColor": "#1c9dec",
+    "Cursor": "Hand",
+    "FlatAppearance.BorderColor": "#1c9dec",
+    "FlatAppearance.BorderSize": 5,
+    "FlatAppearance.MouseDownBackColor": "#0057ca",
+    "FlatAppearance.MouseOverBackColor": "#00caca",
+    "FlatStyle": "Flat",
+    "Font": {
+     "family": "IBM Plex Sans SemiBold",
+     "size": 12.75,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "ForeColor": "#f8f5fa",
+    "Location": [
+     721,
+     259
+    ],
+    "Size": [
+     154,
+     44
+    ],
+    "TabIndex": 170,
+    "Text": "Import Settings",
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "Click": "LoadConfig_Click"
+   }
+  },
+  {
+   "name": "buttonModified1",
+   "type": "ButtonModified",
+   "props": {
+    "BackColor": "#1c9dec",
+    "Cursor": "Hand",
+    "FlatAppearance.BorderColor": "#1c9dec",
+    "FlatAppearance.BorderSize": 5,
+    "FlatAppearance.MouseDownBackColor": "#0057ca",
+    "FlatAppearance.MouseOverBackColor": "#00caca",
+    "FlatStyle": "Flat",
+    "Font": {
+     "family": "IBM Plex Sans SemiBold",
+     "size": 12.75,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "ForeColor": "#f8f5fa",
+    "Location": [
+     561,
+     259
+    ],
+    "Size": [
+     154,
+     44
+    ],
+    "TabIndex": 169,
+    "Text": "Export Settings",
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "Click": "SaveConfig_Click"
+   }
+  },
+  {
+   "name": "buttonModified2",
+   "type": "ButtonModified",
+   "props": {
+    "BackColor": "#1c9dec",
+    "Cursor": "Hand",
+    "FlatAppearance.BorderColor": "#1c9dec",
+    "FlatAppearance.BorderSize": 5,
+    "FlatAppearance.MouseDownBackColor": "#0057ca",
+    "FlatAppearance.MouseOverBackColor": "#00caca",
+    "FlatStyle": "Flat",
+    "Font": {
+     "family": "IBM Plex Sans SemiBold",
+     "size": 12.75,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "ForeColor": "#f8f5fa",
+    "Location": [
+     401,
+     259
+    ],
+    "Size": [
+     154,
+     44
+    ],
+    "TabIndex": 168,
+    "Text": "Apply",
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "MouseClick": "SaveChanges_MouseClick"
+   }
+  },
+  {
+   "name": "panel3",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     12,
+     389
+    ],
+    "Size": [
+     372,
+     101
+    ],
+    "TabIndex": 28
+   },
+   "children": [
+    {
+     "name": "pictureBox3",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       204,
+       12
+      ],
+      "Size": [
+       20,
+       20
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 173,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox3_Click",
+      "MouseHover": "pictureBox3_Click"
+     }
+    },
+    {
+     "name": "label11",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       13,
+       12
+      ],
+      "Size": [
+       185,
+       22
+      ],
+      "TabIndex": 32,
+      "Text": "Mouse control options"
+     }
+    },
+    {
+     "name": "label6",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       161,
+       58
+      ],
+      "Size": [
+       91,
+       18
+      ],
+      "TabIndex": 17,
+      "Text": "Click(s) time"
+     }
+    },
+    {
+     "name": "controlMouse",
+     "type": "CheckBox",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       17,
+       56
+      ],
+      "Size": [
+       126,
+       22
+      ],
+      "TabIndex": 8,
+      "Text": "Mouse Control",
+      "UseVisualStyleBackColor": true
+     },
+     "events": {
+      "CheckedChanged": "ControlMouse_CheckedChanged",
+      "MouseHover": "ControlMouse_MouseHover"
+     }
+    },
+    {
+     "name": "clickTimer",
+     "type": "NumericUpDown",
+     "props": {
+      "Enabled": false,
+      "Location": [
+       283,
+       56
+      ],
+      "Minimum": 1,
+      "Size": [
+       70,
+       20
+      ],
+      "TabIndex": 16,
+      "Value": 2
+     }
+    }
+   ]
+  },
+  {
+   "name": "panel2",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     12,
+     233
+    ],
+    "Size": [
+     372,
+     150
+    ],
+    "TabIndex": 27
+   },
+   "children": [
+    {
+     "name": "label10",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       13,
+       8
+      ],
+      "Size": [
+       129,
+       22
+      ],
+      "TabIndex": 31,
+      "Text": "Reticle Options"
+     }
+    },
+    {
+     "name": "pictureBox2",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       148,
+       10
+      ],
+      "Size": [
+       20,
+       20
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 171,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox2_Click",
+      "MouseHover": "pictureBox2_Click"
+     }
+    },
+    {
+     "name": "label4",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       14,
+       66
+      ],
+      "Size": [
+       65,
+       36
+      ],
+      "TabIndex": 17,
+      "Text": "Available\r\nreticles"
+     }
+    },
+    {
+     "name": "reticleExample",
+     "type": "PictureBox",
+     "props": {
+      "BackColor": "@Transparent",
+      "BorderStyle": "FixedSingle",
+      "Location": [
+       118,
+       100
+      ],
+      "Size": [
+       44,
+       44
+      ],
+      "TabIndex": 4,
+      "TabStop": false
+     }
+    },
+    {
+     "name": "label3",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       14,
+       36
+      ],
+      "Size": [
+       93,
+       18
+      ],
+      "TabIndex": 16,
+      "Text": "Reticles path"
+     }
+    },
+    {
+     "name": "reticleDimensions",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       168,
+       110
+      ],
+      "Size": [
+       53,
+       18
+      ],
+      "TabIndex": 6,
+      "Text": "Reticle"
+     }
+    },
+    {
+     "name": "reticlesRoute",
+     "type": "TextBox",
+     "props": {
+      "BackColor": "@Window",
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       118,
+       33
+      ],
+      "ReadOnly": true,
+      "Size": [
+       201,
+       24
+      ],
+      "TabIndex": 15
+     }
+    },
+    {
+     "name": "reticleSelected",
+     "type": "ComboBox",
+     "props": {
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       118,
+       71
+      ],
+      "Size": [
+       235,
+       25
+      ],
+      "TabIndex": 7
+     },
+     "events": {
+      "SelectedIndexChanged": "ReticleSelected_SelectedIndexChanged"
+     }
+    },
+    {
+     "name": "reticlesRouteBrowse",
+     "type": "Button",
+     "props": {
+      "Cursor": "Hand",
+      "Location": [
+       325,
+       33
+      ],
+      "Size": [
+       29,
+       24
+      ],
+      "TabIndex": 14,
+      "Text": "...",
+      "UseVisualStyleBackColor": true
+     },
+     "events": {
+      "Click": "ReticlesRoute_Click",
+      "MouseHover": "ReticlesRouteBrowse_MouseHover"
+     }
+    }
+   ]
+  },
+  {
+   "name": "panel1",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     401,
+     94
+    ],
+    "Size": [
+     437,
+     150
+    ],
+    "TabIndex": 26
+   },
+   "children": [
+    {
+     "name": "pictureBox4",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       194,
+       14
+      ],
+      "Size": [
+       20,
+       20
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 174,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox4_Click",
+      "MouseHover": "pictureBox4_Click"
+     }
+    },
+    {
+     "name": "label9",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       22,
+       12
+      ],
+      "Size": [
+       166,
+       22
+      ],
+      "TabIndex": 30,
+      "Text": "Data saving options"
+     }
+    },
+    {
+     "name": "fileNameTextBox",
+     "type": "TextBox",
+     "props": {
+      "Enabled": false,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       166,
+       67
+      ],
+      "Size": [
+       211,
+       24
+      ],
+      "TabIndex": 20
+     }
+    },
+    {
+     "name": "label7",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       23,
+       67
+      ],
+      "Size": [
+       75,
+       18
+      ],
+      "TabIndex": 19,
+      "Text": "File Name"
+     }
+    },
+    {
+     "name": "saveData",
+     "type": "CheckBox",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       26,
+       43
+      ],
+      "Size": [
+       95,
+       22
+      ],
+      "TabIndex": 10,
+      "Text": "Save Data",
+      "UseVisualStyleBackColor": true
+     },
+     "events": {
+      "CheckedChanged": "SaveData_CheckedChanged",
+      "MouseHover": "SaveData_MouseHover"
+     }
+    },
+    {
+     "name": "label5",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       23,
+       96
+      ],
+      "Size": [
+       73,
+       18
+      ],
+      "TabIndex": 18,
+      "Text": "Save path"
+     }
+    },
+    {
+     "name": "saveFileRouteBrowse",
+     "type": "Button",
+     "props": {
+      "Cursor": "Hand",
+      "Enabled": false,
+      "Location": [
+       349,
+       96
+      ],
+      "Size": [
+       31,
+       24
+      ],
+      "TabIndex": 15,
+      "Text": "...",
+      "UseVisualStyleBackColor": true
+     },
+     "events": {
+      "Click": "SaveFileRoute_Click",
+      "MouseHover": "SaveFileRouteBrowse_MouseHover"
+     }
+    },
+    {
+     "name": "saveFileRoute",
+     "type": "TextBox",
+     "props": {
+      "BackColor": "@Window",
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       166,
+       96
+      ],
+      "ReadOnly": true,
+      "Size": [
+       179,
+       24
+      ],
+      "TabIndex": 17
+     }
+    }
+   ]
+  },
+  {
+   "name": "InteractionsSettingsPanel1",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     12,
+     94
+    ],
+    "Size": [
+     372,
+     133
+    ],
+    "TabIndex": 25
+   },
+   "children": [
+    {
+     "name": "pictureBox1",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       246,
+       12
+      ],
+      "Size": [
+       20,
+       20
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 172,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox1_Click",
+      "MouseHover": "pictureBox1_Click"
+     }
+    },
+    {
+     "name": "label8",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       13,
+       12
+      ],
+      "Size": [
+       227,
+       22
+      ],
+      "TabIndex": 29,
+      "Text": "Eye tracking Plugin Options"
+     }
+    },
+    {
+     "name": "label2",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       14,
+       80
+      ],
+      "Size": [
+       64,
+       36
+      ],
+      "TabIndex": 16,
+      "Text": "Plugins\r\navailable"
+     }
+    },
+    {
+     "name": "pluginsRoute",
+     "type": "TextBox",
+     "props": {
+      "BackColor": "@Window",
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       118,
+       43
+      ],
+      "ReadOnly": true,
+      "Size": [
+       201,
+       24
+      ],
+      "TabIndex": 14
+     }
+    },
+    {
+     "name": "label1",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       14,
+       41
+      ],
+      "Size": [
+       90,
+       18
+      ],
+      "TabIndex": 15,
+      "Text": "Plugins Path"
+     }
+    },
+    {
+     "name": "trackingPlugins",
+     "type": "ComboBox",
+     "props": {
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       118,
+       80
+      ],
+      "Size": [
+       235,
+       25
+      ],
+      "TabIndex": 0
+     }
+    },
+    {
+     "name": "pluginsRouteBrowse",
+     "type": "Button",
+     "props": {
+      "Cursor": "Hand",
+      "Location": [
+       325,
+       43
+      ],
+      "Size": [
+       29,
+       24
+      ],
+      "TabIndex": 13,
+      "Text": "...",
+      "UseVisualStyleBackColor": true
+     },
+     "events": {
+      "Click": "PluginsRoute_Click",
+      "MouseHover": "PluginsRouteBrowse_MouseHover"
+     }
+    }
+   ]
+  },
+  {
+   "name": "TittlePanel",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     0,
+     0
+    ],
+    "Size": [
+     988,
+     74
+    ],
+    "TabIndex": 24
+   },
+   "children": [
+    {
+     "name": "pictureBox5",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       295,
+       32
+      ],
+      "Size": [
+       28,
+       24
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 22,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox5_Click",
+      "MouseHover": "pictureBox5_Click"
+     }
+    },
+    {
+     "name": "InteractionsTittle",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 33.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       12,
+       8
+      ],
+      "Size": [
+       283,
+       58
+      ],
+      "TabIndex": 0,
+      "Text": "Eye tracking"
+     }
+    }
+   ]
+  }
+ ],
+ "detached": [
+  {
+   "name": "components",
+   "type": "Container",
+   "props": {}
+  },
+  {
+   "name": "routeBrowser",
+   "type": "FolderBrowserDialog",
+   "props": {}
+  },
+  {
+   "name": "openFileConfig",
+   "type": "OpenFileDialog",
+   "props": {
+    "FileName": "openFileDialog1"
+   }
+  },
+  {
+   "name": "saveFileConfig",
+   "type": "SaveFileDialog",
+   "props": {}
+  }
+ ],
+ "components": []
+}
