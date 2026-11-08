@@ -20,6 +20,7 @@ una única copia de respaldo "<archivo>.pdf.bac" por sesión.
 import logging
 import re
 import shutil
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -239,19 +240,33 @@ class ConsistencyPlugin(IConsistencyProvider):
         return document[page_number - 1]
 
     def _save(self) -> None:
-        """Guarda los cambios en el mismo archivo, con respaldo .bac la primera vez."""
+        """Guarda los cambios en el mismo archivo, con respaldo .bac la primera vez.
+
+        Siempre se escribe una copia completa (archivo temporal + reemplazo) y se vuelve a
+        abrir. Antes se usaba saveIncr(): con PyMuPDF 2.x, a partir del segundo guardado
+        incremental el archivo quedaba con la tabla xref dañada y, al reabrirlo, PyMuPDF lo
+        "reparaba" perdiendo los resaltados, comentarios o marcadores guardados antes
+        (hallazgo H-02 de la verificación, avance P-07).
+        """
         document = self._require_document()
         if self._make_backup and not self._backup_done and self._pdf_path:
             shutil.copyfile(self._pdf_path, self._pdf_path + ".bac")
             self._backup_done = True
-        if document.can_save_incrementally():
-            document.saveIncr()
-        else:
-            temp = self._pdf_path + ".tmp"
-            document.save(temp, garbage=1)
-            document.close()
-            Path(temp).replace(self._pdf_path)
-            self._document = fitz.open(self._pdf_path)
+        temp = Path(self._pdf_path + ".tmp")
+        document.save(str(temp), garbage=1, deflate=True)
+        document.close()
+        for attempt in range(5):                    # en Windows, OneDrive o un lector de PDF pueden bloquearlo un momento
+            try:
+                temp.replace(self._pdf_path)
+                break
+            except PermissionError:
+                if attempt == 4:
+                    temp.unlink(missing_ok=True)
+                    self._document = fitz.open(self._pdf_path)      # vuelve al estado que está en disco
+                    raise RuntimeError("No se pudo guardar el PDF porque otro programa lo tiene abierto "
+                                       "(por ejemplo, un lector de PDF). Ciérrelo e intente de nuevo.")
+                time.sleep(0.2)
+        self._document = fitz.open(self._pdf_path)
 
     @property
     def pdf_path(self) -> str:

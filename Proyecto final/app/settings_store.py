@@ -42,6 +42,7 @@ DEFAULTS = {
     # Nuevos (antes vivían solo en memoria)
     "pdfPath": "",
     "deviceMode": "",
+    "gestureRotate180": False,      # casilla "Rotate 180°" (cámara gestual montada invertida)
 }
 
 

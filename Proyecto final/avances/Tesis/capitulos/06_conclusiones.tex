@@ -1,0 +1,36 @@
+\chapter{Conclusiones}
+\label{cap:conclusiones}
+
+\textit{Versión preliminar: las conclusiones sobre el cuarto objetivo se completan con los resultados de la verificación funcional y de las pruebas de aceptación en el laboratorio.}
+
+\section{Cumplimiento de los objetivos}
+
+\paragraph{OE1: diagnóstico y factibilidad.} La reclasificación por causa de los 67 errores de \citet{ibaceta2023} mostró que 42 de ellos (62,7\%) dependen de la arquitectura (carga y despliegue, y práctica de código) y no del hardware, lo que justifica reconstruir el núcleo en lugar de corregir errores aislados. Los 19 prototipos desechables confirmaron que las funciones críticas pueden reproducirse en Python con bibliotecas mantenidas y, al medirse con verdad terreno conocida, entregaron cinco hallazgos que no eran visibles en el código del sistema legado: la binarización global falla con la luz del proyector, el preprocesamiento empeora el OCR sobre texto limpio, el contenido proyectado del color del lápiz anula su seguimiento, el orden de la regla de clasificación de figuras confunde cuadrados con círculos y el clic por permanencia depende fuertemente del ruido del sensor. El objetivo se considera cumplido, con las mediciones que dependen del hardware (F1, F9, F24, F25 y la parte de sensor de las demás) pendientes de ejecutar en el laboratorio con el mismo script.
+
+\paragraph{OE2: diseño del núcleo.} Se definió un contrato base único (\texttt{PluginBase}) con ciclo de inicialización, ejecución y liberación, siete contratos de dominio y dos interfaces de flujo de datos, un único archivo de configuración y una capa de abstracción de hardware con conmutación real/simulado. El diseño reemplaza los tres mecanismos de carga de EDDIE-2023 por uno solo. El objetivo se considera cumplido.
+
+\paragraph{OE3: implementación e integración.} Se implementó el núcleo y se integraron, en siete iteraciones, los módulos de consistencia, reconocimiento de texto, interacción gestual (lápiz, mano y mouse), rastreo ocular (GazePoint, TheEyeTribe, GazeCloud y simulado), búsqueda con modelo de lenguaje y voz, junto con la interfaz de configuración y la pantalla proyectada. La interfaz conserva todos los controles y flujos de EDDIE-2023 y corrige los problemas de usabilidad registrados en 2023. El objetivo se considera cumplido en software; la integración con el hardware físico se confirma en las pruebas de aceptación.
+
+\paragraph{OE4: validación.} Las pruebas de software se completaron: \PSietePruebas{} pruebas aprobadas, \PSieteCobertura\% de cobertura de líneas, latencia del ciclo completo de \PSieteCicloPnoventaycinco~ms en el percentil 95 frente al umbral de 8,3~ms y aislamiento de fallos verificado en todas las fases del ciclo de vida. La verificación funcional con MECIVA PS y las pruebas de aceptación \pendiente{se ejecutan en el laboratorio}; sus protocolos e instrumentos están listos (Capítulo~\ref{cap:evaluacion}).
+
+\section{Respuesta a la pregunta de investigación}
+
+La pregunta planteada fue en qué medida la reconstrucción del núcleo bajo una arquitectura de plugins con contrato único permite reducir los errores estructurales documentados y habilitar el uso de EDDIE como instrumento de medición confiable. Respecto de la primera parte, los errores de carga y despliegue dejan de ser posibles por construcción: un plugin faltante o defectuoso se registra y el resto del sistema arranca, y los errores de práctica de código que se reprodujeron quedan respaldados por pruebas. Respecto de la segunda, la arquitectura entrega las condiciones necesarias para medir (latencia acotada, traza de cada acción, ejecución reproducible con dispositivos simulados), pero la confiabilidad de las mediciones con el hardware real solo puede afirmarse después de la verificación con MECIVA PS.
+
+\section{Limitaciones}
+
+\begin{itemize}
+  \item Los resultados de los prototipos marcados como sintéticos miden el algoritmo sobre datos con verdad terreno conocida, no el desempeño con la cámara o el eye tracker reales.
+  \item Las pruebas de software se ejecutaron con dispositivos simulados; la latencia y el comportamiento con el hardware real deben medirse en el PC del laboratorio.
+  \item La búsqueda depende de un servicio externo (Gemini) y de una clave personal; si el servicio cambia sus condiciones, el contrato \texttt{IWebSearchProvider} permite reemplazarlo, pero el reemplazo no está implementado.
+  \item El desarrollo y la validación se realizan solo en Windows~11.
+\end{itemize}
+
+\section{Trabajo futuro}
+
+\begin{itemize}
+  \item Ejecutar la verificación con MECIVA PS y las pruebas de aceptación, y completar la matriz de trazabilidad de los 67 errores.
+  \item Calibrar los parámetros del clic por permanencia y los umbrales de color con el hardware del laboratorio.
+  \item Implementar un proveedor de búsqueda local (por ejemplo, un modelo de lenguaje ejecutado en el equipo) para no depender de un servicio externo.
+  \item Retomar la detección automática del libro (F4), que resultó factible, y el canal de telemetría para el visor web que quedó fuera del alcance.
+\end{itemize}

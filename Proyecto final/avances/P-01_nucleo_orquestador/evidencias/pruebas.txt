@@ -1,0 +1,27 @@
+..................................                                       [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.18-final-0 _______________
+
+Name                                   Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------
+contracts/__init__.py                      0      0   100%
+contracts/i_camera_frame_consumer.py       6      1    83%   13
+contracts/i_camera_sensor.py              14      2    86%   25, 30
+contracts/i_consistency_provider.py       63     16    75%   52, 63, 77, 91, 97, 102, 107, 112, 117, 122, 127, 136, 141, 146, 151, 167
+contracts/i_cycle_result_consumer.py       5      1    80%   11
+contracts/i_eye_tracker.py                20      3    85%   43, 53, 65
+contracts/i_gesture_plugin.py             62      9    85%   80, 85, 90, 95, 100, 105, 110, 116, 127
+contracts/i_image_processor.py            20      5    75%   37, 50, 55, 67, 81
+contracts/i_speech_provider.py            16      4    75%   22, 27, 32, 37
+contracts/i_web_search_provider.py        26      5    81%   44, 49, 54, 59, 64
+contracts/plugin_base.py                  24      4    83%   43, 61, 75, 86
+hardware/__init__.py                       0      0   100%
+hardware/mock_devices.py                 136     36    74%   59-65, 91-98, 122-133, 142, 146-147, 177-181, 192, 195, 198
+orchestrator/__init__.py                   0      0   100%
+orchestrator/orchestrator_core.py        187     39    79%   76, 97-102, 108, 110-116, 123-133, 135-144, 146-156, 233, 245, 264-284, 322-326
+orchestrator/plugin_loader.py             46      3    93%   83-85
+plugins/__init__.py                        0      0   100%
+plugins/demo_plugins.py                   57      1    98%   48
+--------------------------------------------------------------------
+TOTAL                                    682    129    81%
+34 passed in 0.66s

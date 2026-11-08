@@ -97,6 +97,10 @@ class MockCameraSensor(ICameraSensor):
             else:
                 self._capture = cv2.VideoCapture(str(path))
         self._t0 = time.time()
+        if self._still is None and self._capture is None and self._scene != "pen":
+            # La hoja simulada es estática: se dibuja aquí y no en el primer ciclo
+            # (antes ese primer ciclo tardaba ~20 ms y superaba el umbral de 8,3 ms).
+            self._still = _page_scene(self._size[0], self._size[1], 0.0, highlight=True)
         self._initialized = True
         return True
 

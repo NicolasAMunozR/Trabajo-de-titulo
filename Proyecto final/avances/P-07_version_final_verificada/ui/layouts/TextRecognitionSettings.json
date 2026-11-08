@@ -1,0 +1,264 @@
+{
+ "form": "TextRecognitionSettings",
+ "props": {
+  "toolTip1": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "AutoScaleDimensions": {
+   "raw": "new System.Drawing.SizeF(6F, 13F)"
+  },
+  "AutoScaleMode": "Font",
+  "BackColor": "#cfe9f2",
+  "ClientSize": [
+   971,
+   500
+  ],
+  "FormBorderStyle": "None",
+  "KeyPreview": true,
+  "Name": "TextRecognitionSettings",
+  "Text": "Configuración"
+ },
+ "events": {},
+ "controls": [
+  {
+   "name": "InteractionsSettingsPanel1",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     12,
+     94
+    ],
+    "Size": [
+     947,
+     367
+    ],
+    "TabIndex": 139
+   },
+   "children": [
+    {
+     "name": "pictureBox2",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       316,
+       19
+      ],
+      "Size": [
+       28,
+       24
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 138,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox2_Click",
+      "MouseHover": "pictureBox2_Click"
+     }
+    },
+    {
+     "name": "ComboBoxCameraList1",
+     "type": "ComboBox",
+     "props": {
+      "DropDownStyle": "DropDownList",
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       19,
+       45
+      ],
+      "Size": [
+       226,
+       24
+      ],
+      "TabIndex": 2
+     },
+     "events": {
+      "SelectedIndexChanged": "ComboCameras_SelectedIndexChangedText"
+     }
+    },
+    {
+     "name": "labelRecTxt",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       17,
+       19
+      ],
+      "Size": [
+       293,
+       20
+      ],
+      "TabIndex": 4,
+      "Text": "Camera for text recognition(DCR)"
+     }
+    },
+    {
+     "name": "numericUpDownResYText",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       155,
+       77
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 3000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 137,
+      "Value": 480
+     }
+    },
+    {
+     "name": "imageBox1",
+     "type": "ImageBox",
+     "props": {
+      "BorderStyle": "FixedSingle",
+      "Location": [
+       21,
+       113
+      ],
+      "Size": [
+       352,
+       200
+      ],
+      "SizeMode": "StretchImage",
+      "TabIndex": 2,
+      "TabStop": false
+     }
+    },
+    {
+     "name": "numericUpDownResXText",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       19,
+       77
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 3000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 136,
+      "Value": 640
+     }
+    },
+    {
+     "name": "imageBox3",
+     "type": "ImageBox",
+     "props": {
+      "BorderStyle": "FixedSingle",
+      "Location": [
+       383,
+       113
+      ],
+      "Size": [
+       352,
+       200
+      ],
+      "SizeMode": "StretchImage",
+      "TabIndex": 125,
+      "TabStop": false
+     }
+    },
+    {
+     "name": "label4",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Location": [
+       125,
+       81
+      ],
+      "Size": [
+       14,
+       13
+      ],
+      "TabIndex": 134,
+      "Text": "X"
+     }
+    }
+   ]
+  },
+  {
+   "name": "TittlePanel",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     0,
+     0
+    ],
+    "Size": [
+     988,
+     74
+    ],
+    "TabIndex": 138
+   },
+   "children": [
+    {
+     "name": "InteractionsTittle",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "Microsoft Sans Serif",
+       "size": 33.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       12,
+       8
+      ],
+      "Size": [
+       377,
+       52
+      ],
+      "TabIndex": 0,
+      "Text": "Text Recognition"
+     }
+    }
+   ]
+  }
+ ],
+ "detached": [
+  {
+   "name": "components",
+   "type": "Container",
+   "props": {}
+  }
+ ],
+ "components": []
+}

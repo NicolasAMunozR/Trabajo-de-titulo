@@ -1,0 +1,51 @@
+{
+  "modo": "simulado",
+  "ciclos": 500,
+  "ciclos_calentamiento": 10,
+  "gesto_activo": null,
+  "ciclo_completo": {
+    "n": 500,
+    "media_ms": 0.7488,
+    "p95_ms": 0.9827,
+    "max_ms": 2.4958,
+    "sobre_8_3ms": 0
+  },
+  "por_plugin": {
+    "TextCamera": {
+      "n": 500,
+      "media_ms": 0.0942,
+      "p95_ms": 0.131,
+      "max_ms": 0.324,
+      "sobre_8_3ms": 0
+    },
+    "FrameStatistics": {
+      "n": 500,
+      "media_ms": 0.5757,
+      "p95_ms": 0.776,
+      "max_ms": 2.351,
+      "sobre_8_3ms": 0
+    },
+    "EyeTrackerMock": {
+      "n": 500,
+      "media_ms": 0.0137,
+      "p95_ms": 0.018,
+      "max_ms": 0.085,
+      "sobre_8_3ms": 0
+    },
+    "FaultInjection": {
+      "n": 500,
+      "media_ms": 0.0165,
+      "p95_ms": 0.13,
+      "max_ms": 0.22,
+      "sobre_8_3ms": 0
+    },
+    "CycleSummary": {
+      "n": 500,
+      "media_ms": 0.0136,
+      "p95_ms": 0.015,
+      "max_ms": 0.365,
+      "sobre_8_3ms": 0
+    }
+  },
+  "cumple_8_3ms_p95": true
+}

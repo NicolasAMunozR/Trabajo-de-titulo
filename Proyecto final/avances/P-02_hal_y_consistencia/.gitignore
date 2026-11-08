@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+logs/
+CSV_registro_actividades/
+config/user_settings.json
+*.pdf.bac
+.venv/
+config/secrets.json
+.env

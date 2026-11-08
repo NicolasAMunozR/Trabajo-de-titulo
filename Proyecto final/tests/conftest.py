@@ -115,9 +115,8 @@ def fake_llm():
 def qapp():
     from PySide6.QtCore import QCoreApplication, Qt
     from PySide6.QtWidgets import QApplication
-    from ui.form_builder import apply_light_theme, load_fonts
+    from ui.theme import apply_theme
     QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts)
     app = QApplication.instance() or QApplication([])
-    apply_light_theme(app)
-    load_fonts()
+    apply_theme(app)
     return app

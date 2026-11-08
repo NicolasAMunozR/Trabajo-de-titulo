@@ -1,0 +1,56 @@
+{
+  "avance": "P-02_hal_y_consistencia",
+  "fecha": "2026-11-08T13:56:48",
+  "python": "3.13.18",
+  "sistema": "Linux 6.18.44-fc-v310",
+  "pruebas": {
+    "exit_code": 0,
+    "seconds": 1.3,
+    "passed": 41,
+    "xfailed": 1,
+    "coverage_percent": 73,
+    "coverage_threshold_80": false
+  },
+  "latencias": {
+    "modo": "simulado",
+    "ciclos": 500,
+    "ciclos_calentamiento": 10,
+    "gesto_activo": null,
+    "ciclo_completo": {
+      "n": 500,
+      "media_ms": 0.1547,
+      "p95_ms": 0.2044,
+      "max_ms": 2.4865,
+      "sobre_8_3ms": 0
+    },
+    "por_plugin": {
+      "TextCamera": {
+        "n": 500,
+        "media_ms": 0.1133,
+        "p95_ms": 0.151,
+        "max_ms": 2.451,
+        "sobre_8_3ms": 0
+      },
+      "ConsistencyProvider": {
+        "n": 500,
+        "media_ms": 0.0116,
+        "p95_ms": 0.014,
+        "max_ms": 0.113,
+        "sobre_8_3ms": 0
+      }
+    },
+    "cumple_8_3ms_p95": true
+  },
+  "inicializacion": {
+    "TextCamera": {
+      "status": "initialized",
+      "error": null
+    },
+    "ConsistencyProvider": {
+      "status": "initialized",
+      "error": null
+    }
+  },
+  "capturas": [],
+  "demo_consistencia": "evidencias/consistencia/"
+}

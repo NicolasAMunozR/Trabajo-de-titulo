@@ -1,0 +1,37 @@
+{
+  "modo": "simulado",
+  "ciclos": 500,
+  "ciclos_calentamiento": 10,
+  "gesto_activo": null,
+  "ciclo_completo": {
+    "n": 500,
+    "media_ms": 0.1485,
+    "p95_ms": 0.1974,
+    "max_ms": 0.5764,
+    "sobre_8_3ms": 0
+  },
+  "por_plugin": {
+    "TextCamera": {
+      "n": 500,
+      "media_ms": 0.104,
+      "p95_ms": 0.146,
+      "max_ms": 0.25,
+      "sobre_8_3ms": 0
+    },
+    "ImageProcessor": {
+      "n": 500,
+      "media_ms": 0.0059,
+      "p95_ms": 0.007,
+      "max_ms": 0.089,
+      "sobre_8_3ms": 0
+    },
+    "ConsistencyProvider": {
+      "n": 500,
+      "media_ms": 0.0097,
+      "p95_ms": 0.01,
+      "max_ms": 0.426,
+      "sobre_8_3ms": 0
+    }
+  },
+  "cumple_8_3ms_p95": true
+}

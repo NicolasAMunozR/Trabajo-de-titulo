@@ -1,0 +1,35 @@
+....x.....................................                               [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.18-final-0 _______________
+
+Name                                   Stmts   Miss  Cover   Missing
+--------------------------------------------------------------------
+app/settings_store.py                     41      4    90%   60-61, 81, 84
+contracts/__init__.py                      0      0   100%
+contracts/i_camera_frame_consumer.py       6      1    83%   13
+contracts/i_camera_sensor.py              14      2    86%   25, 30
+contracts/i_consistency_provider.py       63     16    75%   52, 63, 77, 91, 97, 102, 107, 112, 117, 122, 127, 136, 141, 146, 151, 167
+contracts/i_cycle_result_consumer.py       5      1    80%   11
+contracts/i_eye_tracker.py                20      3    85%   43, 53, 65
+contracts/i_gesture_plugin.py             62      9    85%   80, 85, 90, 95, 100, 105, 110, 116, 127
+contracts/i_image_processor.py            20      5    75%   37, 50, 55, 67, 81
+contracts/i_speech_provider.py            16     16     0%   10-37
+contracts/i_web_search_provider.py        26      5    81%   44, 49, 54, 59, 64
+contracts/plugin_base.py                  24      4    83%   43, 61, 75, 86
+hardware/__init__.py                       0      0   100%
+hardware/camera_enumeration.py            35     35     0%   6-59
+hardware/camera_sensor.py                109     12    89%   37, 77, 92-97, 131, 137-139
+hardware/mock_devices.py                 136     58    57%   59-65, 91-98, 122-133, 138, 146-147, 156-160, 164, 167-171, 174-188, 192, 195, 198, 201
+orchestrator/__init__.py                   0      0   100%
+orchestrator/device_factory.py            24      2    92%   33-34
+orchestrator/execution_trace.py           65     65     0%   2-115
+orchestrator/orchestrator_core.py        312     83    73%   94, 99, 115-120, 126, 128-134, 141-151, 153-162, 164-174, 251, 263, 275-276, 282-302, 340-344, 373, 375, 387, 395-410, 414-419, 451-452, 462-463, 467-468, 472-477, 480-483, 485-487, 495, 500, 508, 511-512
+orchestrator/plugin_loader.py             46      4    91%   83-85, 122
+plugins/__init__.py                        0      0   100%
+plugins/consistency/__init__.py            0      0   100%
+plugins/consistency/vision.py             75      4    95%   58, 86, 94, 100
+plugins/consistency_plugin.py            363     63    83%   82-85, 113-114, 127-128, 130-131, 136-137, 140-141, 150, 159-161, 163-165, 187, 202, 220-221, 223-224, 238, 250-254, 258, 261, 264-265, 289, 291, 293, 336, 371, 384, 391, 397, 403-405, 429, 434, 449-452, 460, 466-475
+plugins/spatial_calibration.py            45      8    82%   24, 28, 30, 36, 42, 56, 77, 84
+--------------------------------------------------------------------
+TOTAL                                   1507    400    73%
+41 passed, 1 xfailed in 0.68s

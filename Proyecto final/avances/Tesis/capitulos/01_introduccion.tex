@@ -1,0 +1,106 @@
+\chapter{Introducción}
+\label{cap:introduccion}
+
+\section{Antecedentes y motivación}
+
+La lectura constituye un proceso cognitivo fundamental para el aprendizaje y la construcción de conocimiento, el cual ha experimentado una transformación sustancial con la digitalización de la información. En el ámbito de la Interacción Humano-Información (HII) resulta de especial interés analizar cómo las personas interactúan con distintos soportes de lectura y de qué manera estas modalidades impactan en factores como la comprensión lectora, la retención de ideas y la carga cognitiva. A pesar de la masificación de los dispositivos electrónicos, la evidencia empírica muestra que el material impreso conserva vigencia y sigue siendo preferido para tareas de lectura profunda (Saleh y Mashhur, 2015; Singer y Alexander, 2016, como se citaron en \citealp{santibanez2020}).
+
+Para avanzar en el estudio sistemático de estos fenómenos, la comunidad científica requiere herramientas y metodologías experimentales rigurosas. La investigación en este campo depende de entornos que integren componentes de hardware, software y diseños experimentales capaces de capturar y evaluar, de manera precisa y no intrusiva, las dinámicas de interacción del lector durante el proceso de lectura. Dentro de las aproximaciones tecnológicas en esta área, una de las líneas menos exploradas es la lectura aumentada aplicada sobre papel físico. En este contexto, la lectura aumentada no se refiere a la superposición de animaciones o elementos tridimensionales lúdicos, sino al enriquecimiento del material impreso con prestaciones funcionales equivalentes a las del formato digital: búsqueda en línea de términos del texto, traducción instantánea, consulta de definiciones en contexto, despliegue de contenido complementario y sincronización bidireccional de anotaciones entre el documento físico y su versión digital.
+
+Las herramientas capaces de soportar este tipo de experiencias integradas son escasas tanto en la literatura como en la práctica experimental. En el Departamento de Ingeniería Informática de la Universidad de Santiago de Chile (USACH), bajo la línea de trabajo del grupo InTeractiOn, nació la plataforma EDDIE (\textit{augmEnteD reaDIng dEsk}), concebida como un instrumento de investigación para habilitar experiencias de lectura aumentada no obstructiva sobre documentos impresos \citep{carrasco2017}. A lo largo de los años, EDDIE ha experimentado múltiples fases de desarrollo e integración incremental a través de aportes de distintos memoristas, quienes incorporaron capacidades de procesamiento visual, búsqueda, consistencia y seguimiento ocular \citep{ibaceta2023}.
+
+Sin embargo, debido al tiempo transcurrido desde su concepción original y a la acumulación de evoluciones heterogéneas desarrolladas en diferentes etapas, la herramienta presenta limitaciones y desactualizaciones operativas que impiden utilizarla de manera plena, estable y confiable en estudios experimentales contemporáneos sobre comprensión y comportamiento lector, limitando su potencial como plataforma de medición científica.
+
+\section{Descripción del problema}
+
+El problema central del proyecto EDDIE no radica en el volumen total de errores documentados, sino en un riesgo arquitectónico específico sobre una base de aproximadamente 45\,000 líneas de código distribuidas en 26 proyectos. De los 67 problemas registrados por \citet{ibaceta2023}, su reclasificación por causa (Tabla~\ref{tab:reclasificacion}) muestra que 16 (23\%) corresponden a la infraestructura técnica de carga y despliegue, mientras que el resto se distribuye entre errores de práctica de código, hardware y sensores, servicios externos, interfaz e idioma, infraestructura de laboratorio y documentación. Aunque los cuatro errores de carga por reflexión representan solo una fracción de esta infraestructura técnica, tienen un impacto desproporcionado: cada uno impide el arranque completo de un módulo, y su causa raíz constituye un riesgo estructural recurrente, ya que cualquier desarrollador que integre un nuevo plugin puede reproducir el mismo tipo de falla al no existir una única interfaz validada que lo prevenga.
+
+Ante este escenario, se plantea la pregunta: ¿en qué medida la reconstrucción del núcleo de EDDIE bajo una arquitectura de plugins con contrato único permite reducir el número de errores estructurales documentados y habilitar su uso como instrumento de medición científica confiable?
+
+\section{Solución propuesta}
+
+Se propone reconstruir el núcleo tecnológico de EDDIE en Python bajo una arquitectura de plugins con un contrato único, siguiendo el antecedente validado de Multimodal Observer (MO) en el mismo laboratorio \citep{figueroa2025}. La solución reemplaza los tres mecanismos heterogéneos de carga por reflexión del sistema en C\# (\texttt{Assembly.LoadFrom}, \texttt{AppDomain} y \texttt{Assembly.LoadFile}) por un único mecanismo, y se compone de:
+
+\begin{itemize}
+  \item Un \textbf{orquestador central} (\texttt{OrchestratorCore}) que ejecuta en un único proceso un ciclo estandarizado de tres fases (inicialización, ejecución y liberación) y aísla en un manejo de excepciones centralizado la falla de cualquier plugin, de modo que queda registrada sin detener el sistema.
+  \item Un \textbf{cargador de plugins} (\texttt{PluginLoader}) que instancia, a partir de un único archivo de configuración (\texttt{config/plugins.json}), las clases declaradas mediante \texttt{importlib}.
+  \item Un \textbf{contrato base} (\texttt{PluginBase}) y contratos por dominio: \texttt{ICameraSensor}, \texttt{IImageProcessor}, \texttt{IGesturePlugin}, \texttt{IEyeTracker}, \texttt{IConsistencyProvider}, \texttt{IWebSearchProvider} e \texttt{ISpeechProvider}.
+  \item Una \textbf{capa de abstracción de hardware} (\texttt{DeviceFactory}) que conmuta cada dispositivo entre su implementación real y una simulada mediante una variable de entorno, lo que permite validar el sistema completo sin el laboratorio antes de una sesión real.
+  \item La integración de los módulos existentes como plugins: consistencia bidireccional papel--PDF, reconocimiento del texto resaltado, interacción gestual, rastreo ocular, búsqueda y voz, junto con la interfaz de configuración y la pantalla proyectada.
+\end{itemize}
+
+Respecto de la propuesta original, en la que \texttt{IWebSearchProvider} quedaba solo como interfaz, los cinco servicios de búsqueda (enciclopedia, definiciones, traducción, video e imágenes) se implementaron sobre un modelo de lenguaje (Google Gemini 2.5 Flash), ya que las APIs que usaba el sistema legado (Wikipedia, Google, Bing, YouTube y Cloud Vision) dejaron de estar disponibles en sus condiciones originales.
+
+\section{Objetivos y alcance del proyecto}
+
+\subsection{Objetivo general}
+
+Actualizar el núcleo tecnológico del proyecto EDDIE mediante el rediseño y reimplementación en Python e integración de los módulos de investigación existentes, para reducir la deuda técnica y asegurar la compatibilidad con sensores físicos del proyecto en un entorno de lectura aumentada no obstructiva.
+
+\subsection{Objetivos específicos}
+
+\begin{enumerate}
+  \item Diagnosticar la arquitectura actual de EDDIE en C\# a partir de la reclasificación de errores de \citet{ibaceta2023}, y evaluar mediante prototipos desechables en Python la factibilidad técnica de migrar los módulos existentes a las tecnologías propuestas.
+  \item Diseñar el núcleo orquestador de EDDIE, definiendo los contratos de interfaz que permitan la integración de los módulos previos como plugins desacoplados.
+  \item Implementar el núcleo orquestador en Python, junto con la capa de abstracción de sensores, integrando los módulos de consistencia bidireccional, reconocimiento de texto, interacción gestual y rastreo ocular bajo la nueva arquitectura.
+  \item Validar el sistema integrado mediante pruebas de software, verificación funcional y pruebas de aceptación en el ambiente operativo real del laboratorio InTeractiOn.
+\end{enumerate}
+
+\subsection{Alcances y limitaciones}
+
+La solución cubre la reconstrucción completa del núcleo orquestador, los contratos de interfaz de plugin y la capa de abstracción de hardware con conmutación real/simulado. La validación con hardware real se limita a los cuatro módulos del MVP (\texttt{IConsistencyProvider}, \texttt{IEyeTracker} sobre GazePoint y TheEyeTribe, \texttt{IImageProcessor} e \texttt{IGesturePlugin}) en el ambiente del laboratorio InTeractiOn. La búsqueda con modelo de lenguaje y la voz se integraron como extensión del alcance, pero su validación se limita a pruebas de software con un servidor de lenguaje local de prueba, ya que dependen de un servicio externo y de una clave personal.
+
+Quedan fuera del alcance el dashboard web, el visor de proyección en navegador, la interfaz de línea de comandos de validación y su canal de telemetría WebSocket, el reconocimiento automático del libro físico y el catálogo de lectura, la eliminación de accesorios mediadores (mouse, lápices de color) y la recalibración de visión computacional más allá de la mínima necesaria para el MVP. La migración de Emgu CV a OpenCV no es una traducción directa, ya que ambas bibliotecas pueden producir resultados numéricos distintos ante los mismos parámetros, por lo que los algoritmos de reconocimiento deben recalibrarse y validarse en el nuevo entorno.
+
+Al ejecutarse todos los plugins como objetos en memoria dentro del proceso del orquestador se elimina el costo de comunicación entre procesos, pero el aislamiento de fallos depende del manejo de excepciones centralizado (Capítulo~\ref{cap:diseno}). La proyección se dibuja en el mismo proceso mediante una ventana nativa (Qt). Se eliminan las dependencias nativas de 32 bits, lo que mejora la portabilidad potencial del software; sin embargo, el desarrollo y la validación se realizan exclusivamente en Windows~11, el sistema depende de SDK de fabricante específicos de esa plataforma y está atado a un montaje físico particular, por lo que la verificación en Linux o macOS queda fuera de alcance.
+
+\section{Metodología y herramientas utilizadas}
+
+\subsection{Metodología}
+
+Para la modernización del núcleo de EDDIE se emplea el ciclo PDCA (\textit{Plan-Do-Check-Act}), complementado con Kanban para el seguimiento de tareas y \textit{Rapid Application Development} (RAD) para el desarrollo iterativo mediante prototipos. Esta combinación replica el enfoque validado por \citet{figueroa2025} en la reimplementación de MO, dada la similitud estructural entre ambos proyectos. El ciclo PDCA estructura el trabajo en cuatro etapas, correspondientes a los objetivos específicos:
+
+\begin{itemize}
+  \item \textbf{Planificación (Plan, OE1):} diagnóstico del estado actual de EDDIE e identificación de los nudos críticos de incompatibilidad mediante prototipos desechables (avance P-00).
+  \item \textbf{Ejecución (Do, OE2 y OE3):} diseño e implementación del núcleo orquestador, la capa de abstracción de sensores y la integración de los módulos como plugins mediante iteraciones sucesivas de prototipado (avances P-01 a P-06).
+  \item \textbf{Verificación (Check, OE4):} pruebas de software, verificación funcional y pruebas de aceptación descritas en el Capítulo~\ref{cap:evaluacion}.
+  \item \textbf{Actuación (Act, OE4):} incorporación de los ajustes derivados de dichas pruebas y cierre de la documentación técnica (avance P-07).
+\end{itemize}
+
+Un aspecto central de RAD es el uso de prototipos desechables (\textit{throwaway prototyping}) durante las primeras semanas, en lugar de incorporar directamente cada funcionalidad migrada al código definitivo. Cada componente crítico se valida primero mediante un prototipo aislado y de bajo costo, cuyo único propósito es confirmar la factibilidad técnica de la migración a Python antes de invertir tiempo en su integración formal al orquestador \citep{figueroa2025}. Kanban se utiliza para visualizar el flujo de tareas de cada módulo y fase del ciclo PDCA a lo largo de las 17 semanas del proyecto (Tabla~\ref{tab:plan_trabajo}). Cada iteración se registra como un avance con código completo, pruebas y evidencias reproducibles (Apéndice~\ref{ap:avances}).
+
+\subsection{Herramientas de desarrollo}
+
+Las herramientas empleadas durante el desarrollo del proyecto son las siguientes:
+
+\begin{itemize}
+  \item \textbf{Python 3.12}, lenguaje principal del núcleo orquestador, la capa de abstracción de sensores y los plugins.
+  \item \textbf{OpenCV} \citep{bradski2000}, para las funciones de visión computacional que en EDDIE-2023 dependían de Emgu CV.
+  \item \textbf{Tesseract OCR} \citep{smith2007} mediante \texttt{pytesseract}, para el reconocimiento del texto resaltado.
+  \item \textbf{PyMuPDF}, para la consistencia con el documento PDF, en reemplazo de iTextSharp.
+  \item \textbf{PySide6} (Qt~6), para la interfaz de configuración y la pantalla proyectada, en reemplazo de WinForms.
+  \item \textbf{Google Gemini 2.5 Flash}, modelo de lenguaje que responde los servicios de búsqueda.
+  \item \textbf{pytest} y \textbf{pytest-cov}, para las pruebas unitarias, de integración y de interfaz y la medición de cobertura.
+  \item \textbf{SonarQube}, para el análisis estático de calidad del código durante la etapa de verificación.
+  \item \textbf{Git y GitHub}, para el control de versiones; \textbf{Visual Studio Code}, como entorno de desarrollo.
+  \item \textbf{EDDIE-2023} (versión en C\#), como referencia funcional y línea base de comparación.
+  \item \textbf{Overleaf} (\LaTeX) para la redacción del informe y \textbf{Notion} para el tablero Kanban y el registro de avances.
+\end{itemize}
+
+\subsection{Ambiente de desarrollo}
+
+El desarrollo se realiza en dos ambientes complementarios. El primero corresponde a un equipo personal utilizado para la implementación y las pruebas unitarias y de integración del núcleo y los plugins, con las siguientes características:
+
+\begin{itemize}
+  \item Procesador AMD Ryzen 5 7600, 6 núcleos, 3,80 GHz.
+  \item Memoria RAM de 32 GB (5200 MT/s).
+  \item Tarjeta gráfica NVIDIA GeForce RTX 5060 (8 GB VRAM) y GPU integrada AMD Radeon.
+  \item Almacenamiento SSD de 932 GB.
+  \item Sistema operativo Windows 11 Pro (versión 25H2).
+\end{itemize}
+
+En este ambiente se realiza la mayor parte del ciclo de desarrollo iterativo, con los dispositivos simulados de la capa de abstracción de hardware. El segundo ambiente corresponde a la sala de experimentación del Departamento de Ingeniería Informática de la USACH, donde se encuentra el despliegue físico de EDDIE: el computador designado para su operación, dos cámaras digitales para el reconocimiento de texto y el reconocimiento gestual, un proyector que actúa como pantalla sobre el escritorio y los eye trackers GazePoint y TheEyeTribe. Este ambiente se utiliza en la etapa de verificación para las pruebas de aceptación y la validación con el hardware físico real.
+
+\section{Organización del documento}
+
+El Capítulo~\ref{cap:marco} presenta el marco conceptual y el estado del arte: la evolución histórica de EDDIE, los sistemas de lectura aumentada comparables, el problema de la modernización del software científico y el antecedente de Multimodal Observer. El Capítulo~\ref{cap:analisis} contiene el diagnóstico de la arquitectura en C\#, la captura de requerimientos, el análisis de factibilidad técnica y los prototipos desechables con sus mediciones. El Capítulo~\ref{cap:diseno} describe la arquitectura del núcleo, los contratos de plugin, la capa de abstracción de hardware, los módulos integrados, la interfaz y las iteraciones de desarrollo. El Capítulo~\ref{cap:evaluacion} reporta las pruebas de software, los hallazgos de la verificación y el protocolo y resultados de la verificación funcional y las pruebas de aceptación. El Capítulo~\ref{cap:conclusiones} presenta las conclusiones, las limitaciones y el trabajo futuro. Los anexos reúnen la reclasificación de errores y el plan de trabajo; los apéndices, las tablas de los avances, las mediciones detalladas y el manual de instalación y uso.

@@ -7,6 +7,12 @@ Cada detector concreto (lápiz de color, piel de la mano, mouse) solo implementa
 _detect(frame); esta clase aplica la calibración sensor→aplicación, mueve el
 cursor ("Recognition on"), gestiona la máquina de estados de clic (AutoClick /
 DetectClick) y la captura automática del rectángulo seleccionado (AutoCamCapture).
+
+Orientación de la cámara gestual: el C# (HandSkinRecognition.cs) rotaba siempre 180° la
+imagen porque la cámara del laboratorio estaba montada invertida. En Python la rotación es
+una opción común a todos los detectores ("rotate_180", por defecto False) que se aplica
+UNA sola vez al frame: la vista previa, las coordenadas del sensor usadas en la calibración
+y el recorte capturado quedan siempre en la misma orientación.
 """
 import logging
 import time
@@ -60,6 +66,7 @@ class CalibratedGesturePlugin(IGesturePlugin):
         self._min_interval = 0.0
         self._scale = 1.0
         self._last_processed = 0.0
+        self._rotate_180 = False
         self._initialized = False
 
     # ------------------------------------------------------------------ contrato base
@@ -85,6 +92,7 @@ class CalibratedGesturePlugin(IGesturePlugin):
         # Reducir la imagen antes de detectar mantiene el ciclo bajo el presupuesto de 8,3 ms.
         self._scale = float(config.get("processing_scale", 0.5)) if self.SCALABLE else 1.0
         self._active = bool(config.get("start_active", False))
+        self._rotate_180 = bool(config.get("rotate_180", False))
         self.configure(config)
         self._initialized = True
         return True
@@ -111,6 +119,20 @@ class CalibratedGesturePlugin(IGesturePlugin):
     def get_preview_frame(self) -> Optional[CameraFrame]:
         return self._preview
 
+    # ------------------------------------------------------------------ orientación
+    def set_rotate_180(self, enabled: bool) -> None:
+        """Casilla "Rotate 180°" de Gesture recognition (solo si la cámara está montada invertida)."""
+        self._rotate_180 = bool(enabled)
+
+    @property
+    def rotate_180(self) -> bool:
+        return self._rotate_180
+
+    def _orient(self, frame: Optional[CameraFrame]) -> Optional[CameraFrame]:
+        if frame is None or not self._rotate_180:
+            return frame
+        return cv2.rotate(frame, cv2.ROTATE_180)
+
     def get_error_rate(self) -> float:
         return self._errors / max(1, self._attempts)
 
@@ -121,7 +143,7 @@ class CalibratedGesturePlugin(IGesturePlugin):
         now = time.perf_counter()
         if now - self._last_processed < self._min_interval:
             return self._result(processed=False)
-        frame = self._camera_sensor.get_latest_frame() if self._camera_sensor else None
+        frame = self._orient(self._camera_sensor.get_latest_frame()) if self._camera_sensor else None
         if frame is None:
             self._attempts += 1
             self._errors += 1
@@ -219,7 +241,7 @@ class CalibratedGesturePlugin(IGesturePlugin):
         """cropColorFrame: recorta la selección; si es inválida usa el frame completo."""
         frame = self._last_frame
         if frame is None and self._camera_sensor is not None:
-            frame = self._camera_sensor.get_latest_frame()
+            frame = self._orient(self._camera_sensor.get_latest_frame())
         if frame is None:
             return None
         s = selection or self._selection
@@ -243,7 +265,7 @@ class CalibratedGesturePlugin(IGesturePlugin):
         return buffer.tobytes() if ok else None
 
     def detect_gesture(self, frame: CameraFrame) -> GestureResult:
-        detection = self._detect(frame)
+        detection = self._detect(self._orient(frame))
         x, y = self._map(detection.center)
         return GestureResult(
             gesture_name="point" if detection.detect_gesture else "none",

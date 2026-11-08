@@ -1,0 +1,210 @@
+{
+ "form": "AlertBox",
+ "props": {
+  "AutoScaleDimensions": {
+   "raw": "new System.Drawing.SizeF(6F, 13F)"
+  },
+  "AutoScaleMode": "Font",
+  "BackColor": "#f8f5fa",
+  "ClientSize": [
+   909,
+   382
+  ],
+  "FormBorderStyle": "None",
+  "Name": "AlertBox",
+  "Text": "Form1",
+  "TopMost": true
+ },
+ "events": {
+  "Load": "WebSearchServicesSettings_Load"
+ },
+ "controls": [
+  {
+   "name": "ExitPictureBox",
+   "type": "PictureBox",
+   "props": {
+    "Cursor": "Hand",
+    "Image": {
+     "resx": "ExitPictureBox.Image"
+    },
+    "Location": [
+     853,
+     12
+    ],
+    "Size": [
+     32,
+     32
+    ],
+    "SizeMode": "AutoSize",
+    "TabIndex": 10,
+    "TabStop": false
+   },
+   "events": {
+    "Click": "ExitPictureBox_Click"
+   }
+  },
+  {
+   "name": "buttonModified2",
+   "type": "ButtonModified",
+   "props": {
+    "BackColor": "@White",
+    "Cursor": "Hand",
+    "FlatAppearance.BorderColor": "#1c9dec",
+    "FlatAppearance.BorderSize": 5,
+    "FlatAppearance.MouseDownBackColor": "#0057ca",
+    "FlatAppearance.MouseOverBackColor": "#00caca",
+    "FlatStyle": "Flat",
+    "Font": {
+     "family": "IBM Plex Sans SemiBold",
+     "size": 14.25,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "ForeColor": "#1c9dec",
+    "Location": [
+     129,
+     280
+    ],
+    "Size": [
+     204,
+     64
+    ],
+    "TabIndex": 9,
+    "Text": "Cancel",
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "Click": "cancelButton_Click"
+   }
+  },
+  {
+   "name": "buttonModified1",
+   "type": "ButtonModified",
+   "props": {
+    "BackColor": "#1c9dec",
+    "Cursor": "Hand",
+    "FlatAppearance.BorderColor": "#1c9dec",
+    "FlatAppearance.BorderSize": 5,
+    "FlatAppearance.MouseDownBackColor": "#0057ca",
+    "FlatAppearance.MouseOverBackColor": "#00caca",
+    "FlatStyle": "Flat",
+    "Font": {
+     "family": "IBM Plex Sans SemiBold",
+     "size": 14.25,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "ForeColor": "#f8f5fa",
+    "Location": [
+     570,
+     280
+    ],
+    "Size": [
+     204,
+     64
+    ],
+    "TabIndex": 8,
+    "Text": "Confirm",
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "Click": "confirmButton_Click"
+   }
+  },
+  {
+   "name": "okButton",
+   "type": "ButtonModified",
+   "props": {
+    "BackColor": "#1c9dec",
+    "Cursor": "Hand",
+    "FlatAppearance.BorderColor": "#1c9dec",
+    "FlatAppearance.BorderSize": 5,
+    "FlatAppearance.MouseDownBackColor": "#0057ca",
+    "FlatAppearance.MouseOverBackColor": "#00caca",
+    "FlatStyle": "Flat",
+    "Font": {
+     "family": "IBM Plex Sans SemiBold",
+     "size": 14.25,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "ForeColor": "#f8f5fa",
+    "Location": [
+     349,
+     280
+    ],
+    "Size": [
+     204,
+     64
+    ],
+    "TabIndex": 7,
+    "Text": "Ok",
+    "UseVisualStyleBackColor": false
+   },
+   "events": {
+    "Click": "OkButton_Click"
+   }
+  },
+  {
+   "name": "label2",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "IBM Plex Sans",
+     "size": 16.0,
+     "bold": false,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     124,
+     180
+    ],
+    "MaximumSize": [
+     600,
+     0
+    ],
+    "Size": [
+     345,
+     29
+    ],
+    "TabIndex": 1,
+    "Text": "Subtittle example alert box yeah!!"
+   }
+  },
+  {
+   "name": "label1",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "IBM Plex Sans SemiBold",
+     "size": 32.25,
+     "bold": true,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     119,
+     63
+    ],
+    "MaximumSize": [
+     900,
+     0
+    ],
+    "Size": [
+     522,
+     56
+    ],
+    "TabIndex": 0,
+    "Text": "¡Alert Box example tittle!"
+   }
+  }
+ ],
+ "detached": [],
+ "components": []
+}

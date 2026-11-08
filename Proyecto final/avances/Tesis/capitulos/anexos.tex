@@ -1,0 +1,192 @@
+% ============================================================================ ANEXOS
+% Anexo = material de terceros o de la propuesta; Apéndice = elaboración propia.
+\titleformat{\chapter}[hang]{\normalfont\Large\bfseries\raggedright}{ANEXO \thechapter.}{0.5em}{\MakeUppercase}
+
+\chapter{Errores de EDDIE-2023 y plantilla de trazabilidad}
+\label{an:errores}
+
+La Tabla~\ref{tab:extracto_errores} reproduce un extracto de los errores registrados por \citet{ibaceta2023} que se citan en este documento. La matriz completa se construye con la plantilla de la Tabla~\ref{tab:plantilla_traz}, una fila por cada uno de los 67 errores, ejecutando el caso de prueba original en EDDIE-2023 y en la versión en Python.
+
+\begin{table}[H]
+\centering
+\caption{Extracto de errores encontrados en EDDIE-2023.}
+\label{tab:extracto_errores}
+\footnotesize
+\begin{tabularx}{\textwidth}{l l X c}
+\toprule
+\textbf{ID} & \textbf{Tipo} & \textbf{Descripción} & \textbf{Estado} \\ \midrule
+E7 & Interno-otro & El programa no se puede inicializar por falta de cámara disponible. & SF \\
+E8 & Interno-otro & El programa no funciona correctamente sin dos cámaras disponibles. & SF \\
+E9 & Externo & Falta de conexiones eléctricas en el laboratorio. & SP \\
+E10 & Externo & Falta de seguridad en el computador del laboratorio. & SF \\
+E11 & Interno-consistencia & La sincronización hace fallar el programa cuando no se ingresa un PDF. & SF \\
+E12 & Externo & No existe un manual de instalación. & SS \\
+E13 & Externo & No existe un manual de uso. & SS \\
+E14 & Interno-otro & Los mensajes de error están en un idioma distinto al resto de la aplicación. & SF \\
+E15 & Externo & No se reconoce el eye tracker en el computador. & SF \\
+E16 & Externo & La conexión de la cámara digital es inestable. & SP \\
+E21 & Interno-consistencia & El botón de búsqueda hace fallar el programa si no se sube un PDF. & SF \\
+E22 & Interno-consistencia & La revisión del contenido del PDF falla si no existe el archivo. & SF \\
+E27 & Interno-otro & Faltan comentarios en el código. & SS \\
+E28 & Interno-otro & Variables y funciones sin nombres representativos. & SS \\
+E30 & Interno-consistencia & El contenido del PDF falla si no se indica una página. & SF \\
+E48 & Interno-consistencia & La consistencia de comentarios falla con datos correctos. & SF \\
+E49 & Externo & Con TheEyeTribe no se detecta la parte inferior de la proyección. & SS \\
+E50 & Interno-consistencia & No se encuentra la carpeta \texttt{PluginsConsistencia}. & SF \\ \bottomrule
+\end{tabularx}
+\fuente{\citet{ibaceta2023}. SF: solución final; SP: solución parcial; SS: sin solución.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Plantilla de la matriz de trazabilidad.}
+\label{tab:plantilla_traz}
+\footnotesize
+\begin{tabularx}{\textwidth}{l l c c c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{ID} & \textbf{Módulo} & \textbf{Estado C\#} & \textbf{Cat.} & \textbf{¿Reproducido?} & \textbf{Resultado en Python} & \textbf{Evidencia} \\ \midrule
+E\textit{n} & \dots & SF/SP/SS & (a)--(g) & Sí/No & Corregido / Persiste / Fuera de alcance & Prueba, log o nota de alcance \\ \bottomrule
+\end{tabularx}
+\fuente{Propuesta de tesis (Tabla 3.3).}
+\end{table}
+
+\chapter{Plan de trabajo}
+\label{an:plan}
+
+\begin{table}[H]
+\centering
+\caption{Plan de trabajo.}
+\label{tab:plan_trabajo}
+\footnotesize
+\begin{tabularx}{\textwidth}{l l >{\raggedright\arraybackslash}X c c >{\raggedright\arraybackslash}p{3cm}}
+\toprule
+\textbf{Semanas} & \textbf{Fase} & \textbf{Actividades} & \textbf{OE} & \textbf{Horas} & \textbf{Entregable} \\ \midrule
+1--3 & Plan & Diagnóstico de la arquitectura en C\# mediante la reclasificación de errores y prototipos desechables de factibilidad. & OE1 & 108 & Diagnóstico y resultados de prototipos \\ \midrule
+4--6 & Do (diseño) & Diseño del núcleo y de los contratos de interfaz; primer prototipo funcional. & OE2 & 108 & Arquitectura y contratos \\ \midrule
+7--10 & Do (implem.) & Núcleo, capa de abstracción de sensores, consistencia, reconocimiento de texto e interacción gestual. & OE3 & 144 & Prototipos funcionales del núcleo con módulos \\ \midrule
+11--12 & Do (implem.) & Rastreo ocular con hardware físico; contingencia: validación con \texttt{EyeTrackerMock}. & OE3 & 72 & Prototipo integrado \\ \midrule
+13--14 & Check & Pruebas de software: cobertura, trazabilidad, latencia y métricas de sincronización y visión. & OE4 & 72 & Reporte de pruebas de software \\ \midrule
+15--16 & Check & MECIVA PS por módulo, validez y confiabilidad, pruebas de aceptación. & OE4 & 72 & Reporte de verificación y validación \\ \midrule
+17 & Act & Ajustes finales, cierre de la documentación y entrega. & OE4 & 36 & Documentación y entrega final \\ \bottomrule
+\end{tabularx}
+\fuente{Propuesta de tesis (Tabla 6.1).}
+\end{table}
+
+% ============================================================================ APÉNDICES
+\titleformat{\chapter}[hang]{\normalfont\Large\bfseries\raggedright}{APÉNDICE \thechapter.}{0.5em}{\MakeUppercase}
+\setcounter{chapter}{0}
+
+\chapter{Fichas de los avances}
+\label{ap:avances}
+
+Cada avance se describe con el formato de \citet{figueroa2025}: identificador, nombre, objetivos, descripción y requisitos funcionales y no funcionales. Las tablas se generan desde la carpeta \texttt{avances/} del repositorio.
+
+{\small\input{datos/tabla_prototipos}}
+
+\chapter{Mediciones de los prototipos}
+\label{ap:mediciones}
+
+La Tabla~\ref{tab:resumen_mediciones} resume el tipo de medición y el resultado principal de cada prototipo. El detalle (protocolo, fórmula, parámetros y todas las métricas) está en \texttt{avances/P-00\_prototipos\_desechables/evidencias/MEDICIONES.md}, generado junto con los valores de este documento.
+
+\begin{table}[H]
+\centering
+\caption{Resumen de las mediciones de los prototipos.}
+\label{tab:resumen_mediciones}
+\footnotesize
+\begin{tabularx}{\textwidth}{l l >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{ID} & \textbf{Tipo} & \textbf{Resultado principal} \\ \midrule
+F1 & \FUnoTipo & \pendiente{FPS y latencia con las cámaras} \\
+F2 & \FDosTipo & Eficacia Otsu \FDosEficaciaPct\%; adaptativo \FDosEficaciaAdaptativoPct\% \\
+F3 & \FTresTipo & CER \FTresCerLimpioPct\% / WER \FTresWerLimpioPct\% (sin preproceso: \FTresCerSinPreprocesoPct\% / \FTresWerSinPreprocesoPct\%) \\
+F4 & \FCuatroTipo & Éxito \FCuatroExitoPct\%, RMSE \FCuatroRmsePx~px \\
+F5 & \FCincoTipo & Detección \FCincoDeteccionPct\% sin rojo proyectado; \FCincoDeteccionRojoPct\% con rojo \\
+F6 & \FSeisTipo & IoU \FSeisIouPct\%, punta correcta \FSeisPuntaOkPct\% \\
+F7 & \FSieteTipo & Error de reproyección \FSieteErrorPx~$\pm$~\FSieteErrorSdPx~px \\
+F9 & \FNueveTipo & \pendiente{latencia de eventos} \\
+F10 & \FDiezTipo & Pérdida \FDiezPerdidaPct\%, \textit{jitter} \FDiezJitterMs~ms \\
+F11 & \FOnceTipo & \FOnceFallas{} fallas en \FOnceCargas{} cargas, \FOnceTiempoMs~ms \\
+F12 & \FDoceTipo & \FDoceVoluntariasPct\% voluntarias, \FDoceAccidentalesPorMin{} accidentales/min \\
+F13 & \FTreceTipo & \FTreceTiempoMs~ms por cuadro \\
+F14 & \FCatorceTipo & Coherencia \FCatorceCoherenciaPct\% \\
+F15 & \FQuinceTipo & \FQuincePersistidas{}/\FQuinceAnotaciones{} persistidos, \FQuinceTiempoMs~ms \\
+F16 & \FDieciseisTipo & \FDieciseisDetectadasPct\% detectadas, \FDieciseisErrorPt~pt \\
+F17 & \FDiecisieteTipo & Exactitud \FDiecisieteExactitudPct\%, IoU \FDiecisieteIouPct\% \\
+F24 & \FVeinticuatroTipo & \pendiente{exactitud de comandos} \\
+F25 & \FVeinticincoTipo & \pendiente{palabras por minuto} \\
+F27 & \FVeintisieteTipo & \FVeintisieteTiempoMs~ms por cuadro \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia, \texttt{mediciones/medir\_prototipos.py} (P-00), \MedicionFecha.}
+\end{table}
+
+Para repetir las mediciones en el PC y agregar las de hardware:
+\begin{verbatim}
+cd avances\P-00_prototipos_desechables
+python mediciones\medir_prototipos.py --pdf ruta\al\documento.pdf --camara 0
+python ..\..\tesis\datos\actualizar_datos.py ..
+\end{verbatim}
+El segundo comando copia los valores nuevos a \texttt{datos/}, y al recompilar el documento todas las tablas y fichas se actualizan.
+
+\chapter{Comparación de la interfaz}
+\label{ap:interfaz}
+
+Las figuras siguientes comparan la interfaz de EDDIE-2023, reproducida a partir de sus archivos \texttt{.Designer.cs}, con la versión en Python.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/comparacion_inicio.png}
+\caption{Pantalla de inicio: EDDIE-2023 (izquierda) y versión en Python (derecha).}
+\fuente{Elaboración propia.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/comparacion_gestos.png}
+\caption{Configuración de gestos: EDDIE-2023 (izquierda) y versión en Python (derecha).}
+\fuente{Elaboración propia.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figuras/comparacion_proyeccion.png}
+\caption{Pantalla proyectada: EDDIE-2023 (izquierda) y versión en Python (derecha).}
+\fuente{Elaboración propia.}
+\end{figure}
+
+\chapter{Manual de instalación y uso}
+\label{ap:manual}
+
+\section{Instalación}
+
+\begin{enumerate}
+  \item Instalar Python 3.12 (64 bits) y, para el reconocimiento de texto, Tesseract-OCR con el idioma español.
+  \item En la carpeta del proyecto:
+\begin{verbatim}
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+\end{verbatim}
+  \item Para las búsquedas, copiar \nolinkurl{config/secrets.example.json} como \nolinkurl{config/secrets.json} y pegar la clave de Google AI Studio, o definir la variable \texttt{GEMINI\_API\_KEY}. Este archivo no se sube al repositorio.
+  \item Para el rastreo ocular, abrir GazePoint Control o EyeTribe Server antes de conectar el eye tracker desde la aplicación.
+\end{enumerate}
+
+\section{Ejecución}
+
+\begin{verbatim}
+python main.py              # con el hardware del laboratorio
+python main.py --sim        # con cámaras y eye tracker simulados
+python -m pytest            # pruebas automatizadas
+python tools\generar_evidencias.py   # evidencias
+\end{verbatim}
+
+\section{Uso}
+
+\begin{enumerate}
+  \item Al abrir, la pantalla de inicio muestra los pasos para preparar la sesión y el estado de cada módulo; cada paso lleva a su página.
+  \item En \textit{Texto} y \textit{Gestos}, elegir la cámara y la resolución. En gestos, elegir el complemento (lápiz, mano o mouse), iniciarlo y calibrar apuntando a la cruz superior izquierda y luego a la inferior derecha.
+  \item En \textit{Documento PDF}, elegir el PDF del libro.
+  \item En \textit{Rastreo ocular}, elegir el eye tracker, la retícula y el registro CSV, y pulsar \textit{Aplicar y conectar}.
+  \item Guardar e iniciar la proyección. En la proyección, resaltar una palabra; el texto reconocido aparece en el campo superior y los botones de búsqueda entregan definición, traducción, enciclopedia, video o imagen. \textit{Sincronizar PDF} abre las herramientas de consistencia papel--PDF.
+\end{enumerate}
+
+Los ajustes se guardan en \texttt{config/user\_settings.json}, las búsquedas en \texttt{CSV\_registro\_actividades/} y cada acción del orquestador con su latencia en \texttt{logs/}.

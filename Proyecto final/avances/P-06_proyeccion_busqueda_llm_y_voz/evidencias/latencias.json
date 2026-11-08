@@ -1,0 +1,86 @@
+{
+  "modo": "simulado",
+  "ciclos": 500,
+  "ciclos_calentamiento": 10,
+  "gesto_activo": "ColorPenRecognition",
+  "ciclo_completo": {
+    "n": 500,
+    "media_ms": 0.6566,
+    "p95_ms": 1.492,
+    "max_ms": 10.2818,
+    "sobre_8_3ms": 2
+  },
+  "por_plugin": {
+    "TextCamera": {
+      "n": 500,
+      "media_ms": 0.1221,
+      "p95_ms": 0.174,
+      "max_ms": 2.001,
+      "sobre_8_3ms": 0
+    },
+    "GestureCamera": {
+      "n": 500,
+      "media_ms": 0.2828,
+      "p95_ms": 0.372,
+      "max_ms": 2.537,
+      "sobre_8_3ms": 0
+    },
+    "ImageProcessor": {
+      "n": 500,
+      "media_ms": 0.0069,
+      "p95_ms": 0.008,
+      "max_ms": 0.078,
+      "sobre_8_3ms": 0
+    },
+    "ColorPenRecognition": {
+      "n": 500,
+      "media_ms": 0.1467,
+      "p95_ms": 0.97,
+      "max_ms": 9.062,
+      "sobre_8_3ms": 1
+    },
+    "HandSkinRecognition": {
+      "n": 500,
+      "media_ms": 0.0029,
+      "p95_ms": 0.006,
+      "max_ms": 0.058,
+      "sobre_8_3ms": 0
+    },
+    "MouseRecognition": {
+      "n": 500,
+      "media_ms": 0.0025,
+      "p95_ms": 0.003,
+      "max_ms": 0.031,
+      "sobre_8_3ms": 0
+    },
+    "EyeTrackerMock": {
+      "n": 500,
+      "media_ms": 0.0102,
+      "p95_ms": 0.012,
+      "max_ms": 0.143,
+      "sobre_8_3ms": 0
+    },
+    "SpeechProvider": {
+      "n": 500,
+      "media_ms": 0.0036,
+      "p95_ms": 0.004,
+      "max_ms": 0.058,
+      "sobre_8_3ms": 0
+    },
+    "GazeSession": {
+      "n": 500,
+      "media_ms": 0.0048,
+      "p95_ms": 0.005,
+      "max_ms": 0.107,
+      "sobre_8_3ms": 0
+    },
+    "ConsistencyProvider": {
+      "n": 500,
+      "media_ms": 0.01,
+      "p95_ms": 0.011,
+      "max_ms": 0.202,
+      "sobre_8_3ms": 0
+    }
+  },
+  "cumple_8_3ms_p95": true
+}

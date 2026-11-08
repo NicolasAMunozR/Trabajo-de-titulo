@@ -1,0 +1,140 @@
+{
+ "form": "busquedasRecientes2",
+ "props": {
+  "AutoScaleDimensions": {
+   "raw": "new System.Drawing.SizeF(6F, 13F)"
+  },
+  "AutoScaleMode": "Font",
+  "BorderStyle": "FixedSingle",
+  "Name": "busquedasRecientes2",
+  "Size": [
+   242,
+   93
+  ]
+ },
+ "events": {},
+ "controls": [
+  {
+   "name": "label2",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 12.0,
+     "bold": false,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     1,
+     70
+    ],
+    "Size": [
+     33,
+     20
+    ],
+    "TabIndex": 15,
+    "Text": "En:"
+   }
+  },
+  {
+   "name": "label1",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 12.0,
+     "bold": false,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     1,
+     36
+    ],
+    "Size": [
+     86,
+     20
+    ],
+    "TabIndex": 14,
+    "Text": "Búsqueda:"
+   }
+  },
+  {
+   "name": "lbl_Api",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 12.0,
+     "bold": false,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     64,
+     70
+    ],
+    "Size": [
+     87,
+     20
+    ],
+    "TabIndex": 13,
+    "Text": "En que Api"
+   }
+  },
+  {
+   "name": "lbl_palabraBuscada",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 12.0,
+     "bold": false,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     91,
+     36
+    ],
+    "Size": [
+     128,
+     20
+    ],
+    "TabIndex": 12,
+    "Text": "Palabra buscada"
+   }
+  },
+  {
+   "name": "lbl_fecha_hora",
+   "type": "Label",
+   "props": {
+    "AutoSize": true,
+    "Font": {
+     "family": "Microsoft Sans Serif",
+     "size": 12.0,
+     "bold": false,
+     "italic": false,
+     "underline": false
+    },
+    "Location": [
+     1,
+     5
+    ],
+    "Size": [
+     96,
+     20
+    ],
+    "TabIndex": 11,
+    "Text": "fecha y hora"
+   }
+  }
+ ],
+ "detached": [],
+ "components": []
+}

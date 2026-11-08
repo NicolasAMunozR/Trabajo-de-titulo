@@ -1,0 +1,26 @@
+{
+  "TextCamera": {
+    "status": "initialized",
+    "error": null
+  },
+  "FrameStatistics": {
+    "status": "initialized",
+    "error": null
+  },
+  "EyeTrackerMock": {
+    "status": "initialized",
+    "error": null
+  },
+  "FaultInjection": {
+    "status": "initialized",
+    "error": null
+  },
+  "PluginInexistente": {
+    "status": "load_failed",
+    "error": "El plugin no se pudo cargar; revisa el log del PluginLoader."
+  },
+  "CycleSummary": {
+    "status": "initialized",
+    "error": null
+  }
+}

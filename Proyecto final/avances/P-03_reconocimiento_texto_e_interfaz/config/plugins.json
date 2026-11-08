@@ -1,0 +1,45 @@
+{
+  "_comentario": "Avance P-03: + reconocimiento de texto resaltado (IImageProcessor) y primera interfaz (Menu Settings con Text recognition y Page detection).",
+  "_nota": "'simulated_class' lo usa DeviceFactory cuando EDDIE_DEVICE_MODE=sim. Los ajustes del usuario (cámara, resolución, PDF...) se superponen desde config/user_settings.json sin editar este archivo.",
+  "plugins": [
+    {
+      "name": "TextCamera",
+      "label": "Cámara de reconocimiento de texto",
+      "class": "hardware.camera_sensor.CameraSensorPlugin",
+      "simulated_class": "hardware.mock_devices.MockCameraSensor",
+      "enabled": true,
+      "config": {
+        "camera_index": 0,
+        "width": 640,
+        "height": 480,
+        "scene": "page"
+      }
+    },
+    {
+      "name": "ImageProcessor",
+      "label": "Reconocimiento de texto resaltado (OCR)",
+      "class": "plugins.image_processor_plugin.ImageProcessorPlugin",
+      "enabled": true,
+      "dependencies": {
+        "camera_sensor": "TextCamera"
+      },
+      "config": {
+        "ocr_language": "spa+eng",
+        "rotate_180": true,
+        "tesseract_path": ""
+      }
+    },
+    {
+      "name": "ConsistencyProvider",
+      "label": "Consistencia bidireccional papel ↔ PDF",
+      "class": "plugins.consistency_plugin.ConsistencyPlugin",
+      "enabled": true,
+      "config": {
+        "pdf_path": "",
+        "camera_rotated_180": true,
+        "gesture_plugin": "ColorPenRecognition",
+        "eye_tracker_plugin": "EyeTracker-GazePoint"
+      }
+    }
+  ]
+}

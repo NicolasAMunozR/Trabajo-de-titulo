@@ -1,4 +1,4 @@
-"""Pruebas de la interfaz (Qt offscreen): fidelidad del layout y flujos completos de EDDIE."""
+"""Pruebas de la interfaz renovada (P-08, Qt offscreen): controles del original y flujos completos de EDDIE."""
 import json
 import os
 import shutil
@@ -8,7 +8,8 @@ import pytest
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtTest import QTest
 
-from ui.form_builder import LAYOUTS, build_form
+from ui.form_builder import LAYOUTS
+from ui.modern_forms import build_modern
 
 FORMS = ["MenuSettings", "SeleccionInteraccionPorVoz2", "SeleccionApis2", "EyeTrackingConfiguration2",
          "TextRecognitionSettings", "GestureRecognitionSettings", "PageDetectionSettings", "AlertBox",
@@ -22,19 +23,31 @@ def _nodes(nodes):
 
 
 @pytest.mark.parametrize("name", FORMS)
-def test_every_original_control_is_rebuilt_at_its_original_geometry(qapp, name):
-    from PySide6.QtWidgets import QWidget
+def test_every_original_control_exists_in_the_new_interface(qapp, name):
+    """P-08 cambia el diseño, pero cada control del original sigue existiendo con su nombre, un tipo
+    compatible y el mismo comportamiento (rangos, valores, ítems), porque la lógica los usa por nombre."""
+    from PySide6.QtWidgets import (QAbstractButton, QAbstractSpinBox, QCheckBox, QComboBox, QLabel, QLineEdit,
+                                   QListWidget, QRadioButton, QTextEdit, QWidget)
+    from ui.widgets import FitFrameView
+    expected = {"Label": QLabel, "PictureBox": QLabel, "ImageBox": FitFrameView, "ButtonModified": QAbstractButton,
+                "Button": QAbstractButton, "ButtonAlt": QAbstractButton, "TextBox": (QLineEdit, QTextEdit),
+                "RichTextBox": QTextEdit, "ComboBox": QComboBox, "NumericUpDown": QAbstractSpinBox,
+                "CheckBox": QCheckBox, "RadioButton": QRadioButton, "ListBox": QListWidget}
     data = json.loads((LAYOUTS / f"{name}.json").read_text(encoding="utf-8"))
     root = QWidget()
-    form = build_form(name, root)
+    form = build_modern(name, root)
     for node in _nodes(data["controls"]):
         if node["type"] in ("Container",):
             continue
         widget = form.controls[node["name"]]
-        x, y = node["props"].get("Location", [0, 0])
-        assert (widget.x(), widget.y()) == (x, y), node["name"]
-        if node["type"] not in ("Label", "CheckBox", "RadioButton") and "Size" in node["props"]:
-            assert (widget.width(), widget.height()) == tuple(node["props"]["Size"]), node["name"]
+        if node["type"] in expected:
+            assert isinstance(widget, expected[node["type"]]), node["name"]
+        props = node["props"]
+        if node["type"] == "NumericUpDown":
+            assert widget.minimum() == props.get("Minimum", 0) and widget.maximum() == props.get("Maximum", 100)
+            assert widget.value() == pytest.approx(props.get("Value", props.get("Minimum", 0))), node["name"]
+        if props.get("Enabled") is False:
+            assert not widget.isEnabled(), node["name"]
 
 
 @pytest.fixture
@@ -174,7 +187,7 @@ def test_pdf_highlight_sync_and_content_flow(eddie, qapp, sample_pdf):
     _drag(screen.highlight, (50, 100), (300, 100))
     _settle(ctx, qapp)
     screen.sync_highlight()
-    assert screen.form.syncPDFLabel.text() == " Sync Page 1/3"
+    assert screen.form.syncPDFLabel.text() == "Página 1 de 3"
     assert len(screen.highlight.rectangles) == 1
     with pymupdf.open(sample_pdf) as document:
         assert len(list(document[0].annots())) == 1
@@ -193,7 +206,7 @@ def test_pdf_tools_require_pdf_and_page_number(eddie):
     ctx, window, messages = eddie
     window.start_projection()
     ctx.projection.sync_highlight()
-    assert messages[-1] == "Make sure you upload a pdf file."
+    assert messages[-1].startswith("Primero elige el PDF del libro")
 
 
 def test_eye_tracking_apply_with_simulated_tracker(eddie, qapp, tmp_path):
@@ -253,3 +266,74 @@ def _as_text_copy(pdf_path):
     with pymupdf.open(pdf_path) as document:
         data = document.tobytes(deflate=True, garbage=3, use_objstms=1)
     return data.decode("utf-8", "replace").encode("utf-8")
+
+
+def test_gesture_page_rotate_checkbox_controls_plugin_orientation(eddie, qapp):
+    """La casilla "Rotate 180°" llega al plug-in gestual activo y se guarda en los ajustes."""
+    ctx, window, messages = eddie
+    page = ctx.pages["gesture"]
+    form = page.form
+    assert form.checkBoxRotate180.isChecked() is False
+    form.comboBox1.setCurrentIndex(form.comboBox1.findData("HandSkinRecognition"))
+    page.start_recognition()
+    plugin = ctx.runtime.plugin("HandSkinRecognition")
+    assert plugin.rotate_180 is False
+    form.checkBoxRotate180.setChecked(True)
+    assert plugin.rotate_180 is True
+    page.save_settings()
+    assert ctx.settings["gestureRotate180"] is True
+    page.stop_recognition()
+
+
+def test_text_page_recognizes_the_highlighted_word(eddie, qapp):
+    """Text recognition muestra el rectángulo detectado y el texto reconocido (antes solo desde la proyección)."""
+    ctx, window, messages = eddie
+    page = ctx.pages["text"]
+    window.open_page("TextRecognitiionButton")
+    _settle(ctx, qapp)
+    page.recognize_now()
+    _settle(ctx, qapp)
+    assert page.form.imageBox1.pixmap() is not None
+    text = page.form.textBoxRecognized.text()
+    import shutil
+    if shutil.which("tesseract"):
+        assert "aumentada" in text.lower()
+    else:
+        assert "Tesseract" in text
+
+
+def test_page_detection_shows_a_preview_of_the_pdf(eddie, qapp, sample_pdf):
+    ctx, window, messages = eddie
+    page = ctx.pages["page"]
+    assert page.open_pdf(str(sample_pdf))
+    assert page.form.pdfPreview.pixmap() is not None
+    assert page.form.labelPreviewPage.text() == "Página 1 / 3"
+    page.show_preview(2)
+    assert page.form.labelPreviewPage.text() == "Página 2 / 3"
+    page.show_preview(99)                                   # fuera de rango: se queda en la última
+    assert page.form.labelPreviewPage.text() == "Página 3 / 3"
+
+
+def test_info_icons_and_buttons_with_help_do_not_raise(eddie, qapp, monkeypatch):
+    """Regresión: clicked(bool) de los botones "Browse" llegaba como w=False a la lambda de la ayuda
+    ("'bool' object has no attribute 'mapToGlobal'")."""
+    import sys
+    from PySide6.QtWidgets import QAbstractButton, QFileDialog
+    ctx, window, messages = eddie
+    errors = []
+    monkeypatch.setattr(sys, "excepthook", lambda *exc: errors.append(exc[1]))
+    for name in ("getExistingDirectory",):
+        monkeypatch.setattr(QFileDialog, name, lambda *a, **k: "")
+    for name in ("getOpenFileName", "getSaveFileName"):
+        monkeypatch.setattr(QFileDialog, name, lambda *a, **k: ("", ""))
+    for page in ctx.pages.values():
+        for control in page.TOOLTIPS:
+            widget = page.form.controls.get(control)
+            if widget is None:
+                continue
+            if isinstance(widget, QAbstractButton):
+                widget.click()                                  # emite clicked(checked=False), como el usuario
+            else:
+                widget.clicked.emit()
+            qapp.processEvents()
+    assert not errors, errors

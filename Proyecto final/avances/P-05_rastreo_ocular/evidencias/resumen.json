@@ -1,0 +1,151 @@
+{
+  "avance": "P-05_rastreo_ocular",
+  "fecha": "2026-11-08T13:57:18",
+  "python": "3.13.18",
+  "sistema": "Linux 6.18.44-fc-v310",
+  "pruebas": {
+    "exit_code": 0,
+    "seconds": 9.3,
+    "passed": 94,
+    "xfailed": 1,
+    "coverage_percent": 74,
+    "coverage_threshold_80": false
+  },
+  "latencias": {
+    "modo": "simulado",
+    "ciclos": 500,
+    "ciclos_calentamiento": 10,
+    "gesto_activo": "ColorPenRecognition",
+    "ciclo_completo": {
+      "n": 500,
+      "media_ms": 0.5838,
+      "p95_ms": 1.4146,
+      "max_ms": 3.5275,
+      "sobre_8_3ms": 0
+    },
+    "por_plugin": {
+      "TextCamera": {
+        "n": 500,
+        "media_ms": 0.1143,
+        "p95_ms": 0.165,
+        "max_ms": 0.381,
+        "sobre_8_3ms": 0
+      },
+      "GestureCamera": {
+        "n": 500,
+        "media_ms": 0.2665,
+        "p95_ms": 0.341,
+        "max_ms": 3.346,
+        "sobre_8_3ms": 0
+      },
+      "ImageProcessor": {
+        "n": 500,
+        "media_ms": 0.0061,
+        "p95_ms": 0.008,
+        "max_ms": 0.08,
+        "sobre_8_3ms": 0
+      },
+      "ColorPenRecognition": {
+        "n": 500,
+        "media_ms": 0.1202,
+        "p95_ms": 0.924,
+        "max_ms": 1.283,
+        "sobre_8_3ms": 0
+      },
+      "HandSkinRecognition": {
+        "n": 500,
+        "media_ms": 0.0024,
+        "p95_ms": 0.005,
+        "max_ms": 0.052,
+        "sobre_8_3ms": 0
+      },
+      "MouseRecognition": {
+        "n": 500,
+        "media_ms": 0.0028,
+        "p95_ms": 0.003,
+        "max_ms": 0.063,
+        "sobre_8_3ms": 0
+      },
+      "EyeTrackerMock": {
+        "n": 500,
+        "media_ms": 0.0106,
+        "p95_ms": 0.013,
+        "max_ms": 0.084,
+        "sobre_8_3ms": 0
+      },
+      "GazeSession": {
+        "n": 500,
+        "media_ms": 0.0047,
+        "p95_ms": 0.006,
+        "max_ms": 0.056,
+        "sobre_8_3ms": 0
+      },
+      "ConsistencyProvider": {
+        "n": 500,
+        "media_ms": 0.01,
+        "p95_ms": 0.011,
+        "max_ms": 0.474,
+        "sobre_8_3ms": 0
+      }
+    },
+    "cumple_8_3ms_p95": true
+  },
+  "inicializacion": {
+    "TextCamera": {
+      "status": "initialized",
+      "error": null
+    },
+    "GestureCamera": {
+      "status": "initialized",
+      "error": null
+    },
+    "ImageProcessor": {
+      "status": "initialized",
+      "error": null
+    },
+    "ColorPenRecognition": {
+      "status": "initialized",
+      "error": null
+    },
+    "HandSkinRecognition": {
+      "status": "initialized",
+      "error": null
+    },
+    "MouseRecognition": {
+      "status": "initialized",
+      "error": null
+    },
+    "EyeTracker-GazePoint": {
+      "status": "disabled",
+      "error": null
+    },
+    "EyeTracker-EyeTribe": {
+      "status": "disabled",
+      "error": null
+    },
+    "EyeTracker-GazeCloud": {
+      "status": "disabled",
+      "error": null
+    },
+    "EyeTrackerMock": {
+      "status": "initialized",
+      "error": null
+    },
+    "GazeSession": {
+      "status": "initialized",
+      "error": null
+    },
+    "ConsistencyProvider": {
+      "status": "initialized",
+      "error": null
+    }
+  },
+  "capturas": [
+    "00_menu_settings.png",
+    "01_text.png",
+    "02_page.png",
+    "03_gesture_mano.png",
+    "03_gesture_lapiz.png",
+    "04_eye.png"
+  ]
+}

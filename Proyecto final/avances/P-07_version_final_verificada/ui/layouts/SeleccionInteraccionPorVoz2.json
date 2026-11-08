@@ -1,0 +1,327 @@
+{
+ "form": "SeleccionInteraccionPorVoz2",
+ "props": {
+  "toolTip1": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "toolTip2": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "AutoScaleDimensions": {
+   "raw": "new System.Drawing.SizeF(6F, 13F)"
+  },
+  "AutoScaleMode": "Font",
+  "BackColor": "#cfe9f2",
+  "ClientSize": [
+   971,
+   500
+  ],
+  "FormBorderStyle": "None",
+  "Name": "SeleccionInteraccionPorVoz2",
+  "StartPosition": "CenterScreen",
+  "Text": "SeleccionInteraccionPorVoz"
+ },
+ "events": {},
+ "controls": [
+  {
+   "name": "InteractionsSettingsPanel1",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     12,
+     94
+    ],
+    "Size": [
+     947,
+     199
+    ],
+    "TabIndex": 20
+   },
+   "children": [
+    {
+     "name": "pictureBox1",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       235,
+       34
+      ],
+      "Size": [
+       28,
+       24
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 20,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox1_Click",
+      "MouseHover": "pictureBox1_MouseHover"
+     }
+    },
+    {
+     "name": "label1",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       17,
+       36
+      ],
+      "Size": [
+       212,
+       22
+      ],
+      "TabIndex": 13,
+      "Text": "Activate voice interaction"
+     },
+     "events": {
+      "Click": "label1_Click"
+     }
+    },
+    {
+     "name": "rbtn_voz_si",
+     "type": "RadioButton",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 14.25,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       21,
+       67
+      ],
+      "Size": [
+       57,
+       28
+      ],
+      "TabIndex": 11,
+      "TabStop": true,
+      "Text": "Yes",
+      "UseVisualStyleBackColor": true
+     }
+    },
+    {
+     "name": "panel1",
+     "type": "Panel",
+     "props": {
+      "Location": [
+       338,
+       27
+      ],
+      "Size": [
+       221,
+       137
+      ],
+      "TabIndex": 19
+     },
+     "children": [
+      {
+       "name": "pictureBox2",
+       "type": "PictureBox",
+       "props": {
+        "Cursor": "Help",
+        "Image": {
+         "resource": "informationIcon"
+        },
+        "Location": [
+         190,
+         7
+        ],
+        "Size": [
+         28,
+         24
+        ],
+        "SizeMode": "Zoom",
+        "TabIndex": 21,
+        "TabStop": false
+       },
+       "events": {
+        "Click": "pictureBox2_Click",
+        "MouseHover": "pictureBox2_Click"
+       }
+      },
+      {
+       "name": "label2",
+       "type": "Label",
+       "props": {
+        "AutoSize": true,
+        "Font": {
+         "family": "IBM Plex Sans SemiBold",
+         "size": 12.75,
+         "bold": true,
+         "italic": false,
+         "underline": false
+        },
+        "ForeColor": "#00003c",
+        "Location": [
+         3,
+         9
+        ],
+        "Size": [
+         181,
+         22
+        ],
+        "TabIndex": 15,
+        "Text": "Enable button display"
+       }
+      },
+      {
+       "name": "rbtn_no_botones",
+       "type": "RadioButton",
+       "props": {
+        "AutoSize": true,
+        "Font": {
+         "family": "IBM Plex Sans",
+         "size": 14.25,
+         "bold": false,
+         "italic": false,
+         "underline": false
+        },
+        "ForeColor": "#00003c",
+        "Location": [
+         7,
+         65
+        ],
+        "Size": [
+         52,
+         28
+        ],
+        "TabIndex": 17,
+        "TabStop": true,
+        "Text": "No",
+        "UseVisualStyleBackColor": true
+       },
+       "events": {
+        "CheckedChanged": "rbtn_no_botones_CheckedChanged"
+       }
+      },
+      {
+       "name": "rbtn_Si_botones",
+       "type": "RadioButton",
+       "props": {
+        "AutoSize": true,
+        "Font": {
+         "family": "IBM Plex Sans",
+         "size": 14.25,
+         "bold": false,
+         "italic": false,
+         "underline": false
+        },
+        "ForeColor": "#00003c",
+        "Location": [
+         7,
+         41
+        ],
+        "Size": [
+         57,
+         28
+        ],
+        "TabIndex": 16,
+        "TabStop": true,
+        "Text": "Yes",
+        "UseVisualStyleBackColor": true
+       }
+      }
+     ]
+    },
+    {
+     "name": "rbtn_voz_no",
+     "type": "RadioButton",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 14.25,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       21,
+       90
+      ],
+      "Size": [
+       52,
+       28
+      ],
+      "TabIndex": 12,
+      "TabStop": true,
+      "Text": "No",
+      "UseVisualStyleBackColor": true
+     }
+    }
+   ]
+  },
+  {
+   "name": "TittlePanel",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     0,
+     0
+    ],
+    "Size": [
+     988,
+     74
+    ],
+    "TabIndex": 21
+   },
+   "children": [
+    {
+     "name": "InteractionsTittle",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 33.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       12,
+       8
+      ],
+      "Size": [
+       611,
+       58
+      ],
+      "TabIndex": 0,
+      "Text": "Interaction with web search"
+     }
+    }
+   ]
+  }
+ ],
+ "detached": [
+  {
+   "name": "components",
+   "type": "Container",
+   "props": {}
+  }
+ ],
+ "components": []
+}

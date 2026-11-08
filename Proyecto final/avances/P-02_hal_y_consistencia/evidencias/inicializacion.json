@@ -1,0 +1,10 @@
+{
+  "TextCamera": {
+    "status": "initialized",
+    "error": null
+  },
+  "ConsistencyProvider": {
+    "status": "initialized",
+    "error": null
+  }
+}

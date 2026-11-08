@@ -51,14 +51,13 @@ def run_gui(config: str) -> int:
     from app.runtime import EddieRuntime
     from app.settings_store import SettingsStore
     from ui.context import AppContext
-    from ui.form_builder import apply_light_theme, load_fonts
+    from ui.theme import apply_theme
     from ui.menu_settings import MenuSettingsWindow
 
     QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts)   # requerido por QtWebEngine
     app = QApplication(sys.argv)
     app.setApplicationName("EDDIE")
-    apply_light_theme(app)
-    load_fonts()
+    apply_theme(app)
     settings = SettingsStore()
     runtime = EddieRuntime(settings, config)
     runtime.start()

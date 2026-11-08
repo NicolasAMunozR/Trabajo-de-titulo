@@ -74,6 +74,13 @@ No se portaron las interfaces antiguas que el propio original ya no usaba (`Inte
 | Video: URL de la API de YouTube; imagen: etiquetas de Cloud Vision | Gemini propone la búsqueda de YouTube / reconoce la imagen (entrada multimodal) y se abre en el navegador embebido | Idem |
 | El término a buscar solo venía del OCR | El lector puede corregirlo en *Captured content* | Errores de OCR |
 | Cámara gestual por defecto en el índice 0 (igual que la de texto) | Índice 1 | Evita abrir la misma cámara dos veces |
+| El texto reconocido solo se veía desde la pantalla de proyección (CaptureTxt) | Botón *Recognize text* y campo con el texto reconocido en *Text recognition*; el recorte queda visible 4 s | Probar el OCR sin abrir la proyección (avance P-03) |
+| *Page detection* solo mostraba la ruta y el tamaño de página del PDF | Vista previa de la página con navegación ‹ › | Confirmar que se cargó el PDF correcto |
+| El OCR devolvía las letras vecinas que toca el resaltador ("1 aumentada e") | Se descartan los fragmentos de 1–2 caracteres que tocan el borde del resaltado (si queda al menos una palabra) y el recorte se muestra derecho | Texto reconocido limpio para buscar |
+| La ayuda de cada control se abría al hacer clic en cualquier control con `clicked`, incluidos botones y casillas | Solo los íconos de información la abren al hacer clic; los botones y casillas la muestran al pasar el mouse | Los botones entregaban `checked` a la lambda y fallaba con "'bool' object has no attribute 'mapToGlobal'" (hallazgo H-03) |
+| — | La hoja de la cámara simulada se dibuja en `initialize()`, no en el primer ciclo | Evita un pico de ~20 ms en el primer ciclo |
+| `HandSkinRecognition` rotaba siempre 180° la imagen (cámara del laboratorio montada invertida): con otra cámara la vista de calibración de la mano salía al revés y solo ese plug-in usaba coordenadas rotadas | La rotación es opcional y común a los tres plug-ins gestuales (casilla *Rotate 180°*, `rotate_180` en `plugins.json`); se aplica una vez al frame, así vista previa, coordenadas de calibración y recorte coinciden | Hallazgo de la verificación (avance P-07) |
+| `ConsistencyPlugin._save` guardaba con `saveIncr()`; con PyMuPDF 2.x, desde el segundo guardado el PDF quedaba con la xref dañada y al reabrirlo se perdían resaltados, comentarios y marcadores anteriores | Cada guardado escribe una copia completa (temporal + reemplazo) y reabre el documento; si otro programa tiene el PDF bloqueado, se informa con un mensaje claro | Hallazgo H-02 de la verificación (avance P-07) |
 
 ## 5. Fuera de alcance
 

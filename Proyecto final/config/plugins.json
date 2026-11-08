@@ -32,7 +32,7 @@
       "class": "plugins.gestures.detectors.ColorPenPlugin",
       "enabled": true,
       "dependencies": {"camera_sensor": "GestureCamera"},
-      "config": {"max_fps": 15}
+      "config": {"max_fps": 15, "rotate_180": false}
     },
     {
       "name": "HandSkinRecognition",
@@ -40,7 +40,7 @@
       "class": "plugins.gestures.detectors.HandSkinPlugin",
       "enabled": true,
       "dependencies": {"camera_sensor": "GestureCamera"},
-      "config": {"max_fps": 15}
+      "config": {"max_fps": 15, "rotate_180": false}
     },
     {
       "name": "MouseRecognition",
@@ -48,7 +48,7 @@
       "class": "plugins.gestures.detectors.MousePlugin",
       "enabled": true,
       "dependencies": {"camera_sensor": "GestureCamera"},
-      "config": {"max_fps": 15}
+      "config": {"max_fps": 15, "rotate_180": false}
     },
     {
       "name": "EyeTracker-GazePoint",

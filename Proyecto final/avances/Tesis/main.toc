@@ -1,0 +1,133 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{Resumen}{\es@scroman {i}}{chapter*.1}%
+\contentsline {chapter}{Abstract}{\es@scroman {ii}}{chapter*.2}%
+\contentsline {chapter}{\numberline {1}Introducción}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Antecedentes y motivación}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Descripción del problema}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Solución propuesta}{2}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Objetivos y alcance del proyecto}{3}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}Objetivo general}{3}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}Objetivos específicos}{4}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}Alcances y limitaciones}{4}{subsection.1.4.3}%
+\contentsline {section}{\numberline {1.5}Metodología y herramientas utilizadas}{5}{section.1.5}%
+\contentsline {subsection}{\numberline {1.5.1}Metodología}{5}{subsection.1.5.1}%
+\contentsline {subsection}{\numberline {1.5.2}Herramientas de desarrollo}{6}{subsection.1.5.2}%
+\contentsline {subsection}{\numberline {1.5.3}Ambiente de desarrollo}{7}{subsection.1.5.3}%
+\contentsline {section}{\numberline {1.6}Organización del documento}{7}{section.1.6}%
+\contentsline {chapter}{\numberline {2}Marco teórico}{8}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Marco conceptual}{8}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Lectura aumentada y realidad aumentada espacial}{8}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Percepción del documento: binarización y OCR}{8}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Rastreo ocular e interacción por la mirada}{9}{subsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.1.4}Software científico y deuda técnica}{9}{subsection.2.1.4}%
+\contentsline {subsection}{\numberline {2.1.5}Arquitectura de plugins y orquestación}{10}{subsection.2.1.5}%
+\contentsline {subsection}{\numberline {2.1.6}MECIVA PS}{10}{subsection.2.1.6}%
+\contentsline {section}{\numberline {2.2}Estado del arte}{10}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Antecedentes del proyecto (evolución histórica)}{10}{subsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.1.1}Catálogo de funcionalidades y levantamiento de la usabilidad previa}{12}{subsubsection.2.2.1.1}%
+\contentsline {subsection}{\numberline {2.2.2}Sistemas de lectura aumentada similares}{13}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}El problema de la modernización en software de investigación}{15}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Multimodal Observer como referente arquitectural}{15}{subsection.2.2.4}%
+\contentsline {chapter}{\numberline {3}Análisis}{17}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Diagnóstico}{17}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Reclasificación de los errores de EDDIE-2023}{17}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Arquitectura en C\#}{18}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Captura de requerimientos}{19}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Fuentes y etapas del proceso}{19}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Requerimientos funcionales}{20}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Requerimientos no funcionales}{22}{subsection.3.2.3}%
+\contentsline {section}{\numberline {3.3}Factibilidad}{23}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Factibilidad técnica}{23}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Factibilidad económica}{24}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Factibilidad operativa}{24}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}Prototipado}{24}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Inventario de funciones}{25}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Síntesis de la selección y método de medición}{28}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Prototipo F1: Enumeración e inicialización de cámaras}{29}{subsection.3.4.3}%
+\contentsline {paragraph}{Protocolo de validación.}{30}{paragraph*.21}%
+\contentsline {subsection}{\numberline {3.4.4}Prototipo F2: Preprocesamiento y binarización}{30}{subsection.3.4.4}%
+\contentsline {paragraph}{Protocolo de validación.}{30}{paragraph*.23}%
+\contentsline {paragraph}{Hallazgo.}{31}{paragraph*.24}%
+\contentsline {subsection}{\numberline {3.4.5}Prototipo F3: Reconocimiento óptico de caracteres}{31}{subsection.3.4.5}%
+\contentsline {paragraph}{Protocolo de validación.}{32}{paragraph*.26}%
+\contentsline {paragraph}{Hallazgo.}{32}{paragraph*.27}%
+\contentsline {subsection}{\numberline {3.4.6}Prototipo F4: Detección automática de páginas}{33}{subsection.3.4.6}%
+\contentsline {paragraph}{Protocolo de validación.}{33}{paragraph*.29}%
+\contentsline {subsection}{\numberline {3.4.7}Prototipo F5: Seguimiento de lápiz de color}{33}{subsection.3.4.7}%
+\contentsline {paragraph}{Protocolo de validación.}{34}{paragraph*.31}%
+\contentsline {paragraph}{Hallazgo.}{34}{paragraph*.32}%
+\contentsline {subsection}{\numberline {3.4.8}Prototipo F6: Segmentación de mano y apuntado}{34}{subsection.3.4.8}%
+\contentsline {paragraph}{Protocolo de validación.}{35}{paragraph*.34}%
+\contentsline {subsection}{\numberline {3.4.9}Prototipo F7: Mapeo de coordenadas}{35}{subsection.3.4.9}%
+\contentsline {paragraph}{Protocolo de validación.}{36}{paragraph*.36}%
+\contentsline {subsection}{\numberline {3.4.10}Prototipo F9: Mouse como alternativa}{36}{subsection.3.4.10}%
+\contentsline {paragraph}{Protocolo de validación.}{37}{paragraph*.38}%
+\contentsline {subsection}{\numberline {3.4.11}Prototipo F10: Comunicación con el eye tracker}{37}{subsection.3.4.11}%
+\contentsline {paragraph}{Protocolo de validación.}{38}{paragraph*.40}%
+\contentsline {subsection}{\numberline {3.4.12}Prototipo F11: Carga dinámica de plugins}{38}{subsection.3.4.12}%
+\contentsline {paragraph}{Protocolo de validación.}{39}{paragraph*.42}%
+\contentsline {subsection}{\numberline {3.4.13}Prototipo F12: Clic por permanencia de la mirada}{39}{subsection.3.4.13}%
+\contentsline {paragraph}{Protocolo de validación.}{40}{paragraph*.44}%
+\contentsline {paragraph}{Hallazgo.}{41}{paragraph*.46}%
+\contentsline {subsection}{\numberline {3.4.14}Prototipo F13: Retícula de mirada proyectada}{41}{subsection.3.4.14}%
+\contentsline {paragraph}{Protocolo de validación.}{42}{paragraph*.48}%
+\contentsline {subsection}{\numberline {3.4.15}Prototipo F14: Búsqueda de coordenadas QuadPoints}{42}{subsection.3.4.15}%
+\contentsline {paragraph}{Protocolo de validación.}{43}{paragraph*.50}%
+\contentsline {paragraph}{Hallazgo.}{43}{paragraph*.51}%
+\contentsline {subsection}{\numberline {3.4.16}Prototipo F15: Sincronización de resaltado}{43}{subsection.3.4.16}%
+\contentsline {paragraph}{Protocolo de validación.}{44}{paragraph*.53}%
+\contentsline {subsection}{\numberline {3.4.17}Prototipo F16: Sincronización de notas adhesivas}{44}{subsection.3.4.17}%
+\contentsline {paragraph}{Protocolo de validación.}{45}{paragraph*.55}%
+\contentsline {subsection}{\numberline {3.4.18}Prototipo F17: Sincronización de figuras geométricas}{45}{subsection.3.4.18}%
+\contentsline {paragraph}{Protocolo de validación.}{46}{paragraph*.57}%
+\contentsline {paragraph}{Hallazgo.}{46}{paragraph*.58}%
+\contentsline {subsection}{\numberline {3.4.19}Prototipo F24: Comandos de voz}{46}{subsection.3.4.19}%
+\contentsline {paragraph}{Protocolo de validación.}{47}{paragraph*.60}%
+\contentsline {subsection}{\numberline {3.4.20}Prototipo F25: Síntesis de voz}{47}{subsection.3.4.20}%
+\contentsline {paragraph}{Protocolo de validación.}{48}{paragraph*.62}%
+\contentsline {subsection}{\numberline {3.4.21}Prototipo F27: Banda de resaltado proyectada}{48}{subsection.3.4.21}%
+\contentsline {paragraph}{Protocolo de validación.}{48}{paragraph*.64}%
+\contentsline {subsection}{\numberline {3.4.22}Síntesis de los prototipos}{48}{subsection.3.4.22}%
+\contentsline {chapter}{\numberline {4}Diseño y aspectos de implementación}{50}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Arquitectura general}{50}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Contratos de plugin}{51}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Núcleo orquestador}{52}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Ciclo de vida}{52}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Configuración declarativa}{53}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Capa de abstracción de hardware}{54}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Integración con la interfaz}{54}{subsection.4.3.4}%
+\contentsline {section}{\numberline {4.4}Módulos integrados}{54}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Diseño de la interfaz}{55}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Iteraciones de desarrollo}{58}{section.4.6}%
+\contentsline {chapter}{\numberline {5}Evaluación}{59}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Plan de evaluación}{59}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Pruebas de software}{60}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Pruebas automatizadas y cobertura}{60}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Latencia del orquestador}{61}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Aislamiento de fallos}{62}{subsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.2.4}Matriz de trazabilidad}{62}{subsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.2.5}Hallazgos de la verificación}{63}{subsection.5.2.5}%
+\contentsline {section}{\numberline {5.3}Verificación y validación con MECIVA PS}{64}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Protocolo}{64}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Resultados}{65}{subsection.5.3.2}%
+\contentsline {section}{\numberline {5.4}Pruebas de aceptación}{65}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Síntesis de la evaluación}{66}{section.5.5}%
+\contentsline {chapter}{\numberline {6}Conclusiones}{68}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Cumplimiento de los objetivos}{68}{section.6.1}%
+\contentsline {paragraph}{OE1: diagnóstico y factibilidad.}{68}{paragraph*.78}%
+\contentsline {paragraph}{OE2: diseño del núcleo.}{68}{paragraph*.79}%
+\contentsline {paragraph}{OE3: implementación e integración.}{68}{paragraph*.80}%
+\contentsline {paragraph}{OE4: validación.}{69}{paragraph*.81}%
+\contentsline {section}{\numberline {6.2}Respuesta a la pregunta de investigación}{69}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Limitaciones}{69}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Trabajo futuro}{70}{section.6.4}%
+\contentsline {chapter}{Glosario}{71}{chapter*.82}%
+\contentsline {chapter}{\numberline {A}Errores de EDDIE-2023 y plantilla de trazabilidad}{73}{appendix.Alph1}%
+\contentsline {chapter}{\numberline {B}Plan de trabajo}{75}{appendix.Alph2}%
+\contentsline {chapter}{\numberline {A}Fichas de los avances}{76}{appendix.Alph1}%
+\contentsline {chapter}{\numberline {B}Mediciones de los prototipos}{82}{appendix.Alph2}%
+\contentsline {chapter}{\numberline {C}Comparación de la interfaz}{84}{appendix.Alph3}%
+\contentsline {chapter}{\numberline {D}Manual de instalación y uso}{86}{appendix.Alph4}%
+\contentsline {section}{\numberline {D.1}Instalación}{86}{section.Alph4.1}%
+\contentsline {section}{\numberline {D.2}Ejecución}{86}{section.Alph4.2}%
+\contentsline {section}{\numberline {D.3}Uso}{86}{section.Alph4.3}%

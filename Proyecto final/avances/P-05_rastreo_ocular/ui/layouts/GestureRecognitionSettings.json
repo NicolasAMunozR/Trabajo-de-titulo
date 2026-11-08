@@ -1,0 +1,1100 @@
+{
+ "form": "GestureRecognitionSettings",
+ "props": {
+  "toolTip1": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "toolTip2": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "AutoScaleDimensions": {
+   "raw": "new System.Drawing.SizeF(6F, 13F)"
+  },
+  "AutoScaleMode": "Font",
+  "BackColor": "#cfe9f2",
+  "ClientSize": [
+   971,
+   500
+  ],
+  "FormBorderStyle": "None",
+  "KeyPreview": true,
+  "Name": "GestureRecognitionSettings",
+  "Text": "Configuración"
+ },
+ "events": {
+  "Load": "GestureRecognitionSettings_Load"
+ },
+ "controls": [
+  {
+   "name": "TittlePanel",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     0,
+     0
+    ],
+    "Size": [
+     988,
+     74
+    ],
+    "TabIndex": 167
+   },
+   "children": [
+    {
+     "name": "InteractionsTittle",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 33.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       12,
+       8
+      ],
+      "Size": [
+       435,
+       58
+      ],
+      "TabIndex": 0,
+      "Text": "Gesture recognition"
+     }
+    }
+   ]
+  },
+  {
+   "name": "InteractionsSettingsPanel1",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     12,
+     94
+    ],
+    "Size": [
+     947,
+     417
+    ],
+    "TabIndex": 166
+   },
+   "events": {
+    "Paint": "InteractionsSettingsPanel1_Paint"
+   },
+   "children": [
+    {
+     "name": "pictureBox4",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       110,
+       295
+      ],
+      "Size": [
+       20,
+       20
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 172,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox4_Click",
+      "MouseHover": "pictureBox4_Click"
+     }
+    },
+    {
+     "name": "pictureBox2",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       270,
+       8
+      ],
+      "Size": [
+       20,
+       20
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 170,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox2_Click",
+      "MouseHover": "pictureBox2_Click"
+     }
+    },
+    {
+     "name": "pictureBox1",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       879,
+       87
+      ],
+      "Size": [
+       20,
+       20
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 169,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox1_Click",
+      "MouseHover": "pictureBox1_Click"
+     }
+    },
+    {
+     "name": "buttonModified3",
+     "type": "ButtonModified",
+     "props": {
+      "BackColor": "#1c9dec",
+      "Cursor": "Hand",
+      "FlatAppearance.BorderColor": "#1c9dec",
+      "FlatAppearance.BorderSize": 5,
+      "FlatAppearance.MouseDownBackColor": "#0057ca",
+      "FlatAppearance.MouseOverBackColor": "#00caca",
+      "FlatStyle": "Flat",
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#f8f5fa",
+      "Location": [
+       773,
+       296
+      ],
+      "Size": [
+       157,
+       47
+      ],
+      "TabIndex": 168,
+      "Text": "Save calibration",
+      "UseVisualStyleBackColor": false
+     },
+     "events": {
+      "Click": "buttonSetting_Click"
+     }
+    },
+    {
+     "name": "buttonModified2",
+     "type": "ButtonModified",
+     "props": {
+      "BackColor": "#1c9dec",
+      "Cursor": "Hand",
+      "FlatAppearance.BorderColor": "#1c9dec",
+      "FlatAppearance.BorderSize": 5,
+      "FlatAppearance.MouseDownBackColor": "#0057ca",
+      "FlatAppearance.MouseOverBackColor": "#00caca",
+      "FlatStyle": "Flat",
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#f8f5fa",
+      "Location": [
+       648,
+       14
+      ],
+      "Size": [
+       140,
+       63
+      ],
+      "TabIndex": 167,
+      "Text": "Capture",
+      "UseVisualStyleBackColor": false
+     },
+     "events": {
+      "Click": "button4_Click"
+     }
+    },
+    {
+     "name": "label6",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       14,
+       296
+      ],
+      "Size": [
+       99,
+       22
+      ],
+      "TabIndex": 166,
+      "Text": "Calibration"
+     }
+    },
+    {
+     "name": "ComboBoxCameraList2",
+     "type": "ComboBox",
+     "props": {
+      "DropDownStyle": "DropDownList",
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       18,
+       31
+      ],
+      "Size": [
+       226,
+       25
+      ],
+      "TabIndex": 5
+     },
+     "events": {
+      "SelectedIndexChanged": "ComboCameras_SelectedIndexChangedGesture"
+     }
+    },
+    {
+     "name": "buttonModified1",
+     "type": "ButtonModified",
+     "props": {
+      "BackColor": "#1c9dec",
+      "Cursor": "Hand",
+      "FlatAppearance.BorderColor": "#1c9dec",
+      "FlatAppearance.BorderSize": 5,
+      "FlatAppearance.MouseDownBackColor": "#0057ca",
+      "FlatAppearance.MouseOverBackColor": "#00caca",
+      "FlatStyle": "Flat",
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#f8f5fa",
+      "Location": [
+       794,
+       14
+      ],
+      "Size": [
+       137,
+       63
+      ],
+      "TabIndex": 165,
+      "Text": "Stop Recognition",
+      "UseVisualStyleBackColor": false
+     },
+     "events": {
+      "Click": "detenerToolStripMenuItem_Click"
+     }
+    },
+    {
+     "name": "label1",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       15,
+       6
+      ],
+      "Size": [
+       255,
+       22
+      ],
+      "TabIndex": 8,
+      "Text": "Camera for gesture recognition"
+     },
+     "events": {
+      "Click": "label1_Click"
+     }
+    },
+    {
+     "name": "StartProjectionButtonModified",
+     "type": "ButtonModified",
+     "props": {
+      "BackColor": "#1c9dec",
+      "Cursor": "Hand",
+      "FlatAppearance.BorderColor": "#1c9dec",
+      "FlatAppearance.BorderSize": 5,
+      "FlatAppearance.MouseDownBackColor": "#0057ca",
+      "FlatAppearance.MouseOverBackColor": "#00caca",
+      "FlatStyle": "Flat",
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#f8f5fa",
+      "Location": [
+       502,
+       14
+      ],
+      "Size": [
+       140,
+       63
+      ],
+      "TabIndex": 164,
+      "Text": "Start Recognition",
+      "UseVisualStyleBackColor": false
+     },
+     "events": {
+      "Click": "comenzarToolStripMenuItem_Click"
+     }
+    },
+    {
+     "name": "checkBoxX",
+     "type": "CheckBox",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       19,
+       320
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Size": [
+       111,
+       23
+      ],
+      "TabIndex": 92,
+      "Text": "Transform X",
+      "UseVisualStyleBackColor": true
+     },
+     "events": {
+      "CheckedChanged": "checkBoxX_CheckedChanged"
+     }
+    },
+    {
+     "name": "label4",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       300,
+       6
+      ],
+      "Size": [
+       67,
+       22
+      ],
+      "TabIndex": 163,
+      "Text": "Plug-in"
+     },
+     "events": {
+      "Click": "label4_Click"
+     }
+    },
+    {
+     "name": "checkBoxY",
+     "type": "CheckBox",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       414,
+       316
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Size": [
+       111,
+       23
+      ],
+      "TabIndex": 93,
+      "Text": "Transform Y",
+      "UseVisualStyleBackColor": true
+     }
+    },
+    {
+     "name": "comboBox1",
+     "type": "ComboBox",
+     "props": {
+      "DropDownStyle": "DropDownList",
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       304,
+       31
+      ],
+      "Size": [
+       180,
+       25
+      ],
+      "TabIndex": 162
+     },
+     "events": {
+      "SelectedIndexChanged": "comboBox1_SelectedIndexChanged"
+     }
+    },
+    {
+     "name": "numericUpDownSEndX",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       317,
+       350
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 300000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 94,
+      "Value": 1
+     }
+    },
+    {
+     "name": "checkBoxMouse",
+     "type": "CheckBox",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       746,
+       88
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Size": [
+       130,
+       23
+      ],
+      "TabIndex": 161,
+      "Text": "Recognition on",
+      "UseVisualStyleBackColor": true
+     }
+    },
+    {
+     "name": "numericUpDownSStartX",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       118,
+       350
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 300000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 95,
+      "Value": 1
+     }
+    },
+    {
+     "name": "numericUpDownAEndX",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       317,
+       377
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 3000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 96,
+      "Value": 300
+     }
+    },
+    {
+     "name": "numericUpDownYGestual",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       155,
+       63
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 3000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 139,
+      "Value": 720
+     }
+    },
+    {
+     "name": "numericUpDownAStartX",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       118,
+       377
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 3000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 97,
+      "Value": 600
+     }
+    },
+    {
+     "name": "numericUpDownXGestual",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       18,
+       61
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 3000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 138,
+      "Value": 960
+     }
+    },
+    {
+     "name": "label41",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       15,
+       351
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0)"
+      },
+      "Size": [
+       106,
+       19
+      ],
+      "TabIndex": 98,
+      "Text": "Sensor Start X"
+     },
+     "events": {
+      "Click": "label41_Click"
+     }
+    },
+    {
+     "name": "label5",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Location": [
+       124,
+       65
+      ],
+      "Size": [
+       14,
+       13
+      ],
+      "TabIndex": 135,
+      "Text": "X"
+     }
+    },
+    {
+     "name": "label40",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       211,
+       351
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0)"
+      },
+      "Size": [
+       100,
+       19
+      ],
+      "TabIndex": 99,
+      "Text": "Sensor End X"
+     }
+    },
+    {
+     "name": "imageBox4",
+     "type": "ImageBox",
+     "props": {
+      "BorderStyle": "FixedSingle",
+      "Location": [
+       376,
+       88
+      ],
+      "Size": [
+       352,
+       200
+      ],
+      "SizeMode": "StretchImage",
+      "TabIndex": 126,
+      "TabStop": false
+     }
+    },
+    {
+     "name": "label39",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       15,
+       377
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0)"
+      },
+      "Size": [
+       87,
+       19
+      ],
+      "TabIndex": 100,
+      "Text": "App Start X"
+     },
+     "events": {
+      "Click": "label39_Click"
+     }
+    },
+    {
+     "name": "imageBox2",
+     "type": "ImageBox",
+     "props": {
+      "BorderStyle": "FixedSingle",
+      "Location": [
+       18,
+       88
+      ],
+      "Size": [
+       352,
+       200
+      ],
+      "SizeMode": "StretchImage",
+      "TabIndex": 124,
+      "TabStop": false
+     }
+    },
+    {
+     "name": "label38",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       211,
+       377
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0)"
+      },
+      "Size": [
+       81,
+       19
+      ],
+      "TabIndex": 101,
+      "Text": "App End X"
+     }
+    },
+    {
+     "name": "label3",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       593,
+       320
+      ],
+      "Size": [
+       69,
+       19
+      ],
+      "TabIndex": 122,
+      "Text": "Sensor Y"
+     }
+    },
+    {
+     "name": "numericUpDownSEndY",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       717,
+       350
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 300000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 102,
+      "Value": 1
+     }
+    },
+    {
+     "name": "label2",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       186,
+       320
+      ],
+      "Size": [
+       69,
+       19
+      ],
+      "TabIndex": 121,
+      "Text": "Sensor X"
+     }
+    },
+    {
+     "name": "numericUpDownSStartY",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       513,
+       350
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 300000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 103,
+      "Value": 1
+     }
+    },
+    {
+     "name": "textBoxY",
+     "type": "TextBox",
+     "props": {
+      "Location": [
+       668,
+       319
+      ],
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 120
+     }
+    },
+    {
+     "name": "numericUpDownAEndY",
+     "type": "NumericUpDown",
+     "props": {
+      "BackColor": "@Window",
+      "ForeColor": "@WindowText",
+      "Location": [
+       717,
+       377
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 3000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 104,
+      "Value": 300
+     }
+    },
+    {
+     "name": "textBoxX",
+     "type": "TextBox",
+     "props": {
+      "Location": [
+       280,
+       319
+      ],
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 119
+     }
+    },
+    {
+     "name": "numericUpDownAStartY",
+     "type": "NumericUpDown",
+     "props": {
+      "Location": [
+       513,
+       377
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0, 2, 0, 2)"
+      },
+      "Maximum": 3000,
+      "Minimum": -3000,
+      "Size": [
+       90,
+       20
+      ],
+      "TabIndex": 105,
+      "Value": 600
+     }
+    },
+    {
+     "name": "label54",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       410,
+       351
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0)"
+      },
+      "Size": [
+       106,
+       19
+      ],
+      "TabIndex": 106,
+      "Text": "Sensor Start Y"
+     }
+    },
+    {
+     "name": "label51",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       612,
+       377
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0)"
+      },
+      "Size": [
+       81,
+       19
+      ],
+      "TabIndex": 109,
+      "Text": "App End Y"
+     }
+    },
+    {
+     "name": "label53",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       612,
+       351
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0)"
+      },
+      "Size": [
+       100,
+       19
+      ],
+      "TabIndex": 107,
+      "Text": "Sensor End Y"
+     }
+    },
+    {
+     "name": "label52",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 10.75,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       410,
+       377
+      ],
+      "Margin": {
+       "raw": "new System.Windows.Forms.Padding(0)"
+      },
+      "Size": [
+       87,
+       19
+      ],
+      "TabIndex": 108,
+      "Text": "App Start Y"
+     }
+    }
+   ]
+  }
+ ],
+ "detached": [
+  {
+   "name": "components",
+   "type": "Container",
+   "props": {}
+  }
+ ],
+ "components": []
+}

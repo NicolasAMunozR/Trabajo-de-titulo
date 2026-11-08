@@ -70,6 +70,20 @@ def test_ocr_reads_highlighted_word(frames):
     assert "palabra" in plugin.recognize_highlighted_text()["text"].lower()
 
 
+@pytest.mark.skipif(os.system("tesseract --version >/dev/null 2>&1") != 0
+                    and os.system("tesseract --version >NUL 2>&1") != 0, reason="Tesseract no instalado")
+def test_ocr_drops_letter_fragments_cut_by_the_highlight():
+    """El resaltado toca letras de las palabras vecinas: no deben aparecer como "1 aumentada e"."""
+    camera = MockCameraSensor()
+    camera.initialize({"scene": "page"})
+    plugin = ImageProcessorPlugin()
+    plugin.set_camera_sensor(camera)
+    plugin.initialize({"ocr_language": "spa+eng"})
+    result = plugin.recognize_highlighted_text()
+    assert result["text"].lower() == "aumentada"
+    assert result["upright_crop"] is not None
+
+
 def test_precision_recall_metric():
     plugin = ImageProcessorPlugin()
     plugin._last_detected_words = ["lectura", "aumentada", "ruido"]
@@ -125,6 +139,40 @@ def test_hand_skin_detects_skin_blob():
     cv2.ellipse(frame, (320, 260), (90, 130), 0, 0, 360, (120, 160, 220), -1)   # tono piel (BGR)
     plugin = _gesture(HandSkinPlugin, frame)
     assert plugin.execute()["gesture"] == "point"
+
+
+def _skin_frame_top_left() -> np.ndarray:
+    frame = np.full((480, 640, 3), 30, np.uint8)
+    cv2.ellipse(frame, (140, 110), (60, 80), 0, 0, 360, (120, 160, 220), -1)   # mano arriba a la izquierda
+    cv2.rectangle(frame, (590, 440), (610, 460), (255, 0, 0), -1)              # marca azul abajo a la derecha
+    return frame
+
+
+@pytest.mark.parametrize("cls", [HandSkinPlugin, ColorPenPlugin])
+def test_gesture_preview_keeps_camera_orientation_by_default(cls):
+    """Regresión: la vista de calibración de Hand Skin salía rotada 180° respecto de la cámara."""
+    frame = _skin_frame_top_left()
+    cv2.circle(frame, (140, 110), 10, (40, 40, 255), -1)            # punta luminosa para Color Pen
+    plugin = _gesture(cls, frame, processing_scale=1.0)
+    out = plugin.execute()
+    assert out["gesture"] == "point"
+    assert out["sensor_x"] < 320 and out["sensor_y"] < 240          # sigue arriba a la izquierda
+    preview = plugin.get_preview_frame()
+    assert preview.shape == frame.shape
+    assert preview[450, 600].tolist() == [255, 0, 0]                 # la marca sigue abajo a la derecha
+
+
+def test_rotate_180_is_optional_and_shared_by_preview_coordinates_and_capture():
+    frame = _skin_frame_top_left()
+    plugin = _gesture(HandSkinPlugin, frame, processing_scale=1.0, rotate_180=True)
+    out = plugin.execute()
+    assert out["sensor_x"] > 320 and out["sensor_y"] > 240          # cámara montada invertida
+    assert plugin.get_preview_frame()[480 - 1 - 450, 640 - 1 - 600].tolist() == [255, 0, 0]
+    crop = plugin.capture_selection()
+    assert crop.shape == frame.shape and crop[480 - 1 - 450, 640 - 1 - 600].tolist() == [255, 0, 0]
+    plugin.set_rotate_180(False)
+    plugin._last_processed = 0
+    assert plugin.execute()["sensor_y"] < 240
 
 
 def test_selection_start_end_rectangle(frames):
@@ -193,6 +241,39 @@ def test_physical_figures_become_digital_figures(sample_pdf, frames):
     figures = plugin.get_figures(1, (400, 450))
     assert len(figures["rectangulos"]) + len(figures["circulos"]) == 2
     assert all(0 <= f["x"] <= 400 for f in figures["rectangulos"] + figures["circulos"])
+
+
+def test_successive_saves_keep_every_annotation_on_disk(sample_pdf, frames):
+    """Regresión H-02: con saveIncr() el segundo guardado dañaba el PDF y se perdían los cambios previos."""
+    plugin = _consistency(sample_pdf)
+    assert plugin.add_highlight(Annotation(1, 0.1, 0.1, 0.5, 0.15, "highlight", "lectura"))
+    plugin.add_bookmark("Introducción", 1)
+    assert plugin.sync_comments_from_frame(frames["comment"], 2) == 1
+    assert plugin.sync_figures_from_frame(frames["figures"], 3) == 2
+    plugin.release()
+    with pymupdf.open(sample_pdf) as document:
+        assert not document.is_repaired
+        assert [len(list(page.annots())) for page in document] == [1, 1, 2]
+        assert document.get_toc() == [[1, "Introducción", 1]]
+
+
+def test_locked_pdf_reports_a_clear_error_and_keeps_working(sample_pdf, monkeypatch):
+    """Si el PDF está bloqueado por otro programa (Windows), se informa y el plugin sigue utilizable."""
+    from pathlib import Path
+    plugin = _consistency(sample_pdf)
+
+    def locked(self, target):
+        raise PermissionError("archivo en uso")
+
+    monkeypatch.setattr(Path, "replace", locked)
+    monkeypatch.setattr("plugins.consistency_plugin.time.sleep", lambda s: None)
+    with pytest.raises(RuntimeError, match="otro programa"):
+        plugin.add_bookmark("Introducción", 1)
+    monkeypatch.undo()
+    assert plugin.get_bookmarks() == []                       # el estado coincide con el archivo en disco
+    plugin.add_bookmark("Introducción", 1)
+    assert plugin.get_bookmarks() == ["Introducción Pag.1"]
+    assert not (sample_pdf.parent / (sample_pdf.name + ".tmp")).exists()
 
 
 def test_missing_pdf_is_reported_not_crashing():
@@ -297,6 +378,17 @@ def test_device_factory_switches_to_simulated(monkeypatch):
     monkeypatch.setenv("EDDIE_DEVICE_MODE", "sim")
     assert DeviceFactory.resolve(conf) == conf["simulated_class"]
     assert DeviceFactory.resolve({**conf, "device_mode": "real"}) == conf["class"]
+
+
+def test_mock_page_scene_is_ready_after_initialize():
+    """La hoja simulada se dibuja en initialize(): el primer ciclo ya no tiene un pico de ~20 ms."""
+    camera = MockCameraSensor()
+    camera.initialize({"scene": "page"})
+    assert camera._still is not None
+    import time
+    start = time.perf_counter()
+    camera.capture_frame()
+    assert (time.perf_counter() - start) * 1000 < 8.3
 
 
 def test_mock_camera_page_scene_contains_highlight():

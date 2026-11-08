@@ -1,0 +1,48 @@
+{
+  "_comentario": "Avance P-01: núcleo orquestador + contratos. Plugins de prueba y dispositivos simulados; todos se cargan con un único mecanismo (PluginLoader/importlib).",
+  "plugins": [
+    {
+      "name": "TextCamera",
+      "label": "Cámara simulada (hoja con resaltado)",
+      "class": "hardware.mock_devices.MockCameraSensor",
+      "enabled": true,
+      "config": {"camera_index": 0, "width": 640, "height": 480, "scene": "page"}
+    },
+    {
+      "name": "FrameStatistics",
+      "label": "Consumidor de frames (inyección de dependencia)",
+      "class": "plugins.demo_plugins.FrameStatisticsPlugin",
+      "enabled": true,
+      "dependencies": {"camera_sensor": "TextCamera"},
+      "config": {}
+    },
+    {
+      "name": "EyeTrackerMock",
+      "label": "Eye tracker simulado (trayectoria de lectura)",
+      "class": "hardware.mock_devices.EyeTrackerMock",
+      "enabled": true,
+      "config": {"source": "synthetic"}
+    },
+    {
+      "name": "FaultInjection",
+      "label": "Plugin que falla cada 10 ciclos (aislamiento de fallos)",
+      "class": "plugins.demo_plugins.FaultInjectionPlugin",
+      "enabled": true,
+      "config": {"fail_every": 10}
+    },
+    {
+      "name": "PluginInexistente",
+      "label": "Entrada con clase inexistente (equivale a la DLL faltante E38/E50 del C#)",
+      "class": "plugins.no_existe.PluginQueNoExiste",
+      "enabled": true,
+      "config": {}
+    },
+    {
+      "name": "CycleSummary",
+      "label": "Consumidor de resultados del ciclo",
+      "class": "plugins.demo_plugins.CycleSummaryPlugin",
+      "enabled": true,
+      "config": {}
+    }
+  ]
+}

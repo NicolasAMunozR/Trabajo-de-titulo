@@ -15,7 +15,7 @@ from PySide6.QtCore import QPoint, QPointF, QRect, QRectF, Qt
 from PySide6.QtGui import QColor, QGuiApplication, QPainter, QPen, QPixmap
 from PySide6.QtWidgets import QFrame, QWidget
 
-from ui.form_builder import build_form
+from ui.modern_forms import build_modern
 
 
 @dataclass
@@ -163,14 +163,13 @@ class RecentSearchItem(QFrame):
     def __init__(self, date_time: str, term: str, service: str) -> None:
         super().__init__()
         self.setObjectName("busquedasRecientes2")
-        form = build_form("busquedasRecientes2", self, apply_form_props=False)
-        self.setFixedSize(242, 93)
-        self.setStyleSheet("QFrame#busquedasRecientes2{border:1px solid #000000;background:#f0f0f0;}")
-        form.lbl_fecha_hora.setText(date_time)
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        form = build_modern("busquedasRecientes2", self)
+        self.setStyleSheet("QFrame#busquedasRecientes2{border:none;border-radius:8px;background:#FFFFFF;}")
+        form.lbl_fecha_hora.setText(date_time.split("-")[-1][:5] if "-" in date_time else date_time)
+        form.lbl_fecha_hora.setToolTip(date_time)
         form.lbl_palabraBuscada.setText(term)
         form.lbl_Api.setText(service)
-        for label in (form.lbl_fecha_hora, form.lbl_palabraBuscada, form.lbl_Api):
-            label.adjustSize()
         self.form = form
 
 

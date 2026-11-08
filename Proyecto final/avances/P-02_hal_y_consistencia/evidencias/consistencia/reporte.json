@@ -1,0 +1,130 @@
+{
+  "initialization": {
+    "TextCamera": {
+      "status": "initialized",
+      "error": null
+    },
+    "ConsistencyProvider": {
+      "status": "initialized",
+      "error": null
+    }
+  },
+  "calls": [
+    {
+      "method": "search_text",
+      "ok": true,
+      "error": null,
+      "latency_ms": 4.871,
+      "value": [
+        2
+      ]
+    },
+    {
+      "method": "add_highlight",
+      "ok": true,
+      "error": null,
+      "latency_ms": 1.572,
+      "value": true
+    },
+    {
+      "method": "add_bookmark",
+      "ok": true,
+      "error": null,
+      "latency_ms": 0.618,
+      "value": null
+    },
+    {
+      "method": "sync_bookmark_from_frame",
+      "ok": true,
+      "error": null,
+      "latency_ms": 3.786,
+      "value": true
+    },
+    {
+      "method": "sync_comments_from_frame",
+      "ok": true,
+      "error": null,
+      "latency_ms": 2.709,
+      "value": 1
+    },
+    {
+      "method": "sync_figures_from_frame",
+      "ok": true,
+      "error": null,
+      "latency_ms": 3.828,
+      "value": 2
+    },
+    {
+      "method": "get_bookmarks",
+      "ok": true,
+      "error": null,
+      "latency_ms": 0.267,
+      "value": [
+        "Introducción Pag.1",
+        "Marcador físico página 2 Pag.2"
+      ]
+    },
+    {
+      "method": "get_comments",
+      "ok": true,
+      "error": null,
+      "latency_ms": 0.252,
+      "value": [
+        {
+          "content": "Comentario físico 1 (pág. 2)",
+          "page": 2,
+          "x": 36.0,
+          "y": 36.0
+        }
+      ]
+    },
+    {
+      "method": "get_figures",
+      "ok": true,
+      "error": null,
+      "latency_ms": 0.131,
+      "value": {
+        "rectangulos": [
+          {
+            "x": 234.327731092437,
+            "y": 108.21556036942361,
+            "width": 119.46953781512606,
+            "height": 180.13138578510058
+          }
+        ],
+        "circulos": [
+          {
+            "x": 83.70273109243698,
+            "y": 165.40305167082653,
+            "width": 82.59453781512606,
+            "height": 121.06887926115276
+          }
+        ]
+      }
+    },
+    {
+      "method": "search_text",
+      "ok": true,
+      "error": null,
+      "latency_ms": 0.002,
+      "value": []
+    }
+  ],
+  "persistencia": {
+    "anotaciones_por_pagina": [
+      0,
+      0,
+      2
+    ],
+    "marcadores": [],
+    "pdf_reparado_al_abrir": true,
+    "esperado": {
+      "anotaciones_por_pagina": [
+        1,
+        1,
+        2
+      ],
+      "marcadores": 2
+    }
+  }
+}

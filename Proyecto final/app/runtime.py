@@ -1,14 +1,8 @@
 """
-app/runtime.py
-==============
-Puente entre el OrchestratorCore y la interfaz Qt.
-
-  - Un QTimer ejecuta orchestrator.execute_cycle() (por defecto 30 Hz) en el hilo de la
-    interfaz; los sensores capturan en hilos propios, así un ciclo no se bloquea.
-  - Las acciones bajo demanda (OCR, LLM, PDF, voz) se ejecutan con run_async() en un
-    QThreadPool mediante OrchestratorCore.invoke(), y el resultado vuelve a la interfaz
-    por señal. Esto reemplaza los Thread/LoadingBox ad hoc del C#.
-  - Cada invocación queda en la traza JSONL (logs/) para la evaluación de la tesis.
+Puente entre el OrchestratorCore y la interfaz visual.
+Un QTimer ejecuta orchestrator.execute_cycle() (por defecto 30 Hz) en el hilo de la interfaz; los sensores capturan en hilos propios, así un ciclo no se bloquea.
+Las acciones bajo demanda (OCR, LLM, PDF, voz) se ejecutan con run_async() en un QThreadPool mediante OrchestratorCore.invoke(), y el resultado vuelve a la interfaz por señal. Esto reemplaza los Thread/LoadingBox ad hoc del C#.
+Cada invocación queda en la traza JSONL (logs/) para la evaluación próxima.
 """
 import logging
 from pathlib import Path
@@ -22,23 +16,24 @@ from orchestrator.orchestrator_core import InvocationResult, OrchestratorCore
 
 logger = logging.getLogger(__name__)
 
-
+# Clase auxiliar para emitir señales desde hilos de trabajo
 class _Signals(QObject):
-    done = Signal(object, object)          # (callback, InvocationResult)
+    done = Signal(object, object)          # (callback, resultado de invocación)
 
-
+# Clase auxiliar para ejecutar invocaciones en un hilo de trabajo
 class _Job(QRunnable):
+    # Constructor de la tarea de invocación
     def __init__(self, runtime: "EddieRuntime", plugin: str, method: str, args: tuple, kwargs: dict,
                  callback: Optional[Callable[[InvocationResult], None]]) -> None:
         super().__init__()
         self._runtime, self._plugin, self._method = runtime, plugin, method
         self._args, self._kwargs, self._callback = args, kwargs, callback
-
+    # Ejecuta la invocación y emite la señal de resultado
     def run(self) -> None:
         result = self._runtime.invoke(self._plugin, self._method, *self._args, **self._kwargs)
         self._runtime._signals.done.emit(self._callback, result)
 
-
+# Clase principal que conecta la interfaz con el OrchestratorCore
 class EddieRuntime(QObject):
     cycle = Signal(dict)                    # resultados de cada ciclo del orquestador
     started = Signal(dict)                  # reporte de inicialización
@@ -63,7 +58,7 @@ class EddieRuntime(QObject):
             logger.warning("No se pudo crear la traza de ejecución: %s", exc)
         self._running = False
 
-    # ------------------------------------------------------------------ ciclo de vida
+    # ciclo de vida
     def start(self) -> bool:
         ok = self.orchestrator.initialize()
         report = self.orchestrator.initialization_report

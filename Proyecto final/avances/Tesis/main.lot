@@ -1,0 +1,65 @@
+\babel@toc {spanish}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Síntesis de la evolución histórica del sistema EDDIE a través de seis memorias de título sucesivas.}}{12}{table.caption.7}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces Comparación de sistemas de lectura aumentada.}}{15}{table.caption.9}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {3.1}{\ignorespaces Reclasificación por causa de los 67 errores documentados por \citet {ibaceta2023}.}}{18}{table.caption.11}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Requerimientos funcionales de EDDIE por módulo.}}{20}{table.3.2}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Requerimientos no funcionales y su criterio de aceptación.}}{23}{table.3.3}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces Funciones del subsistema de procesamiento de imágenes y visión computacional.}}{25}{table.caption.13}%
+\contentsline {table}{\numberline {3.5}{\ignorespaces Funciones del subsistema de reconocimiento gestual.}}{26}{table.caption.14}%
+\contentsline {table}{\numberline {3.6}{\ignorespaces Funciones del subsistema de rastreo ocular.}}{26}{table.caption.15}%
+\contentsline {table}{\numberline {3.7}{\ignorespaces Funciones del subsistema de consistencia físico-digital.}}{27}{table.caption.16}%
+\contentsline {table}{\numberline {3.8}{\ignorespaces Funciones del subsistema de búsqueda.}}{27}{table.caption.17}%
+\contentsline {table}{\numberline {3.9}{\ignorespaces Funciones del subsistema de voz.}}{28}{table.caption.18}%
+\contentsline {table}{\numberline {3.10}{\ignorespaces Funciones del subsistema de presentación, proyección y registro.}}{28}{table.caption.19}%
+\contentsline {table}{\numberline {3.11}{\ignorespaces Ficha de validación del prototipo: Enumeración e inicialización de cámaras.}}{29}{table.caption.20}%
+\contentsline {table}{\numberline {3.12}{\ignorespaces Ficha de validación del prototipo: Preprocesamiento y binarización.}}{30}{table.caption.22}%
+\contentsline {table}{\numberline {3.13}{\ignorespaces Ficha de validación del prototipo: Reconocimiento óptico de caracteres.}}{32}{table.caption.25}%
+\contentsline {table}{\numberline {3.14}{\ignorespaces Ficha de validación del prototipo: Detección automática de páginas.}}{33}{table.caption.28}%
+\contentsline {table}{\numberline {3.15}{\ignorespaces Ficha de validación del prototipo: Seguimiento de lápiz de color.}}{34}{table.caption.30}%
+\contentsline {table}{\numberline {3.16}{\ignorespaces Ficha de validación del prototipo: Segmentación de mano y apuntado.}}{35}{table.caption.33}%
+\contentsline {table}{\numberline {3.17}{\ignorespaces Ficha de validación del prototipo: Mapeo de coordenadas (homografía).}}{36}{table.caption.35}%
+\contentsline {table}{\numberline {3.18}{\ignorespaces Ficha de validación del prototipo: Mouse como alternativa.}}{37}{table.caption.37}%
+\contentsline {table}{\numberline {3.19}{\ignorespaces Ficha de validación del prototipo: Comunicación con el eye tracker.}}{38}{table.caption.39}%
+\contentsline {table}{\numberline {3.20}{\ignorespaces Ficha de validación del prototipo: Carga dinámica de plugins.}}{39}{table.caption.41}%
+\contentsline {table}{\numberline {3.21}{\ignorespaces Ficha de validación del prototipo: Clic por permanencia de la mirada.}}{40}{table.caption.43}%
+\contentsline {table}{\numberline {3.22}{\ignorespaces Barrido de los parámetros del clic por permanencia ($\sigma =10$~px).}}{41}{table.caption.45}%
+\contentsline {table}{\numberline {3.23}{\ignorespaces Ficha de validación del prototipo: Retícula de mirada proyectada.}}{42}{table.caption.47}%
+\contentsline {table}{\numberline {3.24}{\ignorespaces Ficha de validación del prototipo: Búsqueda de coordenadas QuadPoints.}}{43}{table.caption.49}%
+\contentsline {table}{\numberline {3.25}{\ignorespaces Ficha de validación del prototipo: Sincronización de resaltado.}}{44}{table.caption.52}%
+\contentsline {table}{\numberline {3.26}{\ignorespaces Ficha de validación del prototipo: Sincronización de notas adhesivas.}}{45}{table.caption.54}%
+\contentsline {table}{\numberline {3.27}{\ignorespaces Ficha de validación del prototipo: Sincronización de figuras geométricas.}}{46}{table.caption.56}%
+\contentsline {table}{\numberline {3.28}{\ignorespaces Ficha de validación del prototipo: Comandos de voz.}}{47}{table.caption.59}%
+\contentsline {table}{\numberline {3.29}{\ignorespaces Ficha de validación del prototipo: Síntesis de voz.}}{47}{table.caption.61}%
+\contentsline {table}{\numberline {3.30}{\ignorespaces Ficha de validación del prototipo: Banda de resaltado proyectada.}}{48}{table.caption.63}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Contratos de plugin y sus implementaciones.}}{52}{table.caption.66}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Avances del desarrollo y resultados de sus pruebas.}}{58}{table.caption.71}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Métricas de evaluación, criterio de aceptación y estado.}}{60}{table.caption.72}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Latencia por plugin en 500{} ciclos del orquestador (ms).}}{61}{table.caption.73}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Matriz de trazabilidad (parcial) de errores de EDDIE-2023.}}{63}{table.caption.74}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Hallazgos de la verificación y su corrección.}}{64}{table.caption.75}%
+\contentsline {table}{\numberline {5.5}{\ignorespaces Escala de evaluación de las pruebas de aceptación.}}{66}{table.caption.76}%
+\contentsline {table}{\numberline {5.6}{\ignorespaces Pruebas de aceptación planificadas.}}{66}{table.caption.77}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{\ignorespaces Extracto de errores encontrados en EDDIE-2023.}}{73}{table.caption.83}%
+\contentsline {table}{\numberline {A.2}{\ignorespaces Plantilla de la matriz de trazabilidad.}}{74}{table.caption.84}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {B.1}{\ignorespaces Plan de trabajo.}}{75}{table.caption.85}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{\ignorespaces Primer prototipo - Núcleo orquestador y contratos de plugins.}}{76}{table.caption.86}%
+\contentsline {table}{\numberline {A.2}{\ignorespaces Segundo prototipo - Capa de abstracción de hardware y módulo de consistencia.}}{77}{table.caption.87}%
+\contentsline {table}{\numberline {A.3}{\ignorespaces Tercer prototipo - Reconocimiento de texto e interfaz de configuración.}}{78}{table.caption.88}%
+\contentsline {table}{\numberline {A.4}{\ignorespaces Cuarto prototipo - Interacción gestual.}}{79}{table.caption.89}%
+\contentsline {table}{\numberline {A.5}{\ignorespaces Quinto prototipo - Rastreo ocular.}}{79}{table.caption.90}%
+\contentsline {table}{\numberline {A.6}{\ignorespaces Sexto prototipo - Pantalla de proyección, búsqueda con LLM y voz.}}{80}{table.caption.91}%
+\contentsline {table}{\numberline {A.7}{\ignorespaces Séptimo prototipo - Versión final verificada.}}{80}{table.caption.92}%
+\contentsline {table}{\numberline {A.8}{\ignorespaces Hallazgos de la verificación.}}{81}{table.caption.93}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {B.1}{\ignorespaces Resumen de las mediciones de los prototipos.}}{82}{table.caption.94}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }

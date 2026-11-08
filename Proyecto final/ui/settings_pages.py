@@ -1,7 +1,16 @@
 """
 ui/settings_pages.py
 ====================
-Páginas de configuración embebidas en "EDDIE Menu Settings":
+Páginas de configuración embebidas en la ventana principal de EDDIE.
+
+P-08 (interfaz renovada): la lógica es la de P-07; cambia la capa visual. Cada página se
+construye con ui/modern_forms.build_modern (mismos nombres de control, otro diseño), los
+textos están en español y los controles que agrega la lógica se ubican en "ranuras" del
+diseño (form.place) en vez de posiciones absolutas. Mejoras de flujo nuevas:
+  - Interacción y Servicios de búsqueda muestran si la voz y los proveedores LLM están listos.
+  - Gesture recognition: botones «Fijar inicio» / «Fijar fin» copian la lectura del sensor a la
+    calibración (antes había que leer los números y escribirlos a mano).
+
 
   InteractionPage        ← SeleccionInteraccionPorVoz2.cs ("Interactions WS")
   WebSearchPage          ← SeleccionApis2.cs ("Web search services"; ahora proveedores LLM)
@@ -20,7 +29,9 @@ from typing import Optional
 import cv2
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QGuiApplication, QPixmap
-from PySide6.QtWidgets import QFileDialog, QToolTip, QWidget
+from PySide6.QtWidgets import (QAbstractButton, QCheckBox, QFileDialog, QLabel, QLineEdit, QSizePolicy, QToolTip,
+                               QWidget)
+from contracts.i_speech_provider import ISpeechProvider
 
 from contracts.i_eye_tracker import IEyeTracker
 from contracts.i_gesture_plugin import GestureCalibration, IGesturePlugin
@@ -28,7 +39,9 @@ from contracts.i_web_search_provider import IWebSearchProvider
 from hardware.camera_enumeration import list_cameras
 from ui.context import AppContext
 from ui.dialogs import message
-from ui.form_builder import ImageButton, build_form
+from ui.form_builder import ImageButton
+from ui.modern_forms import build_modern
+from ui.widgets import ActionButton, FitFrameView
 
 logger = logging.getLogger(__name__)
 PROJECT_DIR = Path(__file__).resolve().parents[1]
@@ -42,13 +55,17 @@ class SettingsPage(QWidget):
         super().__init__()
         self.ctx = ctx
         self.setObjectName(self.LAYOUT)
-        self.form = build_form(self.LAYOUT, self)
+        self.form = build_modern(self.LAYOUT, self)
         for control, text in self.TOOLTIPS.items():
             widget = self.form.controls.get(control)
             if widget is not None:
                 widget.setToolTip(text)
-                if hasattr(widget, "clicked"):
-                    widget.clicked.connect(lambda w=widget, t=text: QToolTip.showText(
+                # Iconos de información: un clic muestra la ayuda. Los botones (p. ej. los "Browse" de
+                # Eye tracking) ya tienen su propia acción y muestran la ayuda al pasar el mouse.
+                # Ojo: clicked(bool) de un botón entrega "checked"; si la lambda tuviera w=widget como
+                # primer parámetro, Qt lo reemplazaría por False ("bool has no attribute mapToGlobal").
+                if hasattr(widget, "clicked") and not isinstance(widget, QAbstractButton):
+                    widget.clicked.connect(lambda *_, w=widget, t=text: QToolTip.showText(
                         w.mapToGlobal(QPoint(0, w.height())), t, w))
 
     def load_settings(self) -> None:
@@ -65,9 +82,26 @@ class SettingsPage(QWidget):
 class InteractionPage(SettingsPage):
     LAYOUT = "SeleccionInteraccionPorVoz2"
     TOOLTIPS = {
-        "pictureBox1": "When activated it is possible to interact with the web search by means of voice prompts",
-        "pictureBox2": "When activated, the web search buttons are displayed",
+        "pictureBox1": "Si se activa, el lector puede pedir las búsquedas con comandos de voz.",
+        "pictureBox2": "Si se activa, la proyección muestra los botones de búsqueda.",
     }
+
+    def __init__(self, ctx: AppContext) -> None:
+        super().__init__(ctx)
+        self.refresh_voice_status()
+
+    def refresh_voice_status(self) -> None:
+        """Nuevo en P-08: dice si hay reconocedor de voz antes de activar los comandos."""
+        speech = [p for p in self.ctx.runtime.plugins_for(ISpeechProvider) if p["status"] == "initialized"]
+        label = self.form.labelVoiceStatus
+        if speech:
+            label.setText(f"Reconocedor listo: {speech[0]['label']}")
+            label.setProperty("state", "ok")
+        else:
+            label.setText("No hay reconocedor de voz disponible en este equipo.")
+            label.setProperty("state", "warn")
+        label.style().unpolish(label)
+        label.style().polish(label)
 
     def load_settings(self) -> None:
         s = self.ctx.settings
@@ -107,9 +141,9 @@ class InteractionPage(SettingsPage):
 class WebSearchPage(SettingsPage):
     LAYOUT = "SeleccionApis2"
     TOOLTIPS = {
-        "pictureBox1": "Select the web search services for each type of search\n (encyclopedia, definitions, "
-                       "images, video and translation),\n for translation select the language to translate into."
-                       "\n\nEach service is answered by a language model (LLM) plugin.",
+        "pictureBox1": "Elige el servicio de cada tipo de búsqueda (enciclopedia, definiciones, imágenes,\n"
+                       "video y traducción) y el idioma al que se traduce.\n\n"
+                       "Cada servicio lo responde un plugin de modelo de lenguaje (LLM).",
     }
     SERVICES = {
         "cbx_apisEnciclopedia": "encyclopediaApi",
@@ -128,7 +162,7 @@ class WebSearchPage(SettingsPage):
         for key, label in self.LANGUAGES:
             combo.addItem(label, key)
         combo.setCurrentIndex(-1)
-        combo.setPlaceholderText("Select Service")
+        combo.setPlaceholderText("Elige un idioma")
 
     def refresh_providers(self) -> None:
         """Equivale a obtenerListaApis*(): ahora los proveedores son plugins IWebSearchProvider."""
@@ -138,12 +172,22 @@ class WebSearchPage(SettingsPage):
             current = combo.currentData()
             combo.clear()
             combo.setEditable(False)
-            combo.setPlaceholderText("Select Service")
+            combo.setPlaceholderText("Elige un servicio")
             for provider in providers:
                 ok = provider["status"] == "initialized"
                 combo.addItem(provider["label"] + ("" if ok else "  (no disponible)"), provider["name"])
             index = combo.findData(current)
             combo.setCurrentIndex(index)
+        lines = []
+        for provider in providers:
+            ok = provider["status"] == "initialized"
+            lines.append(f"{'●' if ok else '○'}  {provider['label']}: "
+                         + ("listo" if ok else "no disponible (revisa la clave en config/secrets.json)"))
+        status = self.form.labelProviderStatus
+        status.setText("\n".join(lines) or "No hay plugins de búsqueda configurados.")
+        status.setProperty("state", "ok" if any(p["status"] == "initialized" for p in providers) else "warn")
+        status.style().unpolish(status)
+        status.style().polish(status)
 
     def load_settings(self) -> None:
         s = self.ctx.settings
@@ -181,14 +225,14 @@ class WebSearchPage(SettingsPage):
 class EyeTrackingPage(SettingsPage):
     LAYOUT = "EyeTrackingConfiguration2"
     TOOLTIPS = {
-        "pictureBox1": "Select an available plugin,\nfirst select the path of your\ndirectory and select the plugin\navailable",
-        "pictureBox2": "Select an available reticle,\nfirst select the path of your\ndirectory and select the reticle\navailable",
-        "pictureBox3": "If selected it is possible to control the pointer with your gaze. Click(s) time is the number of "
-                       "seconds that must elapse before a click is made when looking at a button.",
-        "pictureBox4": "If selected, the data captured by the eye tracker are saved in a .csv file, you can give the "
-                       "file a name and a save path.",
-        "pictureBox5": "Select the eye tracking settings. The settings can be saved to a file using the 'Export Settings' "
-                       "button and loaded with the 'Import Settings' button.",
+        "pictureBox1": "Elige la carpeta con el plugins.json de rastreo ocular\ny luego el eye tracker disponible.",
+        "pictureBox2": "Elige la carpeta de retículas y la retícula que\ndibuja el punto de mirada sobre la pantalla.",
+        "pictureBox3": "Si se activa, el puntero sigue la mirada. El tiempo indica cuántos segundos hay que mirar\n"
+                       "un botón para que se haga clic.",
+        "pictureBox4": "Si se activa, los datos del eye tracker se guardan en un archivo .csv con el nombre\n"
+                       "y en la carpeta indicados.",
+        "pictureBox5": "Los ajustes pueden guardarse en un archivo con «Exportar ajustes» y cargarse con\n"
+                       "«Importar ajustes».",
         "pluginsRouteBrowse": "Presione el botón para seleccionar una carpeta desde la cual se cargarán\nlos plugins de "
                               "rastreo ocular (archivo plugins.json).",
         "reticlesRouteBrowse": "Presione el botón para seleccionar una carpeta desde la cual se cargarán\nlas distintas retículas.",
@@ -391,14 +435,46 @@ def _fill_cameras(combo) -> list[tuple[int, str]]:
 
 class TextRecognitionPage(SettingsPage):
     LAYOUT = "TextRecognitionSettings"
-    TOOLTIPS = {"pictureBox2": "Camera selection for OCR text recognition. The same camera must not be used for "
-                               "gesture recognition."}
+    TOOLTIPS = {"pictureBox2": "Cámara que mira la página para el reconocimiento de texto (OCR).\n"
+                               "No debe ser la misma que la de reconocimiento gestual."}
 
     def __init__(self, ctx: AppContext) -> None:
         super().__init__(ctx)
         self._last_preview = 0.0
+        self._hold_preview_until = 0.0
         _fill_cameras(self.form.ComboBoxCameraList1)
         self.form.ComboBoxCameraList1.currentIndexChanged.connect(self._camera_changed)
+        self._add_recognition_controls()
+
+    def _add_recognition_controls(self) -> None:
+        """Controles nuevos (no existían en el C#): probar el OCR desde esta página y ver el texto.
+
+        En EDDIE-2023 el reconocimiento solo se disparaba desde la pantalla de proyección
+        (modo resaltado → CaptureTxt), así que en esta página nunca se veía el texto reconocido.
+        """
+        button = ActionButton("Reconocer texto", variant="primary", icon="scan-text")
+        button.setObjectName("buttonRecognizeText")
+        button.setToolTip("Detecta el resaltado amarillo en la cámara de texto y aplica OCR (Tesseract).")
+        button.clicked.connect(self.recognize_now)
+        box = QLineEdit()
+        box.setObjectName("textBoxRecognized")
+        box.setReadOnly(True)
+        box.setPlaceholderText("Aquí aparece el texto reconocido")
+        self.form.place("recognition", button, box)
+
+    def recognize_now(self) -> None:
+        if self.ctx.runtime.plugin("ImageProcessor") is None:
+            message(self, "El reconocimiento de texto (ImageProcessor) no está activo.", "Problema")
+            return
+        self.form.textBoxRecognized.setText("Reconociendo…")
+
+        def done(result) -> None:
+            if not result.ok:
+                self.form.textBoxRecognized.setText(f"Error: {result.error}")
+                return
+            self.show_recognition(result.value)
+
+        self.ctx.runtime.run_async("ImageProcessor", "recognize_highlighted_text", callback=done)
 
     def load_settings(self) -> None:
         s, f = self.ctx.settings, self.form
@@ -431,14 +507,25 @@ class TextRecognitionPage(SettingsPage):
             self.ctx.runtime.restart("TextCamera", wanted)
 
     def show_recognition(self, result: dict) -> None:
-        """imageBox1 = frame con el rectángulo; imageBox3 = recorte reconocido (TextImage)."""
+        """imageBox1 = frame con el rectángulo; imageBox3 = recorte reconocido (TextImage); texto abajo."""
         if result.get("annotated") is not None:
             self.form.imageBox1.show_frame(result["annotated"])
-        if result.get("crop") is not None:
-            self.form.imageBox3.show_frame(result["crop"])
+        crop = result.get("upright_crop") if result.get("upright_crop") is not None else result.get("crop")
+        if crop is not None:                                   # recorte derecho, como lo lee el OCR
+            self.form.imageBox3.show_frame(crop)
+            self._hold_preview_until = time.monotonic() + 4.0     # que el recorte no lo tape la vista en vivo
+        if result.get("box") is None:
+            text = "No se encontró un resaltado amarillo en la imagen de la cámara."
+        elif not result.get("ocr_available", True):
+            text = "Resaltado detectado, pero Tesseract-OCR no está instalado (ver README)."
+        else:
+            text = result.get("text", "").strip() or "Resaltado detectado, pero el OCR no reconoció texto."
+        self.form.textBoxRecognized.setText(text)
 
     def on_cycle(self, results: dict) -> None:
         if not self.isVisible() or time.monotonic() - self._last_preview < 1 / 15:   # 15 FPS como el C#
+            return
+        if time.monotonic() < self._hold_preview_until:
             return
         self._last_preview = time.monotonic()
         sensor = self.ctx.runtime.plugin("TextCamera")
@@ -449,16 +536,13 @@ class TextRecognitionPage(SettingsPage):
 class GestureRecognitionPage(SettingsPage):
     LAYOUT = "GestureRecognitionSettings"
     TOOLTIPS = {
-        "pictureBox2": "Camera selection for gesture recognition. The same camera must not be used for text recognition. "
-                       "Before starting the recognition you must select a plug-in.",
-        "pictureBox1": "If the device is going to take control of the mouse such as the Hand Skin or Color Pen, activate "
-                       "the Recognition on checkbox.",
-        "pictureBox4": "'Sensor X' and 'Sensor Y' Displays the sensor information, relative coordinate in X and Y axis.\n "
-                       "In 'Sensor start X' and 'Sensor start Y' the X and Y coordinates shown in the input 'Sensor X' and "
-                       "'Sensor Y' must be entered when pointing the cursor to the center of the upper left calibration "
-                       "cross.\n In 'Sensor end X' and 'Sensor end Y' the X and Y coordinates shown in the input 'Sensor X' "
-                       "and 'Sensor Y' must be entered by pointing the cursor to the center of the lower right calibration "
-                       "cross.",
+        "pictureBox2": "Cámara para el reconocimiento gestual (distinta a la de texto).\n"
+                       "Antes de iniciar hay que elegir un complemento.",
+        "pictureBox1": "Actívalo si el gesto (mano o lápiz de color) debe mover el puntero.",
+        "pictureBox4": "«Sensor X» y «Sensor Y» muestran la posición que entrega el sensor.\n"
+                       "Inicio: apunta al centro de la cruz superior izquierda y pulsa «Fijar inicio».\n"
+                       "Fin: apunta al centro de la cruz inferior derecha y pulsa «Fijar fin».\n"
+                       "También puedes escribir los valores a mano.",
     }
     CALIBRATION_FIELDS = ("numericUpDownSStartX", "numericUpDownSEndX", "numericUpDownAStartX", "numericUpDownAEndX",
                           "numericUpDownSStartY", "numericUpDownSEndY", "numericUpDownAStartY", "numericUpDownAEndY")
@@ -480,8 +564,55 @@ class GestureRecognitionPage(SettingsPage):
             f[field].valueChanged.connect(self._push_calibration)
         for check in ("checkBoxX", "checkBoxY", "checkBoxMouse"):
             f[check].toggled.connect(self._push_calibration)
+        self._add_rotate_checkbox()
+        self._add_calibration_buttons()
         self._last_capture_seq = 0
         self.get_calibration_settings()
+
+    def _add_rotate_checkbox(self) -> None:
+        """Casilla nueva (no existía en el C#): rota 180° la imagen de la cámara gestual.
+
+        El original rotaba siempre la imagen de Hand Skin porque la cámara del laboratorio
+        estaba montada invertida; con otra cámara la vista de calibración salía al revés.
+        Ahora la orientación es la de la cámara y solo se rota si se marca esta casilla.
+        """
+        f = self.form
+        box = QCheckBox("Rotar la imagen 180°")
+        box.setObjectName("checkBoxRotate180")
+        box.setToolTip("Rota 180° la imagen de la cámara gestual. Marcar solo si la cámara está montada "
+                       "invertida (montaje original del laboratorio).")
+        box.toggled.connect(self._push_rotation)
+        f.place("gesture_options", box)
+
+    def _add_calibration_buttons(self) -> None:
+        """Nuevo en P-08: copia la lectura actual del sensor al inicio o al fin de la calibración."""
+        start = ActionButton("Fijar inicio", variant="secondary", icon="locate-fixed")
+        start.setObjectName("buttonSetStart")
+        start.setToolTip("Copia «Sensor X/Y» a «Sensor inicio» (cruz superior izquierda).")
+        start.clicked.connect(lambda: self.set_calibration_point("start"))
+        end = ActionButton("Fijar fin", variant="secondary", icon="locate-fixed")
+        end.setObjectName("buttonSetEnd")
+        end.setToolTip("Copia «Sensor X/Y» a «Sensor fin» (cruz inferior derecha).")
+        end.clicked.connect(lambda: self.set_calibration_point("end"))
+        self.form.place("calibration_actions", start, end)
+
+    def set_calibration_point(self, which: str) -> bool:
+        f = self.form
+        try:
+            x, y = int(float(f.textBoxX.text())), int(float(f.textBoxY.text()))
+        except ValueError:
+            message(self, "Todavía no hay lectura del sensor: inicia el reconocimiento y apunta a la cruz.",
+                    "Problema")
+            return False
+        prefix = "numericUpDownSStart" if which == "start" else "numericUpDownSEnd"
+        f[f"{prefix}X"].setValue(x)
+        f[f"{prefix}Y"].setValue(y)
+        return True
+
+    def _push_rotation(self) -> None:
+        plugin = self.active_plugin()
+        if plugin is not None and hasattr(plugin, "set_rotate_180"):
+            plugin.set_rotate_180(self.form.checkBoxRotate180.isChecked())
 
     # Properties.Settings.Default.ValorX1… (GetSettings / SaveSettings)
     def get_calibration_settings(self) -> None:
@@ -509,6 +640,7 @@ class GestureRecognitionPage(SettingsPage):
         f.numericUpDownSEndX.setValue(int(s["gestureValorX2"]))
         f.numericUpDownSEndY.setValue(int(s["gestureValorY2"]))
         f.checkBoxMouse.setChecked(bool(s["gestureRecognitionOnChecked"]))
+        f.checkBoxRotate180.setChecked(bool(s["gestureRotate180"]))
 
     def save_settings(self) -> None:
         s, f = self.ctx.settings, self.form
@@ -520,6 +652,7 @@ class GestureRecognitionPage(SettingsPage):
         s["gestureValorX1"], s["gestureValorY1"] = f.numericUpDownSStartX.value(), f.numericUpDownSStartY.value()
         s["gestureValorX2"], s["gestureValorY2"] = f.numericUpDownSEndX.value(), f.numericUpDownSEndY.value()
         s["gestureRecognitionOnChecked"] = f.checkBoxMouse.isChecked()
+        s["gestureRotate180"] = f.checkBoxRotate180.isChecked()
 
     def _plugin_changed(self) -> None:
         was_active = self.active_plugin() is not None and self.active_plugin().recognition_active
@@ -557,7 +690,7 @@ class GestureRecognitionPage(SettingsPage):
         """comenzarToolStripMenuItem_Click: abre la cámara gestual y activa el plug-in."""
         self.save_settings()
         if self.form.comboBox1.currentIndex() < 0:
-            message(self, "Before starting the recognition you must select a plug-in.", "Problem")
+            message(self, "Antes de iniciar, elige un complemento de reconocimiento.", "Problema")
             return
         s = self.ctx.settings
         sensor = self.ctx.runtime.plugin("GestureCamera")
@@ -565,14 +698,15 @@ class GestureRecognitionPage(SettingsPage):
                   "height": int(s["cameraGestureHeight"])}
         if sensor is None or getattr(sensor, "camera_index", None) != wanted["camera_index"]:
             if not self.ctx.runtime.restart("GestureCamera", wanted):
-                message(self, "No se pudo abrir la cámara de reconocimiento gestual.", "Problem")
+                message(self, "No se pudo abrir la cámara de reconocimiento gestual.", "Problema")
                 return
         plugin = self.active_plugin()
         if plugin is None:
-            message(self, f"El plug-in '{self.form.comboBox1.currentText()}' no está disponible.", "Problem")
+            message(self, f"El complemento '{self.form.comboBox1.currentText()}' no está disponible.", "Problema")
             return
         self.ctx.active_gesture = self.form.comboBox1.currentData()
         plugin.set_calibration(self.calibration())
+        self._push_rotation()
         plugin.set_recognition_active(True)
 
     def stop_recognition(self) -> None:
@@ -584,7 +718,7 @@ class GestureRecognitionPage(SettingsPage):
         """button4_Click → PutRectangle(RectangularSelection): recorta y guarda la imagen a buscar."""
         plugin = self.active_plugin()
         if plugin is None:
-            message(self, "Before starting the recognition you must select a plug-in.", "Problem")
+            message(self, "Antes de capturar, elige un complemento de reconocimiento.", "Problema")
             return
         crop = plugin.capture_selection()
         self.show_capture(crop)
@@ -619,13 +753,57 @@ class GestureRecognitionPage(SettingsPage):
 # ---------------------------------------------------------------------------- Page detection
 class PageDetectionPage(SettingsPage):
     LAYOUT = "PageDetectionSettings"
-    TOOLTIPS = {"pictureBox2": "Select the PDF file to be synchronized with the physical book."}
+    TOOLTIPS = {"pictureBox2": "PDF que se sincroniza con el libro físico."}
 
     def __init__(self, ctx: AppContext) -> None:
         super().__init__(ctx)
         self.form.buttonModified1.clicked.connect(self.select_pdf)
         self.form.buttonModified2.clicked.connect(self.resize_highlight)
         self.form.textBoxPathPDF.setReadOnly(True)
+        self._preview_page = 1
+        self._page_count = 0
+        self._add_preview_controls()
+
+    PREVIEW_SIZE = (380, 420)                   # tamaño máximo con que se renderiza la página
+
+    def _add_preview_controls(self) -> None:
+        """Vista previa del PDF cargado (nueva: el C# solo mostraba la ruta y el tamaño de página)."""
+        view = FitFrameView(placeholder="Elige un PDF para ver sus páginas")
+        view.setObjectName("pdfPreview")
+        view.setMinimumHeight(330)
+        label = QLabel("Sin PDF")
+        label.setObjectName("labelPreviewPage")
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        label.setProperty("field", True)
+        previous = ActionButton("", variant="secondary", icon="chevron-left")
+        following = ActionButton("", variant="secondary", icon="chevron-right")
+        previous.setObjectName("buttonPreviewPrevious")
+        following.setObjectName("buttonPreviewNext")
+        for button in (previous, following):
+            button.setFixedWidth(44)
+        previous.clicked.connect(lambda: self.show_preview(self._preview_page - 1))
+        following.clicked.connect(lambda: self.show_preview(self._preview_page + 1))
+        from ui.widgets import hbox
+        nav = QWidget()
+        nav.setLayout(hbox(previous, label, following))
+        label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        self.form.place("pdf_preview", view, nav)
+        for name, widget in (("labelPreviewPage", label), ("buttonPreviewPrevious", previous),
+                             ("buttonPreviewNext", following)):
+            self.form.controls[name] = widget
+
+    def show_preview(self, page: int) -> None:
+        if not self._page_count:
+            return
+        page = max(1, min(self._page_count, page))
+        w, h = self.PREVIEW_SIZE
+        image = self.ctx.runtime.invoke("ConsistencyProvider", "render_page", page, w, h)
+        if not image.ok:
+            self.form.labelPreviewPage.setText("No se pudo mostrar")
+            return
+        self.form.pdfPreview.show_frame(image.value)
+        self._preview_page = page
+        self.form.labelPreviewPage.setText(f"Página {page} / {self._page_count}")
 
     def load_settings(self) -> None:
         path = self.ctx.settings["pdfPath"]
@@ -635,7 +813,7 @@ class PageDetectionPage(SettingsPage):
 
     def select_pdf(self) -> None:
         """PDFSelectBt_Click → new DigitalDocSync(file)."""
-        path, _ = QFileDialog.getOpenFileName(self, "Select PDF", "", "PDF (*.pdf)")
+        path, _ = QFileDialog.getOpenFileName(self, "Elegir el PDF del libro", "", "PDF (*.pdf)")
         if path:
             self.open_pdf(path)
 
@@ -644,7 +822,7 @@ class PageDetectionPage(SettingsPage):
         if not result.ok or not result.value:
             consistency = self.ctx.runtime.plugin("ConsistencyProvider")
             reason = result.error or getattr(consistency, "last_load_error", "") or path
-            message(self, f"No se pudo abrir el PDF:\n{reason}", "Problem found")
+            message(self, f"No se pudo abrir el PDF:\n{reason}", "Problema")
             return False
         self.ctx.settings["pdfPath"] = path
         self._show_document(path)
@@ -652,6 +830,9 @@ class PageDetectionPage(SettingsPage):
 
     def _show_document(self, path: str) -> None:
         self.form.textBoxPathPDF.setText(path)
+        count = self.ctx.runtime.invoke("ConsistencyProvider", "get_page_count")
+        self._page_count = count.value if count.ok else 0
+        self.show_preview(1)
         size = self.ctx.runtime.invoke("ConsistencyProvider", "get_page_size")
         if size.ok:
             width, height = size.value

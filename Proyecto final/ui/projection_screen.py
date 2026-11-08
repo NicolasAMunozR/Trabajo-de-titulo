@@ -11,6 +11,13 @@ Flujo principal (idéntico al original):
   2. "Web search" muestra los cinco servicios: diccionario y traductor (panel izquierdo),
      enciclopedia, video e imagen (panel derecho). Ahora los responde un LLM.
   3. "PDF synchronizer" muestra las herramientas de consistencia papel ↔ PDF.
+
+P-08 (interfaz renovada): la lógica es la de P-07. Cambia la disposición (ui/modern_forms.
+arrange_projection): fondo negro (el proyector no ilumina lo que no se usa), todos los botones
+en la franja superior —zona donde el eye tracker fue 100 % válido en Ibaceta (2023)—, ningún
+botón amarillo (el amarillo es del resaltador que busca la cámara), botones con estado
+encendido visible y barra de progreso del clic por mirada. La zona de lectura y las cruces
+de calibración quedan exactamente donde estaban.
 """
 import logging
 import re
@@ -25,31 +32,18 @@ from PySide6.QtWidgets import QApplication, QWidget
 
 from ui.context import AppContext
 from ui.dialogs import AlertBox, LoadingBox, message
-from ui.form_builder import ImageButton, build_form, pixmap
+from ui import theme
+from ui.modern_forms import build_modern
 from ui.projection_widgets import FiguresOverlay, HighlightTool, LineCanvas, RecentSearchItem
 
 logger = logging.getLogger(__name__)
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 
-# Imágenes normal / hover / clic de cada botón (handlers MouseEnter/Leave/Down/Up del C#)
-BUTTON_IMAGES = {
-    "buttonComments": "CommentsButton", "buttonMarker": "BookmarkButton", "buttonFiguresPD": "FiguresButtonn",
-    "buttonPDF": "ContentButton", "btn_diccionario": "DiccionarioButton", "btn_enciclopedia": "EncyclopediaButton",
-    "btn_traductor": "TraductorButton", "btn_video": "VideoButton", "btn_imagen": "ImagesButton",
-    "btn_nav_atras": "LeftArrowButton", "btn_nav_adelante": "RightArrowButton", "btn_leerEnciclopedia": "ReadButton",
-    "btn_leerDefinicionTraduccion": "ReadButton", "btn_cerrarVentanaDerecha": "XButtonImage",
-    "btn_cerrarVentanaIzquierda": "XButtonImage", "btn_drawMenu": "HistoryButton", "syncButton": "SyncHighlightsButton",
-    "btn_turnOFF": "TurnOffButton",
-}
+LEFT_SERVICES = ("btn_diccionario", "btn_traductor")
+RIGHT_SERVICES = ("btn_enciclopedia", "btn_video", "btn_imagen")
 VOICE_TARGETS = ["Video", "Enciclopedia", "Traducción", "Definición", "Imagen"]
 MOBILE_UA = ("Mozilla/5.0 (Linux; Android 7.0; SM-G930V Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) "
              "Chrome/59.0.3071.125 Mobile Safari/537.36")
-
-
-def _images(base: str) -> tuple[str, str, str]:
-    if base == "XButtonImage":
-        return "XButtonImage", "XButtonImageHover", "XButtonImageClicked"
-    return f"{base}Image", f"{base}Hover", f"{base}Clicked"
 
 
 class _VoiceBridge(QObject):
@@ -62,7 +56,9 @@ class ProjectionScreen(QWidget):
         self.ctx = ctx
         self.setObjectName("ProjectionScreenActivity2")
         self.setWindowTitle("AR")
-        self.form = build_form("ProjectionScreenActivity2", self)
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.form = build_modern("ProjectionScreenActivity2", self)
+        self.setStyleSheet(theme.PROJECTION_QSS)
         self.setFixedSize(1300, 740)
         f = self.form
         self.concepto_buscar = ""                   # conceptoBuscar
@@ -79,14 +75,6 @@ class ProjectionScreen(QWidget):
         self._drag_from: Optional[QPoint] = None
         self._started = False
 
-        for name, base in BUTTON_IMAGES.items():
-            button = f.controls.get(name)
-            if isinstance(button, ImageButton):
-                button.set_images(*_images(base))
-        f.btn_buscarWeb.set_images("WebSearcherButtonOFFImage", "WebSearcherButtonOFFHover")
-        f.btn_sincronizadorPdf.set_images("SynchonizerButtonOFFImage", "SynchronizerButtonOFFHover")
-        f.textImageButton.set_images("HighlightModeButtonImage", "HighlightModeButtonHover")
-
         # HighlightTool(30, 517, 400) en (285, 65), al frente
         self.highlight = HighlightTool(30, 517, 400, self)
         self.highlight.move(285, 65)
@@ -97,8 +85,7 @@ class ProjectionScreen(QWidget):
         self.left_lines = LineCanvas(f.leftLinePanel)
         self.right_lines = LineCanvas(f.rightLinePaper)
         f.panel_log.setVisible(False)
-        for rtb in (f.rtb_ResultadosWikipedia, f.rtb_result_definicion_traduccion):
-            rtb.setStyleSheet("QTextEdit{background:#ffffff;}")
+        self._show_mode()
         f.textBox1.textChanged.connect(self._concept_edited)
         self._wire()
         self.alert = AlertBox(self)
@@ -169,7 +156,7 @@ class ProjectionScreen(QWidget):
             return None
         view = QWebEngineView(self.form.panel_navegador)
         view.page().profile().setHttpUserAgent(MOBILE_UA)
-        view.setGeometry(self.form.panel_navegador.rect())
+        self.form.panel_navegador.layout().addWidget(view)
         view.setVisible(False)
         self.browser = view
         return view
@@ -188,21 +175,37 @@ class ProjectionScreen(QWidget):
         """button1_Click: muestra/oculta las cruces de calibración."""
         for name in ("pictureBox3", "pictureBox4", "pictureBox5"):
             if self.mark_point:
-                self.form[name].setPixmap(pixmap("Target"))
+                self.form[name].setPixmap(theme.target_pixmap(60))
             else:
                 self.form[name].clear()
         self.mark_point = not self.mark_point
 
     def toggle_mode(self) -> None:
         """button3_Click: alterna modo resaltado (OCR) / modo captura (imagen)."""
-        if self.highlight.highlight_on:
-            self.form.textImageButton.set_images("HighlightModeButtonImage", "HighlightModeButtonHover")
-            self.highlight.highlight_on = False
-        else:
-            self.form.textImageButton.set_images("CaptureModeButtonImage", "CaptureModeButtonHover")
-            self.highlight.highlight_on = True
+        self.highlight.highlight_on = not self.highlight.highlight_on
+        self._show_mode()
         self.highlight.update()
         self.capture_text(update_concept=False)
+
+    def _show_mode(self) -> None:
+        """El botón dice el modo actual (P-07 mostraba la imagen del modo al que se cambiaba)."""
+        button = self.form.textImageButton
+        if self.highlight.highlight_on:
+            button.configure("highlighter", "Resaltando")
+            button.setToolTip("Modo resaltado: lo que marques se lee con OCR. Pulsa para capturar una imagen.")
+        else:
+            button.configure("scan", "Capturando")
+            button.setToolTip("Modo captura: lo que marques se recorta como imagen. Pulsa para resaltar texto.")
+        button.set_active(self.highlight.highlight_on)
+
+    def toast_anchor(self) -> tuple[int, int]:
+        """Avisos bajo la zona de lectura, centrados, sin tapar el libro ni los paneles."""
+        return 285 + 517 // 2 + 180, 562
+
+    def _mark_service(self, active: Optional[str], group: tuple[str, ...]) -> None:
+        """Reemplaza las líneas guía del original: el servicio que respondió queda encendido."""
+        for name in group:
+            self.form[name].set_active(name == active)
 
     def _gesture(self):
         name = self.ctx.active_gesture
@@ -252,9 +255,7 @@ class ProjectionScreen(QWidget):
         self.left_lines.clear()
         self.right_lines.clear()
         self.web_active = not self.web_active
-        state = "ON" if self.web_active else "OFF"
-        f.btn_buscarWeb.set_images(f"WebSearcherButton{state}Image",
-                                   "WebSearcherButtonOMHover" if self.web_active else "WebSearcherButtonOFFHover")
+        f.btn_buscarWeb.set_active(self.web_active)
         for name in ("btn_diccionario", "btn_enciclopedia", "btn_traductor", "btn_video", "btn_imagen"):
             f[name].setVisible(self.web_active)
         if self.web_active and self.sync_active:
@@ -264,6 +265,8 @@ class ProjectionScreen(QWidget):
         self.left_lines.clear()
         self.right_lines.clear()
         self._set_sync_tools(not self.sync_active)
+        if self.sync_active and self.form.panel2.isVisible():
+            self.close_right()                      # un solo panel por lado: la tarjeta del PDF ocupa la derecha
         if self.sync_active and self.web_active:
             self.web_active = True
             self.toggle_web_search()
@@ -274,8 +277,10 @@ class ProjectionScreen(QWidget):
         f.panel_log.setVisible(on)
         if on:
             f.panel_log.raise_()
-        f.btn_sincronizadorPdf.set_images("SynchronizerButtonONImage" if on else "SynchonizerButtonOFFImage",
-                                          "SynchronizerButtonONHover" if on else "SynchronizerButtonOFFHover")
+        f.btn_sincronizadorPdf.set_active(on)
+        f.syncCard.setVisible(on)
+        if on:
+            f.syncCard.raise_()
         for name in ("buttonMarker", "buttonComments", "buttonFiguresPD", "buttonPDF", "syncButton", "backPageButton2",
                      "nextPageButton2", "btnSearchPages2", "searchTextBox", "syncPDFLabel", "Pages", "PagesLabel"):
             f[name].setVisible(on)
@@ -283,6 +288,8 @@ class ProjectionScreen(QWidget):
     def toggle_history(self) -> None:
         panel = self.form.historyLogPanel
         panel.setVisible(not panel.isVisible())
+        f = self.form
+        f.btn_drawMenu.set_active(panel.isVisible())
         if panel.isVisible():
             panel.raise_()
 
@@ -334,6 +341,8 @@ class ProjectionScreen(QWidget):
         f.lbl_PalabraBuscada.setVisible(True)
         f.rtb_ResultadosWikipedia.setVisible(True)
         f.btn_leerEnciclopedia.setVisible(True)
+        self._hide_sync_card()
+        self._mark_service("btn_enciclopedia", RIGHT_SERVICES)
         term = self.concepto_buscar
         if not term.strip():
             f.rtb_ResultadosWikipedia.setPlainText("Seleccione un término para buscar")
@@ -349,7 +358,7 @@ class ProjectionScreen(QWidget):
                 f.rtb_ResultadosWikipedia.append("\n" + paragraph)
             self.right_lines.draw((356, 45, 330, 45), (330, 45, 330, 170), (330, 170, 43, 170), (43, 170, 43, 163))
         self._run_search("encyclopedia", "search_encyclopedia", (term,), "derecha", show,
-                         "Select an API for the encyclopedia.")
+                         "Elige quién responde la enciclopedia en «Servicios de búsqueda».")
 
     def search_video(self) -> None:
         f = self.form
@@ -357,9 +366,11 @@ class ProjectionScreen(QWidget):
         f.panel2.setVisible(True)
         f.panel2.raise_()
         f.btn_leerEnciclopedia.setVisible(False)
+        self._hide_sync_card()
+        self._mark_service("btn_video", RIGHT_SERVICES)
         term = self.concepto_buscar
         f.lbl_PalabraBuscada.setVisible(True)
-        f.lbl_PalabraBuscada.setText("Searching:" + term)
+        f.lbl_PalabraBuscada.setText("Video: " + term)
         f.rtb_ResultadosWikipedia.setVisible(False)
         if not term.strip():
             message(self, "Seleccione un término para buscar en video")
@@ -375,7 +386,8 @@ class ProjectionScreen(QWidget):
                 return
             self._load_url(value.url)
             self.right_lines.draw((356, 45, 330, 45), (330, 45, 330, 170), (330, 170, 129, 170), (129, 170, 129, 163))
-        self._run_search("video", "search_video", (term,), "derecha", show, "Select an API for the video search.")
+        self._run_search("video", "search_video", (term,), "derecha", show,
+                         "Elige quién responde la búsqueda de video en «Servicios de búsqueda».")
 
     def search_translation(self) -> None:
         f = self.form
@@ -387,6 +399,7 @@ class ProjectionScreen(QWidget):
         f.rtb_result_definicion_traduccion.clear()
         f.btn_cerrarVentanaIzquierda.setVisible(True)
         f.btn_leerDefinicionTraduccion.setVisible(True)
+        self._mark_service("btn_traductor", LEFT_SERVICES)
         term = self.concepto_buscar
         if not term.strip():
             f.rtb_result_definicion_traduccion.setPlainText("Seleccione un término para traducir")
@@ -415,6 +428,7 @@ class ProjectionScreen(QWidget):
                      "btn_leerDefinicionTraduccion"):
             f[name].setVisible(True)
         f.rtb_result_definicion_traduccion.clear()
+        self._mark_service("btn_diccionario", LEFT_SERVICES)
         term = self.concepto_buscar
         f.lbl_datoBuscado_trad_def.setText(term)
         if not term:
@@ -447,6 +461,8 @@ class ProjectionScreen(QWidget):
         f.panel2.setVisible(True)
         f.panel2.raise_()
         f.btn_leerEnciclopedia.setVisible(False)
+        self._hide_sync_card()
+        self._mark_service("btn_imagen", RIGHT_SERVICES)
         image = self.ctx.capture_jpeg
         if image is None:
             message(self, "Seleccione una imagen para buscar")
@@ -467,6 +483,10 @@ class ProjectionScreen(QWidget):
         self._run_search("image", "search_image", (image,), "derecha", show,
                          "Seleccione una api para búsqueda por imagen.")
 
+    def _hide_sync_card(self) -> None:
+        if self.sync_active:
+            self.form.syncCard.setVisible(False)
+
     def _close_browser(self) -> None:
         if self.browser is not None:
             self.browser.setVisible(False)
@@ -485,6 +505,9 @@ class ProjectionScreen(QWidget):
         f.btn_leerEnciclopedia.setVisible(False)
         self._close_browser()
         self._stop_speaking()
+        self._mark_service(None, RIGHT_SERVICES)
+        if self.sync_active:
+            self.form.syncCard.setVisible(True)
 
     def close_left(self) -> None:
         f = self.form
@@ -495,6 +518,9 @@ class ProjectionScreen(QWidget):
         f.rtb_result_definicion_traduccion.clear()
         f.panel3.setVisible(False)
         self._stop_speaking()
+        self._mark_service(None, LEFT_SERVICES)
+        if self.sync_active:
+            f.panel_log.setVisible(True)
 
     # ------------------------------------------------------------------ voz
     def read_aloud(self, widget) -> None:
@@ -534,14 +560,14 @@ class ProjectionScreen(QWidget):
     def _pdf_loaded(self) -> bool:
         plugin = self.ctx.runtime.plugin("ConsistencyProvider")
         if plugin is None or not plugin.execute().get("document_loaded"):
-            message(self, "Make sure you upload a pdf file.", "Problem found")
+            message(self, "Primero elige el PDF del libro en «Documento PDF».", "Problema")
             return False
         return True
 
     def _page_from_box(self) -> Optional[int]:
         text = self.form.searchTextBox.text().strip()
         if not text.isdigit():
-            message(self, "You have to indicate the page number for the pdf content.", "Problem found")
+            message(self, "Escribe el número de página en la tarjeta de sincronización.", "Problema")
             return None
         return int(text)
 
@@ -569,8 +595,7 @@ class ProjectionScreen(QWidget):
         self._update_sync_label()
 
     def _update_sync_label(self) -> None:
-        self.form.syncPDFLabel.setText(f" Sync Page {self.n_page}/{self.n_pages}")
-        self.form.syncPDFLabel.adjustSize()
+        self.form.syncPDFLabel.setText(f"Página {self.n_page} de {self.n_pages}")
         self.form.syncPDFLabel.setVisible(True)
 
     def change_page(self, step: int) -> None:
@@ -586,8 +611,7 @@ class ProjectionScreen(QWidget):
         if not self._pdf_loaded():
             return
         result = self.ctx.runtime.invoke("ConsistencyProvider", "search_text", self.form.searchTextBox.text())
-        self.form.PagesLabel.setText(",".join(str(p) for p in result.value or []) or "---")
-        self.form.PagesLabel.adjustSize()
+        self.form.PagesLabel.setText(", ".join(str(p) for p in result.value or []) or "ninguna")
 
     def load_pdf_content(self) -> None:
         """buttonPDF_Click (Content, digital → papel): figuras, marcadores y comentarios."""
@@ -612,7 +636,7 @@ class ProjectionScreen(QWidget):
         f.checkBox1.blockSignals(True)
         f.checkBox1.setChecked(True)
         f.checkBox1.blockSignals(False)
-        f.checkBox1.setStyleSheet("QCheckBox{color:#00c000;}")
+        f.checkBox1.setStyleSheet(f"QCheckBox{{color:{theme.OK};}}")
         f.listBox1.addItems(runtime.invoke("ConsistencyProvider", "get_bookmarks").value or [])
         comments = runtime.invoke("ConsistencyProvider", "get_comments").value or []
         f.listBox2.addItems([f"{c['content']} Pag.{c['page']}" for c in comments])
@@ -621,11 +645,11 @@ class ProjectionScreen(QWidget):
 
     def toggle_figures(self, _checked: bool) -> None:
         if self.figures_overlay is None:
-            message(self, "Primero cargue el contenido del PDF con el botón Content.", "Problem found")
+            message(self, "Primero proyecta el contenido del PDF con «Mostrar contenido».", "Problem found")
             return
         visible = not self.figures_overlay.isVisible()
         self.figures_overlay.setVisible(visible)
-        self.form.checkBox1.setStyleSheet(f"QCheckBox{{color:{'#00c000' if visible else '#ff0000'};}}")
+        self.form.checkBox1.setStyleSheet(f"QCheckBox{{color:{theme.OK if visible else theme.PELIGRO};}}")
 
     def delete_bookmark(self) -> None:
         item = self.form.listBox1.currentItem()
@@ -681,9 +705,8 @@ class ProjectionScreen(QWidget):
 
     # ------------------------------------------------------------------ ventana
     def turn_off(self) -> None:
-        if self.alert.ask("¿Are you sure you want to close the application?",
-                          "If you have not saved any settings, they will be lost for the next session.",
-                          confirm=True, over=self):
+        if self.alert.ask("¿Cerrar EDDIE?", "Se cerrará la proyección y la ventana de configuración.",
+                          confirm=True, over=self, confirm_text="Cerrar EDDIE"):
             QApplication.instance().quit()
 
     def mousePressEvent(self, event) -> None:

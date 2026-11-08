@@ -1,0 +1,82 @@
+% ============================================================================
+% Tesis — Actualización del núcleo tecnológico de EDDIE (versión preliminar)
+% Este main.tex sirve para compilar y revisar los capítulos. Para la entrega,
+% usa la plantilla oficial del Departamento: copia capitulos/, datos/,
+% figuras/, referencias.bib y comandos_eddie.tex a tu proyecto de Overleaf y
+% sigue las instrucciones de LEEME.md.
+% ============================================================================
+\documentclass[12pt,letterpaper,oneside]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla,es-nodecimaldot,es-noshorthands]{babel}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[left=3cm,right=2.5cm,top=3cm,bottom=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{2.5em}
+\usepackage[labelsep=colon,font=small]{caption}
+\captionsetup[table]{position=top}
+\usepackage[round,authoryear]{natbib}
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]{\normalfont\Large\bfseries\raggedright}{CAPÍTULO \thechapter.}{0.5em}{\MakeUppercase}
+\titlespacing*{\chapter}{0pt}{0pt}{24pt}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{\MakeUppercase}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\itshape}{\thesubsubsection}{0.6em}{}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\input{comandos_eddie}
+\usepackage[hidelinks]{hyperref}
+
+\addto\captionsspanish{%
+  \renewcommand{\contentsname}{TABLA DE CONTENIDO}%
+  \renewcommand{\listtablename}{ÍNDICE DE TABLAS}%
+  \renewcommand{\listfigurename}{ÍNDICE DE ILUSTRACIONES}%
+  \renewcommand{\bibname}{REFERENCIAS BIBLIOGRÁFICAS}}
+\renewcommand{\listalgorithmcfname}{ÍNDICE DE ALGORITMOS}
+
+\begin{document}
+\pagenumbering{roman}
+\begin{titlepage}
+\centering
+{\large\bfseries UNIVERSIDAD DE SANTIAGO DE CHILE\par}
+{\bfseries FACULTAD DE INGENIERÍA\par}
+{\bfseries Departamento de Ingeniería Informática\par}
+\vspace{5cm}
+{\Large\bfseries Actualización del núcleo tecnológico de EDDIE\par}
+\vspace{3cm}
+{\bfseries Nicolás Alonso Muñoz Reyes\par}
+\vfill
+\begin{flushright}
+\begin{minipage}{7.5cm}
+Profesor guía: Roberto González Ibáñez\\[1.5em]
+Tesis de grado presentada en conformidad a los requisitos para obtener el título de Ingeniero Civil en Informática
+\end{minipage}
+\end{flushright}
+\vspace{2cm}
+Santiago -- Chile\\2026
+\end{titlepage}
+
+\input{capitulos/00_resumen}
+\tableofcontents
+\listoftables
+\listoffigures
+\listofalgorithms
+
+\cleardoublepage
+\pagenumbering{arabic}
+\input{capitulos/01_introduccion}
+\input{capitulos/02_marco_teorico}
+\input{capitulos/03_analisis}
+\input{capitulos/04_diseno}
+\input{capitulos/05_evaluacion}
+\input{capitulos/06_conclusiones}
+\input{capitulos/glosario}
+
+\bibliographystyle{apalike}
+\bibliography{referencias}
+
+\appendix
+\input{capitulos/anexos}
+\end{document}

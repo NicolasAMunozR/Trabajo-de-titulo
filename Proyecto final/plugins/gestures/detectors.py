@@ -64,7 +64,6 @@ class HandSkinPlugin(CalibratedGesturePlugin):
     def configure(self, config: dict) -> None:
         self._ycc_min = np.array(config.get("ycrcb_min", (0, 131, 80)), np.uint8)
         self._ycc_max = np.array(config.get("ycrcb_max", (255, 185, 135)), np.uint8)
-        self._rotate = bool(config.get("rotate_180", True))
         self._detect_click = False
         self._repeat = 0
         k12, k6 = max(2, round(12 * self._scale)), max(2, round(6 * self._scale))
@@ -77,8 +76,9 @@ class HandSkinPlugin(CalibratedGesturePlugin):
         return cv2.dilate(skin, self._dilate_kernel, iterations=2, borderType=cv2.BORDER_REFLECT)
 
     def _detect(self, frame: CameraFrame) -> Detection:
-        if self._rotate:
-            frame = cv2.rotate(frame, cv2.ROTATE_180)
+        # La rotación 180° del C# ya no es fija aquí: la aplica la clase base solo si
+        # "rotate_180" está activo, igual para los tres detectores (antes la vista de
+        # calibración de la mano salía invertida respecto de la cámara).
         display = frame.copy()
         contours, _ = cv2.findContours(self._skin(frame), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         if not contours:

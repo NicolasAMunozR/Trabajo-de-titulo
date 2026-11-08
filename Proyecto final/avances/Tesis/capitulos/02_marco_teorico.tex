@@ -1,0 +1,155 @@
+\chapter{Marco teórico}
+\label{cap:marco}
+
+\section{Marco conceptual}
+
+Esta sección define los conceptos que se usan en el resto del documento. Se agrupan en tres bloques: la lectura aumentada y sus técnicas de percepción, la interacción mediante la mirada, y los conceptos de ingeniería de software con los que se aborda la reconstrucción del sistema.
+
+\subsection{Lectura aumentada y realidad aumentada espacial}
+
+Se entiende por \textbf{lectura aumentada} el enriquecimiento de un documento impreso con prestaciones propias del formato digital (búsqueda, definición, traducción, anotación sincronizada) sin reemplazar el papel como soporte de lectura. Cuando la información digital se dibuja directamente sobre los objetos físicos mediante un proyector, en lugar de mostrarse en una pantalla o un visor que el usuario sostiene o lleva puesto, se habla de \textbf{realidad aumentada espacial} \citep{bimber2005}. Esta modalidad es \textbf{no obstructiva}: el lector no necesita sostener un dispositivo ni llevar un casco, lo que la hace adecuada para estudiar la lectura sin alterar la conducta que se quiere medir.
+
+Un sistema de este tipo necesita relacionar tres sistemas de coordenadas: el de la cámara que observa el escritorio, el de la imagen del proyector y el del documento PDF. La relación entre dos planos observados en perspectiva se modela con una \textbf{homografía}, una transformación proyectiva $H \in \mathbb{R}^{3\times3}$ que lleva un punto homogéneo $p=(x,y,1)^\top$ de un plano a otro, $p' \sim Hp$, y que puede estimarse con al menos cuatro pares de puntos correspondientes \citep{hartley2004}. En EDDIE la homografía se obtiene de una calibración de cuatro puntos y permite convertir la posición de un lápiz o de un dedo en la cámara en una posición sobre la proyección.
+
+\subsection{Percepción del documento: binarización y OCR}
+
+La \textbf{binarización} separa los píxeles de tinta de los del fondo. El método de \citet{otsu1979} elige el umbral $t^\ast$ que maximiza la varianza entre las dos clases del histograma de grises,
+\begin{equation}
+t^\ast=\arg\max_{t}\ \omega_0(t)\,\omega_1(t)\,\bigl[\mu_0(t)-\mu_1(t)\bigr]^2,
+\end{equation}
+donde $\omega_i$ y $\mu_i$ son la proporción y la media de cada clase. Es un umbral \emph{global}: un único valor para toda la imagen, por lo que se degrada cuando la iluminación no es uniforme, como ocurre con la luz de un proyector sobre papel. Los umbrales \emph{adaptativos} calculan un valor por vecindad y toleran mejor esos gradientes.
+
+El \textbf{reconocimiento óptico de caracteres} (OCR) convierte la imagen de un texto en una cadena de caracteres. EDDIE usa el motor Tesseract \citep{smith2007}. Su calidad se mide con la tasa de error por carácter (CER) y por palabra (WER), que cuentan las sustituciones ($S$), supresiones ($D$) e inserciones ($I$) necesarias para transformar la transcripción en el texto de referencia de largo $N$, es decir, su distancia de edición de \citet{levenshtein1966}:
+\begin{equation}
+\mathrm{CER}=\frac{S_c+D_c+I_c}{N_c}\times100\%,\qquad
+\mathrm{WER}=\frac{S_w+D_w+I_w}{N_w}\times100\%.
+\end{equation}
+
+\subsection{Rastreo ocular e interacción por la mirada}
+
+Un \textbf{eye tracker} estima, a una frecuencia de muestreo fija (60~Hz en GazePoint y TheEyeTribe), el punto de la escena al que mira una persona. La señal se compone de \textbf{fijaciones}, períodos en que la mirada permanece estable sobre una región y en los que se procesa la información, y \textbf{sacadas}, desplazamientos rápidos entre fijaciones. Un método habitual para identificar fijaciones es el de dispersión (I-DT), que agrupa muestras consecutivas mientras su dispersión no supere un umbral durante un tiempo mínimo \citep{salvucci2000}.
+
+Cuando la mirada se usa además para \emph{actuar} (seleccionar un botón), el sistema debe distinguir entre mirar para leer y mirar para activar. El \textbf{clic por permanencia} (\textit{dwell time}) dispara la acción cuando la mirada permanece dentro de un radio $R$ durante un tiempo $T$. Si $T$ es corto, cualquier fijación de lectura activa controles involuntariamente, problema conocido como \textbf{toque de Midas} \citep{jacob1990}; si es largo, la interacción se vuelve lenta. La elección de $(T,R)$ es, por lo tanto, un compromiso que debe medirse.
+
+\subsection{Software científico y deuda técnica}
+
+En este trabajo se entiende por \textbf{software científico} aquel desarrollado \textit{ad hoc} para soportar una tarea de investigación específica, como la captura, el procesamiento o el análisis de datos experimentales, en contraposición al software de propósito general que un laboratorio utiliza como herramienta auxiliar. Bajo esta definición, EDDIE y Multimodal Observer son software científico, mientras que el sistema operativo o el editor de código empleados en su desarrollo no lo son.
+
+La \textbf{deuda técnica} es el costo futuro que generan las decisiones de diseño o implementación que resuelven un problema inmediato a expensas de la mantenibilidad. En el software científico aparece con frecuencia porque cada investigador optimiza para su propio trabajo y no para el sistema común \citep{ernst2026}.
+
+\subsection{Arquitectura de plugins y orquestación}
+
+Una \textbf{arquitectura de plugins} separa un núcleo estable de módulos intercambiables que implementan un \textbf{contrato de interfaz} común, de modo que se puede agregar o reemplazar un módulo sin modificar el núcleo \citep{bustio2013}. El \textbf{orquestador} es el componente del núcleo que conoce a todos los plugins, controla su ciclo de vida (inicialización, ejecución y liberación) y coordina el flujo de datos entre ellos, a diferencia de un esquema de coreografía en que los módulos se coordinan entre sí sin un componente central \citep{megargel2021}. Una \textbf{capa de abstracción de hardware} (HAL) oculta detrás de una interfaz los detalles de cada dispositivo físico, lo que permite sustituirlo por una implementación simulada para pruebas.
+
+\subsection{MECIVA PS}
+
+\textbf{MECIVA PS} es la metodología de evaluación y validación de software científico aplicada por \citet{ibaceta2023} a EDDIE. Clasifica los requisitos en críticos y secundarios, ejecuta verificaciones funcionales y no funcionales, registra los errores encontrados con su estado (sin falla, solución parcial, sin solución) y evalúa la validez y la confiabilidad de las mediciones del sistema mediante ejecuciones repetidas. En este trabajo se usa como protocolo de verificación del sistema reconstruido, de modo que sus resultados sean comparables con la línea base de 2023 (Capítulo~\ref{cap:evaluacion}).
+
+\section{Estado del arte}
+
+\subsection{Antecedentes del proyecto (evolución histórica)}
+
+Para comprender los fundamentos de la presente propuesta de modernización es necesario reconstruir la trayectoria histórica de EDDIE (\textit{augmEnteD reaDIng dEsk}), desarrollado de forma incremental en el Departamento de Ingeniería Informática de la Universidad de Santiago de Chile bajo el alero del laboratorio InTeractiOn. El proyecto es un caso representativo de software científico que evolucionó a través de seis memorias de título sucesivas, cada una de las cuales incorporó un módulo funcional sin que existiera una revisión sistemática de la arquitectura común.
+
+El concepto original fue propuesto por \citet{carrasco2017}, quien implementó un entorno de realidad aumentada orientado a enriquecer la lectura en papel. \citet{contreras2019} evolucionó esta propuesta hacia una configuración no obstructiva de escritorio con cámara y proyector fijos. A partir de esta base, el proyecto se expandió con tres capacidades de soporte al lector: \citet{montanares2019} integró un módulo de búsqueda web contextual activado por voz y gestos; \citet{pezoa2020} desarrolló un mecanismo de consistencia bidireccional entre el documento físico y su versión PDF; y \citet{estay2020} incorporó dispositivos de rastreo ocular para el análisis del comportamiento atencional. Posteriormente, \citet{santibanez2020} rediseñó la interfaz gráfica bajo un enfoque centrado en el usuario y, finalmente, \citet{ibaceta2023} aplicó la metodología MECIVA PS para diagnosticar el estado del software, identificando 67 errores (Tabla~\ref{tab:evolucion}).
+
+Este proceso incremental produjo un sistema de aproximadamente 45\,000 líneas de código distribuidas en 26 proyectos \texttt{.csproj}, en el que la falta de una arquitectura común llevó a la coexistencia de tres mecanismos heterogéneos de carga por reflexión: \texttt{Assembly.LoadFrom}, un \texttt{AppDomain} subordinado y \texttt{Assembly.LoadFile}. Los errores de carga y despliegue suman 16 de los 67 documentados (Tabla~\ref{tab:reclasificacion}).
+
+\begin{table}[H]
+\centering
+\caption{Síntesis de la evolución histórica del sistema EDDIE a través de seis memorias de título sucesivas.}
+\label{tab:evolucion}
+\small
+\begin{tabularx}{\textwidth}{p{3.2cm} X X}
+\toprule
+\textbf{Trabajo} & \textbf{Aporte al proyecto EDDIE} & \textbf{Limitaciones / deuda técnica generada} \\ \midrule
+\citet{carrasco2017} & Prototipo inicial de lectura aumentada con reconocimiento del texto resaltado. & Dependencia de mediadores manuales. \\ \midrule
+\citet{contreras2019} & Configuración no obstructiva de escritorio (cámara y proyector) y reconocimiento gestual. & Acoplamiento directo con la interfaz WinForms en C\#. \\ \midrule
+\citet{montanares2019} & Módulo de búsqueda web contextual (enciclopedia, definiciones, traducción, video, imágenes) y voz. & Carga mediante reflexión con \texttt{Assembly.LoadFile}; APIs con credenciales de estudiante. \\ \midrule
+\citet{pezoa2020} & Consistencia bidireccional físico-digital (PDF). & Rutas fijas y carpeta de plugins de consistencia que debía crearse a mano. \\ \midrule
+\citet{estay2020} & Integración de rastreo ocular (GazePoint, TheEyeTribe, GazeCloud). & Carga aislada en un \texttt{AppDomain} subordinado. \\ \midrule
+\citet{santibanez2020} & Rediseño centrado en el usuario de la interfaz gráfica. & Mantenimiento de la capa monolítica subyacente. \\ \midrule
+\citet{ibaceta2023} & Diagnóstico de errores mediante la metodología MECIVA PS. & Registro de 67 errores; varios sin solución en hardware real. \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir de los trabajos citados.}
+\end{table}
+
+\subsubsection{Catálogo de funcionalidades y levantamiento de la usabilidad previa}
+
+En su estado actual, EDDIE ofrece cinco categorías funcionales heredadas de las memorias descritas: procesamiento de imágenes y reconocimiento gestual \citep{contreras2019}, búsqueda web contextual \citep{montanares2019}, consistencia bidireccional entre el documento físico y su versión digital \citep{pezoa2020}, rastreo ocular \citep{estay2020} y una capa de presentación en WinForms resultante del rediseño de \citet{santibanez2020}. Cada funcionalidad fue incorporada mediante un mecanismo de integración propio del memorista responsable, sin un contrato de interfaz común, lo que explica la heterogeneidad de mecanismos de carga identificada en el diagnóstico.
+
+La evaluación de \citet{ibaceta2023} identificó fallas internas (consistencia de los módulos entre sí) y externas, vinculadas a la interacción con el hardware y a la ausencia de documentación de uso e instalación. Entre los hallazgos más críticos se cuentan la inestabilidad de la cámara digital (E16) y la imposibilidad de detectar la parte inferior de la proyección con el eye tracker (E49), lo que compromete la validez de EDDIE como instrumento de medición del comportamiento atencional. Sus pruebas de reconocimiento de texto registraron además que la cámara detectaba el botón de resaltado de la interfaz en lugar del texto, por lo que sugirió cambiar su color (EFD2), y que la validez del reconocimiento caía del 60--100\% en las posiciones cercanas a la cámara al 10--30\% en las más lejanas, por lo que sugirió ubicar el texto en la parte superior de la interfaz (EFD4). Este diagnóstico constituye la línea base contra la cual se contrastan los resultados de la reconstrucción (Capítulo~\ref{cap:evaluacion}).
+
+\subsection{Sistemas de lectura aumentada similares}
+
+EDDIE no existe en un vacío tecnológico: hay sistemas de lectura aumentada comparables y plataformas que han enfrentado problemas de modernización arquitectónica. Entre los referentes más destacados se encuentran:
+
+\begin{itemize}
+  \item \textbf{DigitalDesk} \citep{wellner1993}: sistema pionero que introdujo el concepto de entorno aumentado por computador, con una cámara de video y un proyector montados sobre un escritorio convencional. Sus aplicaciones incluyen una calculadora que lee por OCR los números que el usuario señala en un informe impreso, un traductor que proyecta definiciones de palabras extranjeras y PaperPaint, que permite copiar bocetos en papel como objetos digitales proyectados (Figura~\ref{fig:digitaldesk}).
+  \item \textbf{EnhancedDesk} \citep{koike2001}: evoluciona el escritorio aumentado resolviendo la sensibilidad a la iluminación con una cámara infrarroja que sigue los dedos en tiempo real (25--30 cuadros por segundo) sin importar los colores proyectados sobre la piel. Su aplicación principal es un libro de texto interactivo en que códigos 2D impresos activan simulaciones que el estudiante manipula con las manos (Figura~\ref{fig:enhanceddesk}).
+  \item \textbf{AR-PaperSync} \citep{miah2024}: sistema de realidad aumentada móvil que integra artículos científicos impresos y digitales. Permite escanear el título de un artículo impreso para ver capas de información con citas y referencias, y sincroniza las notas de lectura entre el móvil, el escritorio y el papel (Figura~\ref{fig:arpapersync}).
+  \item \textbf{Enlight} \citep{wander_enlight}: lámpara de escritorio que combina visión computacional, OCR, fuentes de datos en red y \textit{projection mapping} para traer funciones inteligentes a libros impresos: subrayar una palabra muestra su definición y los resaltados se sincronizan con la nube. Es un prototipo conceptual de diseño de interacción, sin rastreo ocular ni consistencia bidireccional, pero comparte el principio de proyección no obstructiva (Figura~\ref{fig:enlight}).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}\centering
+\figuraopcional{figuras/digitaldesk.png}{0.9\linewidth}
+\caption{Primer prototipo de DigitalDesk.}\label{fig:digitaldesk}
+\fuente{\citet{wellner1993}.}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\figuraopcional{figuras/enhanceddesk.png}{0.9\linewidth}
+\caption{Gesto de señalamiento en EnhancedDesk.}\label{fig:enhanceddesk}
+\fuente{\citet{koike2001}.}
+\end{minipage}
+
+\vspace{1em}
+\begin{minipage}{0.48\textwidth}\centering
+\figuraopcional{figuras/arpapersync.png}{0.9\linewidth}
+\caption{Descripción general de AR-PaperSync.}\label{fig:arpapersync}
+\fuente{\citet{miah2024}.}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\figuraopcional{figuras/enlight.png}{0.9\linewidth}
+\caption{Enlight: lectura aumentada.}\label{fig:enlight}
+\fuente{\citet{wander_enlight}.}
+\end{minipage}
+\end{figure}
+
+La Tabla~\ref{tab:comparacion} compara estos sistemas con EDDIE en las cuatro características que lo definen. EDDIE es el único que combina proyección sobre papel, rastreo ocular y consistencia bidireccional con un propósito de investigación académica, lo que justifica conservarlo como plataforma en lugar de reemplazarlo por un sistema existente.
+
+\begin{table}[H]
+\centering
+\caption{Comparación de sistemas de lectura aumentada.}
+\label{tab:comparacion}
+\small
+\begin{tabularx}{\textwidth}{l X X X X}
+\toprule
+\textbf{Sistema} & \textbf{Proyección sobre papel} & \textbf{Rastreo ocular} & \textbf{Consistencia bidireccional} & \textbf{Foco académico} \\ \midrule
+EDDIE & Sí & Sí & Sí & Sí \\
+DigitalDesk & Sí & No & Parcial & No \\
+EnhancedDesk & Sí & No & No & Sí \\
+AR-PaperSync & No (móvil) & No & Sí & Sí \\
+Enlight & Sí & No & Parcial & No \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir de los trabajos citados.}
+\end{table}
+
+\subsection{El problema de la modernización en software de investigación}
+
+Un desafío documentado en el desarrollo de software científico es que decisiones técnicas localmente óptimas, tomadas por un investigador para resolver el problema inmediato de su propia tesis, tienden a producir un sistema globalmente inconsistente cuando se acumulan a través de múltiples autores sin una arquitectura común \citep{ernst2026}. El fenómeno se ha documentado en sistemas de mayor escala, como plataformas de bioinformática y biología computacional, donde la falta de coordinación entre grupos de desarrollo genera herramientas difíciles de integrar entre sí \citep{orozco2017}.
+
+La literatura converge en que la solución recurrente es adoptar arquitecturas modulares con interfaces estandarizadas que separen la lógica de investigación de la infraestructura técnica \citep{bustio2013,glatard2017}. En los \textit{science gateways}, plataformas que integran instrumentos y flujos de trabajo científicos, esta separación se implementa habitualmente con una capa de abstracción de hardware y un catálogo de plugins cargados dinámicamente a través de un único mecanismo, lo que permite aislar la falla de un componente sin comprometer el resto \citep{glatard2017}. Un núcleo liviano con contratos bien definidos reduce el tiempo dedicado a resolver problemas comunes de integración y concentra el esfuerzo en los algoritmos de cada dominio \citep{bustio2013}.
+
+\subsection{Multimodal Observer como referente arquitectural}
+
+Un antecedente crítico es la evolución de Multimodal Observer (MO), aplicación del mismo laboratorio InTeractiOn para la captura y el análisis de datos multimodales como movimientos oculares, bioseñales y video. MO enfrentó un problema estructuralmente idéntico al de EDDIE: las sucesivas versiones de su núcleo, desarrolladas por distintos tesistas, generaron incompatibilidades que dejaron inoperativos la mayoría de sus plugins de visualización y análisis. La solución fue reimplementar el núcleo en Python con una arquitectura de plugins desacoplada, que resultó viable en el contexto académico y produjo un sistema validado con métricas objetivas de calidad de código, rendimiento y aceptación \citep{figueroa2025}. Esta experiencia es el antecedente empírico más relevante para la presente propuesta, por la similitud del problema y por compartir el contexto institucional y la línea de investigación (Figura~\ref{fig:mo}).
+
+\begin{figure}[H]
+\centering
+\figuraopcional{figuras/multimodal_observer.png}{0.75\textwidth}
+\caption{Multimodal Observer: vista principal.}
+\label{fig:mo}
+\fuente{\citet{figueroa2025}.}
+\end{figure}

@@ -190,6 +190,33 @@ class ImageProcessorPlugin(IImageProcessor):
         self._last_detected_words = words
         return {"raw_text": " ".join(words), "text_regions": regions}
 
+    def _read_highlight(self, binary: np.ndarray) -> str:
+        """OCR del recorte descartando trozos de letras vecinas cortados por el borde del resaltado.
+
+        El resaltador casi siempre toca un poco las palabras de al lado; Tesseract las lee como
+        caracteres sueltos ("1 aumentada e"). Se descartan los fragmentos de 1–2 caracteres que
+        tocan el borde izquierdo o derecho, siempre que quede al menos una palabra.
+        """
+        try:
+            data = pytesseract.image_to_data(binary, lang=self._ocr_language,
+                                             config=f"{self._tesseract_config} --psm 6".strip(),
+                                             output_type=pytesseract.Output.DICT)
+        except Exception:                                   # versión de Tesseract sin TSV: texto plano
+            return self.extract_text(binary)
+        width = binary.shape[1]
+        margin = max(2, width // 100)
+        words = []
+        for index, raw in enumerate(data["text"]):
+            word = raw.strip()
+            if not word:
+                continue
+            left, right = int(data["left"][index]), int(data["left"][index]) + int(data["width"][index])
+            edge = left <= margin or right >= width - margin
+            words.append((word, edge and len(word) <= 2))
+        kept = [w for w, fragment in words if not fragment] or [w for w, _ in words]
+        self._last_detected_words = kept
+        return " ".join(kept)
+
     def recognize_highlighted_text(self, frame: Optional[CameraFrame] = None) -> dict:
         """Flujo completo de 'resaltar y reconocer' (CaptureTxt + OCRProcess.TransformImage)."""
         if frame is None:
@@ -204,8 +231,11 @@ class ImageProcessorPlugin(IImageProcessor):
             crop = frame[y:y + h, x:x + w].copy()
             ocr_input = cv2.rotate(crop, cv2.ROTATE_180) if self._rotate_180 else crop
             if self._ocr_available:
-                text = self.extract_text(self.preprocess(ocr_input))
-        self._last_result = {"text": text, "annotated": annotated, "crop": crop, "box": box}
+                text = self._read_highlight(self.preprocess(ocr_input))
+        else:
+            ocr_input = None
+        self._last_result = {"text": text, "annotated": annotated, "crop": crop, "box": box,
+                             "upright_crop": ocr_input, "ocr_available": self._ocr_available}
         return dict(self._last_result)
 
     def get_precision_recall(self, expected_words: list[str]) -> dict:

@@ -1,0 +1,586 @@
+\chapter{Análisis}
+\label{cap:analisis}
+
+Este capítulo corresponde a la etapa \textit{Plan} del ciclo PDCA y al primer objetivo específico. Presenta el diagnóstico de la arquitectura en C\#, la captura de requerimientos de la nueva versión, el análisis de factibilidad y los prototipos desechables con los que se evaluó la migración de cada función crítica.
+
+\section{Diagnóstico}
+\label{sec:diagnostico}
+
+\subsection{Reclasificación de los errores de EDDIE-2023}
+
+\citet{ibaceta2023} registró 67 errores al evaluar EDDIE con MECIVA PS, organizados según el módulo en que aparecieron (consistencia, rastreo ocular, documento físico, otros). Esa organización indica \emph{dónde} se manifiesta cada falla, pero no \emph{por qué} ocurre, que es lo que determina si una reconstrucción del núcleo puede corregirla. Por ello se reclasificaron los 67 errores según su causa raíz (Tabla~\ref{tab:reclasificacion}; el detalle por error está en el Anexo~\ref{an:errores}).
+
+\begin{table}[H]
+\centering
+\caption{Reclasificación por causa de los 67 errores documentados por \citet{ibaceta2023}.}
+\label{tab:reclasificacion}
+\small
+\begin{tabularx}{\textwidth}{p{4.2cm} c c X}
+\toprule
+\textbf{Causa} & \textbf{N.\textsuperscript{o}} & \textbf{\%} & \textbf{Ejemplos y relación con la reconstrucción} \\ \midrule
+Carga y despliegue & 16 & 23,9 & DLL o carpeta de plugins faltante (E50), rutas absolutas de desarrolladores anteriores, ensamblados copiados a mano. Los corrige el diseño: un único cargador y un único archivo de configuración. \\ \midrule
+Práctica de código & 26 & 38,8 & Variables con valor nulo, excepciones no capturadas, acciones sobre un PDF no cargado (E11). Los corrige el aislamiento de fallos del orquestador y las validaciones de cada plugin. \\ \midrule
+Hardware y sensores & 9 & 13,4 & Eye tracker no reconocido (E15), cámara inestable (E16), zona inferior de la proyección no detectable (E49). Requieren el laboratorio. \\ \midrule
+Servicios externos & 8 & 11,9 & APIs de búsqueda con credenciales vencidas. Se reemplazan por un modelo de lenguaje. \\ \midrule
+Interfaz e idioma & 3 & 4,5 & Mensajes en un idioma distinto (E14). \\ \midrule
+Infraestructura de laboratorio & 3 & 4,5 & Equipo, montaje y red de la sala. Fuera del alcance del software. \\ \midrule
+Documentación & 2 & 3,0 & Sin manual de instalación ni de uso (E12, E13). \\ \midrule
+\textbf{Total} & \textbf{67} & \textbf{100} & \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir de \citet{ibaceta2023}.}
+\end{table}
+
+La reclasificación muestra que las dos causas más frecuentes, práctica de código (26) y carga y despliegue (16), suman 42 errores (62,7\%) que dependen de la arquitectura y no del hardware. Son las que una reconstrucción del núcleo puede atacar de forma estructural. Los errores de hardware e infraestructura (12) solo pueden verificarse en el laboratorio, y los de servicios externos (8) se resuelven cambiando de proveedor.
+
+\subsection{Arquitectura en C\#}
+
+EDDIE-2023 es una solución de Visual Studio con 26 proyectos y unas 45\,000 líneas de C\#. La aplicación principal (\texttt{AugmentedReadingApp}) contiene la interfaz WinForms, la proyección y la lógica de coordinación, y carga los módulos de tres formas distintas (Figura~\ref{fig:arq_legada}): los plugins de consistencia con \texttt{Assembly.LoadFrom} desde una carpeta que debía existir en el equipo, los de rastreo ocular en un \texttt{AppDomain} subordinado mediante una clase intermedia \texttt{MarshalByRefObject}, y los de búsqueda con \texttt{Assembly.LoadFile}. Ninguno de los tres comparte una interfaz común con los otros, por lo que cada nuevo módulo agregó su propio punto de falla.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw=eddietinta, rounded corners=2pt, align=center, font=\footnotesize, minimum height=0.9cm, text width=3.0cm},
+  app/.style={box, fill=eddietinta!8, text width=8.6cm, minimum height=1.1cm},
+  arr/.style={-{Stealth[length=2mm]}, thick, eddietinta}]
+\node[app] (app) at (0,0) {\textbf{AugmentedReadingApp} (WinForms)\\ interfaz + proyección + coordinación de módulos};
+\node[box] (c) at (-4,-2.2) {Consistencia\\ \nolinkurl{Assembly.LoadFrom}};
+\node[box] (e) at (0,-2.2) {Rastreo ocular\\ \texttt{AppDomain} + proxy};
+\node[box] (b) at (4,-2.2) {Búsqueda web\\ \nolinkurl{Assembly.LoadFile}};
+\node[box, fill=red!6] (c2) at (-4,-4.5) {\nolinkurl{PluginsConsistencia/}\\ \textit{carpeta creada a mano}};
+\node[box, fill=red!6] (e2) at (0,-4.5) {DLL por dispositivo\\ \textit{ruta fija}};
+\node[box, fill=red!6] (b2) at (4,-4.5) {APIs REST\\ \textit{credenciales vencidas}};
+\foreach \x in {c,e,b} \draw[arr] (app.south -| \x) -- (\x);
+\draw[arr] (c) -- (c2); \draw[arr] (e) -- (e2); \draw[arr] (b) -- (b2);
+\node[box, text width=2.0cm] (g) at (-6.4,0) {Gestos y OCR\\ \textit{en la aplicación}};
+\draw[arr] (g) -- (app);
+\end{tikzpicture}
+\caption{Arquitectura de EDDIE-2023: tres mecanismos de carga independientes.}
+\label{fig:arq_legada}
+\fuente{Elaboración propia a partir del repositorio EDDIE-2023.}
+\end{figure}
+
+\section{Captura de requerimientos}
+
+La captura de requerimientos tuvo por objetivo definir qué debe hacer la nueva versión de EDDIE y bajo qué condiciones de calidad. El punto de partida fue el sistema legado, ubicado en el repositorio EDDIE-2023. El proceso persiguió dos metas complementarias: conservar las funcionalidades de interacción físico-digital que el sistema ya ofrecía, y resolver de manera estructural los errores que dependen de la arquitectura (Sección~\ref{sec:diagnostico}).
+
+\subsection{Fuentes y etapas del proceso}
+
+\begin{description}
+  \item[Revisión de requerimientos e historial legado.] Se revisaron los requerimientos de los trabajos de titulación previos \citep{carrasco2017,contreras2019,montanares2019,pezoa2020,estay2020,santibanez2020}, reunidos y verificados por \citet{ibaceta2023}. Esta revisión estableció la línea base de capacidades que debían mantenerse (trazado de resaltados, lectura de QuadPoints, notas adhesivas, rastreo ocular) y las distinguió de las que requerían reestructuración (carga dinámica de DLL, manejo de valores nulos). Se conservaron los identificadores originales (por ejemplo RFCO12 o RFP1) para mantener la trazabilidad.
+  \item[Directrices del profesor guía y diagnóstico arquitectónico.] Se integraron las prioridades surgidas del diagnóstico: desacoplar el núcleo de las bibliotecas del sistema legado (PyMuPDF en lugar de iTextSharp, OpenCV en lugar de Emgu CV, PySide6 en lugar de WinForms) e incorporar un orquestador central.
+  \item[Referentes de arquitectura.] Multimodal Observer \citep{figueroa2025} aportó la estructura de núcleo, contrato \texttt{PluginBase}, cargador por \texttt{importlib} y validación con dispositivos simulados. EDDIE ya contemplaba una arquitectura modular para incorporar nuevos módulos (RFCO12, \citealp{contreras2019}) y plugins por dispositivo de rastreo ocular \citep{estay2020}; la nueva versión generaliza esa idea a todos los módulos.
+  \item[Hallazgos de la evaluación previa.] Los hallazgos de \citet{ibaceta2023} sobre la interfaz proyectada (EFD2, EFD4, E49) se tradujeron en requisitos de interfaz (U1--U3 y RNF-06).
+  \item[Especificación verificable.] Cada requisito se redactó de modo que pudiera verificarse con una prueba automatizada (pytest), un prototipo o una prueba en el laboratorio, y cada avance indica los requisitos que cubre (Apéndice~\ref{ap:avances}).
+\end{description}
+
+\subsection{Requerimientos funcionales}
+
+La Tabla~\ref{tab:rf} presenta los requerimientos funcionales agrupados por módulo. Los requisitos con identificador N son nuevos y corresponden al núcleo y a la capa de abstracción de hardware; los restantes provienen de las memorias anteriores y conservan su identificador original, y los requisitos U provienen del rediseño de la interfaz.
+
+{\small\input{datos/requisitos_rf}}
+\vspace{-1em}\fuente{Elaboración propia a partir de los trabajos citados en la columna Origen.}
+
+\subsection{Requerimientos no funcionales}
+
+La Tabla~\ref{tab:rnf} especifica los ocho requerimientos no funcionales. Cada uno tiene un criterio de aceptación medible, que se verifica en el Capítulo~\ref{cap:evaluacion}. El umbral de latencia de RNF-01 se deriva de la frecuencia de muestreo de los eye trackers: a 60~Hz llega una muestra cada 16,6~ms, y el ciclo del orquestador no debe consumir más de la mitad de ese período para no perder muestras.
+
+{\small\input{datos/requisitos_rnf}}
+\vspace{-1em}\fuente{Elaboración propia.}
+
+Varios de estos requerimientos responden a errores documentados en el sistema legado. RNF-02 y RNF-04 responden a la carga de plugins como archivos \texttt{.dll} que debían compilarse y ubicarse manualmente en carpetas específicas, origen de errores como la ausencia de la carpeta \texttt{PluginsConsistencia} (E50). RNF-02 responde también a las fallas por variables con valor nulo, que en C\# detenían la aplicación. RNF-05 permite verificar todo el software antes de usar el laboratorio, cuya disponibilidad es limitada. RNF-06 responde a los hallazgos de usabilidad EFD2 y EFD4 y al error de idioma E14, y RNF-08 a los servicios de búsqueda con credenciales vencidas.
+
+\section{Factibilidad}
+\label{sec:factibilidad}
+
+\subsection{Factibilidad técnica}
+
+La factibilidad técnica depende de que cada función de EDDIE-2023 tenga un equivalente en el ecosistema Python que entregue el mismo resultado. Para las funciones de bajo riesgo (consultas REST, registro de eventos, marcadores de PDF) basta con verificar que la biblioteca existe y está mantenida. Para las funciones críticas, cuyo comportamiento depende de algoritmos de visión, de protocolos de dispositivos o de la arquitectura, se construyeron prototipos desechables (Sección~\ref{sec:prototipado}). Las bibliotecas elegidas (OpenCV, Tesseract, PyMuPDF, PySide6) son de código abierto, tienen versiones para Windows~11 de 64 bits y se instalan con \texttt{pip}, lo que además elimina las dependencias nativas de 32 bits del sistema legado.
+
+El riesgo técnico principal es que OpenCV y Emgu CV no producen resultados idénticos con los mismos parámetros, por lo que los umbrales de color y de forma deben recalibrarse. Los prototipos permiten medir ese efecto antes de la integración.
+
+\subsection{Factibilidad económica}
+
+Todo el software utilizado es libre o gratuito para uso académico. El hardware (cámaras, proyector, GazePoint y TheEyeTribe) ya existe en el laboratorio. El único costo variable es el modelo de lenguaje que responde las búsquedas, cuyo nivel gratuito es suficiente para sesiones de laboratorio; la clave se guarda fuera del repositorio (RNF-08).
+
+\subsection{Factibilidad operativa}
+
+La operación depende del acceso a la sala de experimentación, que se comparte con otros proyectos. Para que el desarrollo no dependa de ese acceso, la capa de abstracción de hardware permite ejecutar y probar el sistema completo con dispositivos simulados (RNF-05), y el laboratorio se reserva para la verificación con el hardware real.
+
+\section{Prototipado}
+\label{sec:prototipado}
+
+Esta sección presenta la fase de prototipado, cuyo propósito es reducir la incertidumbre técnica antes del diseño e implementación definitivos. Dado que EDDIE-2023 fue desarrollado en C\# y depende de bibliotecas específicas de Windows, es necesario comprobar de manera temprana y con bajo costo que sus funciones esenciales pueden reproducirse en Python. Con este fin se construyeron prototipos desechables (\textit{throwaway}), piezas de software acotadas cuyo valor está en los hallazgos que entregan y no en el código que producen. Cada prototipo se evaluó con tres criterios: (i) equivalencia funcional con la implementación en C\#, (ii) disponibilidad de bibliotecas Python adecuadas y (iii) cumplimiento de los requerimientos asociados (Tablas~\ref{tab:rf} y~\ref{tab:rnf}).
+
+\subsection{Inventario de funciones}
+
+Como paso previo se inventariaron las 28 funciones del código original y se agruparon en siete subsistemas (Tablas~\ref{tab:fun_imagen} a~\ref{tab:fun_gui}). Cada tabla indica la función, su ubicación en EDDIE-2023, el hardware que requiere, la decisión de prototiparla y la tecnología Python que la reemplaza.
+
+\newcommand{\funhead}{\toprule \textbf{ID} & \textbf{Función} & \textbf{EDDIE-2023} & \textbf{Hardware} & \textbf{¿Prototipar? / Tecnología} \\ \midrule}
+\newcolumntype{F}{>{\raggedright\arraybackslash}p{0.8cm}}
+\newcolumntype{G}{>{\raggedright\arraybackslash}p{3.0cm}}
+\newcolumntype{H}{>{\raggedright\arraybackslash}p{3.5cm}}
+\newcolumntype{K}{>{\raggedright\arraybackslash}p{2.2cm}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Funciones del subsistema de procesamiento de imágenes y visión computacional.}
+\label{tab:fun_imagen}
+\begin{tabularx}{\textwidth}{F G H K L}
+\funhead
+F1 & Enumeración e inicialización de cámaras & \nolinkurl{CameraActivity.cs} & Cámaras de texto y gestos & Sí. OpenCV \nolinkurl{VideoCapture} (MSMF con respaldo \nolinkurl{CAP_ANY}) y nombres de dispositivo por PowerShell/WMI. \\ \midrule
+F2 & Preprocesamiento y binarización (Otsu) & \nolinkurl{ColorRecognition.cs} & Cámara de texto & Sí. OpenCV \nolinkurl{cvtColor}, \nolinkurl{GaussianBlur}, \nolinkurl{threshold}. \\ \midrule
+F3 & Reconocimiento óptico de caracteres & \nolinkurl{OCRProcess.cs} & Ninguno & Sí. \nolinkurl{pytesseract} (Tesseract~5, \nolinkurl{spa+eng}). \\ \midrule
+F4 & Detección automática de páginas & \nolinkurl{PageDetectionSettings.cs} & Cámara de texto y proyector & Sí (solo factibilidad; fuera del MVP). OpenCV \nolinkurl{Canny}, \nolinkurl{findContours}, \nolinkurl{approxPolyDP}. \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir del repositorio EDDIE-2023.}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Funciones del subsistema de reconocimiento gestual.}
+\label{tab:fun_gestos}
+\begin{tabularx}{\textwidth}{F G H K L}
+\funhead
+F5 & Seguimiento de lápiz de color (Color Pen) & \nolinkurl{ColorPenRecognition} & Cámara de gestos & Sí. OpenCV \nolinkurl{inRange}. \\ \midrule
+F6 & Segmentación de mano y apuntado (Hand Skin) & \nolinkurl{HandSkinRecognition} / \nolinkurl{YCrCbSkinDetector.cs} & Cámara de gestos & Sí. OpenCV YCrCb, contornos y defectos de convexidad. \\ \midrule
+F7 & Mapeo de coordenadas cámara $\rightarrow$ proyección & \nolinkurl{GestureRecognitionActivity.cs} & Cámara de gestos y proyector & Sí. OpenCV \nolinkurl{findHomography}. \\ \midrule
+F8 & Reconocimiento gestual 3D & \nolinkurl{LeapMotionPlugin.cs} & Leap Motion & No (sensor fuera del alcance). \\ \midrule
+F9 & Mouse como alternativa (Mouse Recognition) & \nolinkurl{MousePlugin.cs} & Mouse & Sí. Eventos de ventana de OpenCV y cursor del sistema operativo. \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir del repositorio EDDIE-2023.}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Funciones del subsistema de rastreo ocular.}
+\label{tab:fun_ocular}
+\begin{tabularx}{\textwidth}{F G H K L}
+\funhead
+F10 & Comunicación con el eye tracker & Plugins GazeCloud (WebSocket, puerto 3000), EyeTribe (TCP 6555) y GazePoint (Open Gaze API, TCP 4242) & Eye tracker & Sí. \nolinkurl{socket} y \nolinkurl{asyncio} con mensajes JSON (EyeTribe) y XML (GazePoint). \\ \midrule
+F11 & Carga y aislamiento de plugins de rastreo & \nolinkurl{IntermediateClass.cs} (\nolinkurl{AppDomain}) & Ninguno & Sí. \nolinkurl{importlib}, mismo mecanismo para todos los plugins. \\ \midrule
+F12 & Clic por permanencia de la mirada (\textit{dwell}) & \nolinkurl{MouseControl.cs} & Eye tracker & Sí. Filtro temporal con zona de radio fijo (0,6~s, 45~px). \\ \midrule
+F13 & Retícula de mirada proyectada & \nolinkurl{ReticleDrawing.cs} & Eye tracker y proyector & Sí. Dibujo con mezcla alfa (OpenCV en el prototipo; Qt en la versión final). \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir del repositorio EDDIE-2023.}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Funciones del subsistema de consistencia físico-digital.}
+\label{tab:fun_consistencia}
+\begin{tabularx}{\textwidth}{F G H K L}
+\funhead
+F14 & Búsqueda de texto y QuadPoints en el PDF & \nolinkurl{DigitalDocSync.cs} (iTextSharp) & Ninguno & Sí. PyMuPDF \nolinkurl{search_for(quads=True)}. \\ \midrule
+F15 & Sincronización de resaltado papel $\rightarrow$ PDF & \nolinkurl{DigitalDocSync.cs} & Cámara de texto & Sí. PyMuPDF \nolinkurl{add_highlight_annot}. \\ \midrule
+F16 & Sincronización de notas adhesivas & \nolinkurl{CommentsDP} / \nolinkurl{CommentsPD} & Cámara de texto y proyector & Sí. OpenCV (detección HSV) y PyMuPDF \nolinkurl{add_text_annot}. \\ \midrule
+F17 & Sincronización de figuras geométricas & \nolinkurl{FiguresDP} / \nolinkurl{FiguresPD} & Cámara de texto y proyector & Sí. OpenCV (\nolinkurl{approxPolyDP}, compacidad) y PyMuPDF. \\ \midrule
+F18 & Sincronización de marcadores de página & \nolinkurl{PageMarkerDP} / \nolinkurl{PageMarkerPD} & Cámara de texto & No (operación directa de PyMuPDF). \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir del repositorio EDDIE-2023.}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Funciones del subsistema de búsqueda.}
+\label{tab:fun_busqueda}
+\begin{tabularx}{\textwidth}{F G H K L}
+\funhead
+F19 & Búsqueda enciclopédica & \nolinkurl{ApiWikipedia.cs} & Internet & No. La responde el modelo de lenguaje (\nolinkurl{IWebSearchProvider}). \\ \midrule
+F20 & Definiciones & \nolinkurl{ApiDefinicionesGoogle.cs} & Internet & No. Modelo de lenguaje. \\ \midrule
+F21 & Traducción & \nolinkurl{ApiTraduccionBing.cs} & Internet & No. Modelo de lenguaje. \\ \midrule
+F22 & Búsqueda de imágenes & \nolinkurl{ApiBusquedaImagenCloudVision.cs} & Cámara e Internet & No. Modelo de lenguaje con la imagen del recorte. \\ \midrule
+F23 & Búsqueda de videos & \nolinkurl{ApiBuscarYoutube.cs} & Internet & No. Modelo de lenguaje (sugerencia de búsqueda y enlace). \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir del repositorio EDDIE-2023.}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Funciones del subsistema de voz.}
+\label{tab:fun_voz}
+\begin{tabularx}{\textwidth}{F G H K L}
+\funhead
+F24 & Comandos de voz & \nolinkurl{ProjectionScreenActivity2.cs} (\nolinkurl{System.Speech}) & Micrófono & Sí. \nolinkurl{SpeechRecognition} (motor de Google en línea; Whisper o Vosk locales como alternativa). \\ \midrule
+F25 & Lectura en voz alta & \nolinkurl{ProjectionScreenActivity2.cs} (\nolinkurl{System.Speech}) & Parlantes & Sí. \nolinkurl{pyttsx3} (voces SAPI5 de Windows). \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir del repositorio EDDIE-2023.}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Funciones del subsistema de presentación, proyección y registro.}
+\label{tab:fun_gui}
+\begin{tabularx}{\textwidth}{F G H K L}
+\funhead
+F26 & Navegador embebido & \nolinkurl{ProjectionScreenActivity2.cs} (CefSharp) & Proyector & No. Resultados como texto en la proyección y enlace al navegador del sistema. \\ \midrule
+F27 & Banda de resaltado proyectada & \nolinkurl{HighlightTool.cs} & Proyector & Sí. Dibujo con mezcla alfa (OpenCV en el prototipo; Qt en la versión final). \\ \midrule
+F28 & Registro de eventos y mirada & Registro CSV de cada plugin & Ninguno & No. \nolinkurl{logging}, CSV y traza JSONL del orquestador. \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir del repositorio EDDIE-2023.}
+\end{table}
+
+\subsection{Síntesis de la selección y método de medición}
+
+De las 28 funciones, 19 se prototiparon y 9 quedaron excluidas por tres razones: depender de hardware fuera del alcance (F8), tener un equivalente directo sin riesgo técnico (F18, F26, F28) o depender de un proveedor externo que se sustituyó por un modelo de lenguaje (F19 a F23).
+
+Cada prototipo reproduce el algoritmo del sistema legado en un script independiente (carpeta \texttt{prototipos/} del repositorio). Para que sus resultados sean reproducibles, las métricas de las fichas se obtuvieron con un único script, \texttt{mediciones/medir\_prototipos.py} del avance P-00, que ejecuta el algoritmo de cada prototipo sobre datos con verdad terreno conocida y escribe los valores que aparecen en este capítulo. Cada resultado indica su tipo de medición:
+
+\begin{itemize}
+  \item \tipomed{pdf}: sobre un PDF real (\MedicionPDF, 64 páginas).
+  \item \tipomed{código}: sobre los módulos del código final.
+  \item \tipomed{sintético}: sobre imágenes o señales generadas con verdad terreno conocida (por ejemplo, una página del PDF con un destello simulado o una traza de mirada con ruido gaussiano). Mide el algoritmo, no el sensor.
+  \item \tipomed{laboratorio}: requiere la cámara, el eye tracker, el micrófono o participantes; se marca como \pendiente{medir en el laboratorio} y se mide con el mismo script.
+\end{itemize}
+
+Las mediciones se ejecutaron el \MedicionFecha{} en \MedicionSistema{} con semilla fija. Los tiempos se midieron con \texttt{time.perf\_counter()} tras 10 ejecuciones de calentamiento y se reportan como media $\pm$ desviación estándar.
+
+% ------------------------------------------------------------------------------------- F1
+\subsection{Prototipo F1: Enumeración e inicialización de cámaras}
+
+En el sistema legado (\texttt{CameraActivity.cs}) esta función enumera las cámaras con DirectShow y asigna una a la captura de texto y otra a la de gestos. El prototipo abre cada cámara con OpenCV (backend Media Foundation con respaldo \texttt{CAP\_ANY}) y obtiene los nombres reales de los dispositivos con una consulta WMI desde PowerShell, de modo que la interfaz pueda mostrar «cámara cenital» en lugar de un índice.
+
+\ficha{Enumeración e inicialización de cámaras}{tab:ficha_f1}
+{Abrir, configurar y leer las cámaras de texto y de gestos desde Python, con el nombre real de cada dispositivo.}
+{OpenCV (\texttt{VideoCapture}), PowerShell (\texttt{Get-CimInstance Win32\_PnPEntity}) / dos cámaras USB.}
+{\texttt{ICameraSensor} (\texttt{CameraSensorPlugin} de la capa de hardware).}
+{N3, N4; RNF-05, RNF-07.}
+{\tipomed{laboratorio} \ifdefined\FUnoFps Tasa efectiva: \FUnoFps~FPS; lectura: \FUnoLecturaMs~$\pm$~\FUnoLecturaSdMs~ms por cuadro; cuadros válidos: \FUnoCuadrosValidos.\else\pendiente{FPS efectivos y latencia de \texttt{cap.read()} con las cámaras del laboratorio}.\fi\newline La enumeración y la conmutación a la cámara simulada se verifican con pruebas automatizadas desde P-02.}
+
+\paragraph{Protocolo de validación.} Con cada cámara del laboratorio se descartan 30 cuadros de calentamiento y se leen 300 cuadros a 640$\times$480, midiendo cada llamada a \texttt{cap.read()}. La tasa efectiva es
+\begin{equation}
+\mathrm{FPS}=\frac{N}{\sum_{i=1}^{N}\Delta t_i},
+\end{equation}
+y se ejecuta con \texttt{python mediciones/medir\_prototipos.py --pdf <pdf> --camara 0} (y luego \texttt{--camara 1}). La medición responde además al error E16 \citep{ibaceta2023}: si la tasa cae o aparecen cuadros vacíos, el problema es del dispositivo o de su conexión y no del software.
+
+% ------------------------------------------------------------------------------------- F2
+\subsection{Prototipo F2: Preprocesamiento y binarización}
+
+En el sistema legado (\texttt{ColorRecognition.cs}) la imagen del papel se convierte a grises, se suaviza con un filtro gaussiano y se binariza con Otsu antes del OCR. La luz del proyector sobre el papel produce destellos y sombras, por lo que el prototipo mide cuánto de la página se recupera correctamente en esas condiciones.
+
+\ficha{Preprocesamiento y binarización}{tab:ficha_f2}
+{Reproducir la binarización de Otsu del sistema legado y medir su eficacia bajo la iluminación no uniforme de un proyector.}
+{OpenCV (\texttt{cvtColor}, \texttt{GaussianBlur}, \texttt{threshold}, \texttt{adaptiveThreshold}).}
+{\texttt{IImageProcessor} (método \texttt{preprocess}).}
+{FD1; RNF-01.}
+{\tipomed{sintético} Eficacia de Otsu global en las zonas afectadas: \FDosEficaciaPct\% ($\pm$\,\FDosEficaciaSd) sobre \FDosPaginas{} páginas; F1 de tinta \FDosFTintaPct\%.\newline Umbral adaptativo gaussiano en las mismas imágenes: \FDosEficaciaAdaptativoPct\%.\newline Tiempo: \FDosTiempoMs~$\pm$~\FDosTiempoSdMs~ms por página de 640~px.}
+
+\paragraph{Protocolo de validación.} Se renderizaron \FDosPaginas{} páginas del PDF a 640~px de ancho y a cada una se le agregó un destello elíptico, una sombra lateral y ruido gaussiano ($\sigma=4$). La verdad terreno es la binarización de la página limpia. La eficacia se calcula solo sobre los píxeles de las zonas de destello o sombra:
+\begin{equation}
+\mathrm{Eficacia}=\left(1-\frac{FP_{\text{ruido}}+FN_{\text{corte}}}{P_{\text{afectados}}}\right)\times100\%,
+\end{equation}
+donde $FP_{\text{ruido}}$ son los píxeles de fondo marcados como tinta, $FN_{\text{corte}}$ los de tinta perdidos y $P_{\text{afectados}}$ el total de píxeles de esas zonas.
+
+\paragraph{Hallazgo.} Un umbral global no puede separar tinta y fondo cuando la iluminación varía a lo largo de la página: Otsu elige un único valor y la zona del destello queda en blanco o la de la sombra en negro. El umbral adaptativo, que calcula un valor por vecindad, recupera casi toda la página. En la versión final esto pesa menos de lo que sugiere la cifra, porque Otsu se aplica solo al recorte pequeño de la palabra resaltada y no a la página completa, pero la sensibilidad a la luz del proyector debe medirse con la cámara real (E40/E41 de \citealp{ibaceta2023}).
+
+% ------------------------------------------------------------------------------------- F3
+\subsection{Prototipo F3: Reconocimiento óptico de caracteres}
+
+En el sistema legado (\texttt{OCRProcess.cs}) el recorte preprocesado se transcribe con Tesseract, el mismo motor que usaban \citet{carrasco2017} y \citet{contreras2019}. El prototipo evalúa Tesseract~5 mediante \texttt{pytesseract} con las tasas de error por carácter y por palabra.
+
+\ficha{Reconocimiento óptico de caracteres}{tab:ficha_f3}
+{Transcribir texto en español e inglés con Tesseract desde Python y medir su exactitud.}
+{\texttt{pytesseract} (Tesseract~5, \texttt{--oem 3 --psm 6 -l spa+eng}), OpenCV.}
+{\texttt{IImageProcessor} (método \texttt{extract\_text}).}
+{FD1; RNF-07.}
+{\tipomed{pdf} \FTresBloques{} bloques de 3 líneas (\FTresPalabras{} palabras, \FTresCaracteres{} caracteres).\newline Con el preprocesamiento del prototipo: CER \FTresCerLimpioPct\%, WER \FTresWerLimpioPct\%.\newline Sin preprocesamiento: CER \FTresCerSinPreprocesoPct\%, WER \FTresWerSinPreprocesoPct\%.\newline Imagen degradada (desenfoque, brillo, ruido) con preprocesamiento: CER \FTresCerDegradadoPct\%, WER \FTresWerDegradadoPct\%.\newline Tiempo: \FTresTiempoMs~$\pm$~\FTresTiempoSdMs~ms por bloque.}
+
+\paragraph{Protocolo de validación.} Se tomaron las tres primeras líneas de \FTresBloques{} párrafos de texto corrido del PDF (sin tablas ni índices), se renderizaron a 150~ppp y se transcribieron con el preprocesamiento de \texttt{prototipo\_f03.py} (CLAHE, Otsu, apertura 2$\times$2 y escala $\times$2). La verdad terreno es el texto que el propio PDF contiene. Las tasas se calculan con la distancia de Levenshtein:
+\begin{equation}
+\mathrm{CER}=\frac{S_c+D_c+I_c}{N_c}\times100\%,\qquad\mathrm{WER}=\frac{S_w+D_w+I_w}{N_w}\times100\%.
+\end{equation}
+
+\paragraph{Hallazgo.} Sobre texto limpio el preprocesamiento \emph{empeora} el resultado: Tesseract ya binariza internamente y la apertura morfológica adelgaza los trazos finos y las tildes. El preprocesamiento se justifica solo con imágenes degradadas, como las de la cámara. Este resultado es un límite superior, porque el texto renderizado no tiene la perspectiva ni el desenfoque de una foto; la validez por palabra y posición respecto de la cámara, que \citet{ibaceta2023} identificó como determinante, se mide en el laboratorio \pendiente{OCR con la cámara real, $\geq$ 10 palabras por posición}.
+
+% ------------------------------------------------------------------------------------- F4
+\subsection{Prototipo F4: Detección automática de páginas}
+
+En el sistema legado (\texttt{PageDetectionSettings.cs}) se detectan los bordes del libro para ajustar el área de proyección. La detección automática del libro quedó fuera del alcance del MVP; el prototipo se mantuvo para registrar su factibilidad.
+
+\ficha{Detección automática de páginas}{tab:ficha_f4}
+{Detectar el contorno de la página en la imagen de la cámara y estimar sus cuatro esquinas.}
+{OpenCV (\texttt{Canny}, \texttt{findContours}, \texttt{approxPolyDP}).}
+{Ninguno en el MVP (factibilidad para trabajo futuro).}
+{C11 (parcial); RNF-01.}
+{\tipomed{sintético} Éxito (cuadrilátero con RMSE $\leq$ 10~px): \FCuatroExitoPct\% de \FCuatroEscenas{} escenas.\newline RMSE de las esquinas detectadas: \FCuatroRmsePx~$\pm$~\FCuatroRmseSdPx~px.}
+
+\paragraph{Protocolo de validación.} Se generaron \FCuatroEscenas{} escenas de 640$\times$480 con una página del PDF sobre un escritorio oscuro con textura, girada entre $-15^\circ$ y $+15^\circ$, con escala de 0,9 a 1,25, leve perspectiva y brillo de 0,75 a 1,1. Las esquinas detectadas se comparan con las reales:
+\begin{equation}
+\mathrm{RMSE}=\sqrt{\frac{1}{4N}\sum_{i=1}^{N}\sum_{k=1}^{4}\left[(x_{k,i}-\hat{x}_{k,i})^2+(y_{k,i}-\hat{y}_{k,i})^2\right]}.
+\end{equation}
+El resultado indica que el algoritmo es viable con buen contraste página--escritorio; con un escritorio claro o con la proyección encendida debe medirse en el laboratorio.
+
+% ------------------------------------------------------------------------------------- F5
+\subsection{Prototipo F5: Seguimiento de lápiz de color}
+
+En el sistema legado (\texttt{ColorPenRecognition}) la punta roja de un lápiz se segmenta por color para usarla como puntero sobre el papel \citep{contreras2019}. El prototipo la segmenta en HSV, donde el rojo ocupa los dos extremos del tono, y toma el contorno rojo más grande.
+
+\ficha{Seguimiento de lápiz de color}{tab:ficha_f5}
+{Localizar la punta roja del lápiz en la imagen de la cámara de gestos.}
+{OpenCV (\texttt{cvtColor} HSV, \texttt{inRange}, \texttt{morphologyEx}, \texttt{findContours}).}
+{\texttt{IGesturePlugin} (\texttt{ColorPenPlugin}).}
+{G2; RNF-01, RNF-04.}
+{\tipomed{sintético} Serie A (proyección sin rojo): detección \FCincoDeteccionPct\%, \FCincoFalsasPor{} detecciones erróneas por cada 100 cuadros, error \FCincoErrorPx~$\pm$~\FCincoErrorSdPx~px.\newline Serie B (un recuadro rojo proyectado): detección \FCincoDeteccionRojoPct\%, \FCincoFalsasRojoPor{} erróneas por cada 100 cuadros.\newline Tiempo: \FCincoTiempoMs~ms por cuadro.}
+
+\paragraph{Protocolo de validación.} Se generaron dos series de 300 cuadros con una página del PDF, tres recuadros de color que simulan contenido proyectado y, en 4 de cada 5 cuadros, la punta del lápiz (radio 12~px) en una posición conocida. En la serie A los recuadros tienen cualquier tono salvo rojo; en la B uno es rojo. Una detección es correcta si el centroide está a $\leq$ 15~px de la punta real:
+\begin{equation}
+e=\sqrt{(x-\hat{x})^2+(y-\hat{y})^2},\qquad \text{erróneas}=\frac{N_{\text{detecciones erróneas}}}{N_{\text{cuadros}}}\times100.
+\end{equation}
+
+\paragraph{Hallazgo.} El algoritmo es exacto mientras no haya otro objeto rojo más grande que la punta. Con contenido rojo en la proyección toma ese objeto en todos los cuadros. Es el mismo tipo de problema que \citet{ibaceta2023} observó con el botón de resaltado, que la cámara detectaba en lugar del texto (EFD2): la proyección no debe usar el color que el sistema busca. En la interfaz nueva se evita el rojo y el amarillo fuera de su uso específico (RNF-06).
+
+% ------------------------------------------------------------------------------------- F6
+\subsection{Prototipo F6: Segmentación de mano y apuntado}
+
+En el sistema legado (\texttt{YCrCbSkinDetector.cs}) la piel se aísla en el espacio YCrCb y la punta del índice se obtiene del contorno de la mano \citep{contreras2019}. El prototipo reproduce la máscara con OpenCV.
+
+\ficha{Segmentación de mano y apuntado}{tab:ficha_f6}
+{Aislar la mano por color de piel y ubicar la punta del dedo índice.}
+{OpenCV (YCrCb, HSV, \texttt{findContours}, \texttt{convexityDefects}).}
+{\texttt{IGesturePlugin} (\texttt{HandSkinPlugin}).}
+{G1; RNF-01.}
+{\tipomed{sintético} \FSeisCuadros{} cuadros: IoU de la máscara \FSeisIouPct\%; punta a $\leq$ 15~px en el \FSeisPuntaOkPct\% de los cuadros, error medio \FSeisErrorPuntaPx~px.\newline Tiempo: \FSeisTiempoMs~ms por cuadro.\newline \pendiente{precisión con manos reales, distintos tonos de piel y distancias}}
+
+\paragraph{Protocolo de validación.} Se generaron \FSeisCuadros{} cuadros con una silueta de mano (palma e índice) en tonos de piel aleatorios sobre una página del PDF. La máscara es $\mathrm{Cr}\in[133,173]\wedge\mathrm{Cb}\in[77,127]\wedge H\leq30$ y la punta es el punto más alto de la máscara. La calidad de la máscara $M$ respecto de la real $G$ se mide con
+\begin{equation}
+\mathrm{IoU}=\frac{|M\cap G|}{|M\cup G|}\times100\%.
+\end{equation}
+Al ser siluetas sintéticas, el resultado valida el algoritmo pero no su robustez ante la diversidad de manos, que se evalúa con participantes.
+
+% ------------------------------------------------------------------------------------- F7
+\subsection{Prototipo F7: Mapeo de coordenadas}
+
+En el sistema legado (\texttt{GestureRecognitionActivity.cs}) las coordenadas de la cámara se llevan a la resolución del proyector con una calibración de cuatro puntos. El prototipo estima una homografía con OpenCV y mide el error de reproyección.
+
+\ficha{Mapeo de coordenadas (homografía)}{tab:ficha_f7}
+{Transformar posiciones de la cámara de gestos al plano de la proyección con una calibración de cuatro puntos.}
+{OpenCV (\texttt{findHomography}, \texttt{perspectiveTransform}).}
+{\texttt{IGesturePlugin} y módulo \texttt{spatial\_calibration}.}
+{G3, U2; RNF-01.}
+{\tipomed{sintético} \FSieteEnsayos{} calibraciones: error de reproyección \FSieteErrorPx~$\pm$~\FSieteErrorSdPx~px (percentil 95: \FSietePPx~px) con un error de clic de $\sigma=1{,}5$~px.}
+
+\paragraph{Protocolo de validación.} En cada ensayo se simula una inclinación de la cámara (esquinas desplazadas hasta $\pm$80~px) y cuatro clics en las esquinas con error gaussiano $\sigma=1{,}5$~px. Con la homografía estimada se reproyectan los 21 puntos interiores de una grilla de 5$\times$5:
+\begin{equation}
+e_{\text{reproy}}=\frac{1}{21}\sum_{j=1}^{21}\left\lVert H\,p_j-p_j^{\ast}\right\rVert_2.
+\end{equation}
+El error resultante es del orden del error de clic, lo que indica que la homografía no agrega error propio y que la precisión depende del cuidado al calibrar. Con la lámina patrón y la cámara reales se mide en el laboratorio \pendiente{error de reproyección con la lámina patrón}.
+
+% ------------------------------------------------------------------------------------- F9
+\subsection{Prototipo F9: Mouse como alternativa}
+
+En el sistema legado (\texttt{MousePlugin.cs}) el mouse sustituye a la cámara de gestos. Su relevancia se explica porque EDDIE-2023 no podía inicializarse sin cámara disponible ni funcionaba correctamente sin dos cámaras (E7 y E8, \citealp{ibaceta2023}): un módulo de respaldo solo es útil si el núcleo permite usarlo cuando falta el sensor.
+
+\ficha{Mouse como alternativa}{tab:ficha_f9}
+{Usar el mouse como dispositivo de interacción cuando no hay cámara de gestos.}
+{OpenCV (\texttt{setMouseCallback}) y cursor del sistema operativo.}
+{\texttt{IGesturePlugin} (\texttt{MousePlugin}).}
+{G1--G3 (alternativa), N2; RNF-02, RNF-05.}
+{\tipomed{laboratorio} \pendiente{latencia de 1\,000 eventos en el PC con interfaz gráfica}.\newline Que el sistema arranque y siga funcionando sin cámara se verifica con pruebas automatizadas (aislamiento de fallos, P-01).}
+
+\paragraph{Protocolo de validación.} Se ejecuta \texttt{prototipo\_f09.py} en el PC y se registran 1\,000 eventos (movimiento, clic y arrastre) con la marca de tiempo del evento y la del \textit{callback}: $\Delta t=t_{\text{callback}}-t_{\text{evento}}$.
+
+% ------------------------------------------------------------------------------------- F10
+\subsection{Prototipo F10: Comunicación con el eye tracker}
+
+En el sistema legado cada eye tracker se comunica por red local: GazeCloud por WebSocket (puerto 3000), TheEyeTribe por TCP con mensajes JSON (puerto 6555) y GazePoint por la Open Gaze API sobre TCP con mensajes XML (puerto 4242) \citep{estay2020}. El prototipo implementa el cliente en Python y mide la regularidad de la recepción.
+
+\ficha{Comunicación con el eye tracker}{tab:ficha_f10}
+{Recibir muestras de mirada a 60~Hz por socket y decodificarlas sin pérdidas.}
+{\texttt{socket}, \texttt{asyncio}, \texttt{json} / GazePoint, TheEyeTribe, GazeCloud.}
+{\texttt{IEyeTracker} (\texttt{EyeTrackerPlugin}).}
+{RO1, RO5; RNF-01, RNF-02.}
+{\tipomed{sintético} \FDiezRecibidas{} de \FDiezMuestras{} muestras recibidas (pérdida \FDiezPerdidaPct\%), \FDiezFrecuenciaHz~Hz, \textit{jitter} \FDiezJitterMs~ms.\newline \pendiente{latencia y pérdida con GazePoint y TheEyeTribe}}
+
+\paragraph{Protocolo de validación.} Un servidor local envía \FDiezMuestras{} muestras a 60~Hz con el formato JSON del protocolo de TheEyeTribe y el cliente las decodifica como el prototipo. El \textit{jitter} es la desviación estándar del intervalo entre recepciones:
+\begin{equation}
+\mathrm{Jitter}=\sqrt{\frac{1}{M-1}\sum_{k=1}^{M}\left(\Delta t_k-\overline{\Delta t}\right)^2}.
+\end{equation}
+El enlace es local (127.0.0.1), por lo que no incluye la latencia del dispositivo; confirma que el cliente en Python no pierde muestras ni introduce retardos.
+
+% ------------------------------------------------------------------------------------- F11
+\subsection{Prototipo F11: Carga dinámica de plugins}
+
+En el sistema legado los plugins de rastreo ocular se cargan en un \texttt{AppDomain} subordinado mediante una clase \texttt{MarshalByRefObject}, uno de los tres mecanismos de carga del sistema. El prototipo reemplaza los tres por \texttt{importlib}, el mecanismo que usa el \texttt{PluginLoader} final.
+
+\ficha{Carga dinámica de plugins}{tab:ficha_f11}
+{Cargar e instanciar cualquier plugin con un único mecanismo, sin compilar ni copiar archivos.}
+{\texttt{importlib.util} (\texttt{spec\_from\_file\_location}, \texttt{exec\_module}).}
+{\texttt{PluginBase} / \texttt{PluginLoader}.}
+{N1, N2, RFCO12; RNF-02, RNF-04.}
+{\tipomed{código} \FOnceCargas{} cargas de los \FOnceModulos{} módulos de plugins del código final: \FOnceFallas{} fallas, \FOnceTiempoMs~$\pm$~\FOnceTiempoSdMs~ms por carga.}
+
+\paragraph{Protocolo de validación.} Cada uno de los \FOnceModulos{} módulos se cargó 30 veces con un nombre de módulo nuevo para evitar la caché, y se midió el tiempo medio $\bar{t}=\frac{1}{N}\sum_{i=1}^{N}t_i$. Las bibliotecas que importan los módulos ya estaban cargadas, por lo que el tiempo corresponde al mecanismo y no a OpenCV o PyMuPDF. No existe telemetría de carga de EDDIE-2023 con que comparar este valor, por lo que la comparación con \texttt{AppDomain} es cualitativa: el mecanismo nuevo no requiere compilar, copiar DLL ni crear carpetas, que es lo que originaba los errores de carga y despliegue (Tabla~\ref{tab:reclasificacion}).
+
+% ------------------------------------------------------------------------------------- F12
+\subsection{Prototipo F12: Clic por permanencia de la mirada}
+
+En el sistema legado (\texttt{MouseControl.cs}) un control se activa cuando la mirada permanece en una zona durante un tiempo. El prototipo usa los parámetros de esa implementación, una zona de radio $R=\FDoceRadioPx$~px anclada al primer punto y un tiempo $T=\FDoceUmbralS$~s, y mide el compromiso entre activaciones voluntarias y accidentales (toque de Midas, \citealp{jacob1990}).
+
+\ficha{Clic por permanencia de la mirada}{tab:ficha_f12}
+{Medir la tasa de activaciones voluntarias y accidentales del \textit{dwell} durante una lectura.}
+{NumPy / eye tracker.}
+{\texttt{IEyeTracker} (\texttt{GazeSession} y pantalla de proyección).}
+{RO3; RNF-01.}
+{\tipomed{sintético} Con $T=\FDoceUmbralS$~s, $R=\FDoceRadioPx$~px y ruido $\sigma=10$~px: \FDoceVoluntariasPct\% de las \FDoceMiradasVoluntarias{} miradas voluntarias activan el control y hay \FDoceAccidentalesPorMin{} activaciones accidentales por minuto de lectura.\newline Con $\sigma=5$~px: \FDoceVoluntariasRuidoBajoPct\% y \FDoceAccidentalesRuidoBajo{}/min. Con $\sigma=15$~px: \FDoceVoluntariasRuidoAltoPct\% y \FDoceAccidentalesRuidoAlto{}/min.}
+
+\paragraph{Protocolo de validación.} Se generó una traza de 10 minutos a 60~Hz que simula lectura (fijaciones log-normales de 150--450~ms, avances de 25--60~px, 12\% de regresiones) e incluye una mirada voluntaria de 1,2~s sobre un botón cada 15--25~s. Una activación es accidental si ocurre fuera de una mirada voluntaria:
+\begin{equation}
+\text{accidentales/min}=\frac{N_{\text{activaciones fuera de miradas voluntarias}}}{t_{\text{lectura}}}.
+\end{equation}
+La Tabla~\ref{tab:f12_barrido} muestra el barrido de $T$ y $R$ con $\sigma=10$~px.
+
+\begin{table}[H]
+\centering
+\caption{Barrido de los parámetros del clic por permanencia ($\sigma=10$~px).}
+\label{tab:f12_barrido}
+\small
+\begin{tabular}{cccc}
+\toprule
+$T$ (s) & $R$ (px) & Voluntarias (\%) & Accidentales/min \\ \midrule
+\FDoceBarrido \\ \bottomrule
+\end{tabular}
+\fuente{Elaboración propia, con \texttt{mediciones/medir\_prototipos.py} (P-00).}
+\end{table}
+
+\paragraph{Hallazgo.} El radio domina el resultado: con 25~px casi ninguna mirada voluntaria se sostiene dentro de la zona, porque el ruido del sensor la saca antes de completar el tiempo, mientras que con 45~px todas lo logran. El tiempo controla las activaciones accidentales: pasar de 0,6 a 0,8~s las reduce de \FDoceAccidentalesPorMin{} a 0,3 por minuto con una pérdida menor de activaciones voluntarias. El resultado también depende del ruido: con menos ruido las fijaciones de lectura permanecen más tiempo dentro de la zona y aumentan las accidentales, y con más ruido se pierden voluntarias. Por eso los parámetros deben calibrarse con el eye tracker real y con lectores \pendiente{calibración de $T$ y $R$ con GazePoint y participantes}.
+
+% ------------------------------------------------------------------------------------- F13
+\subsection{Prototipo F13: Retícula de mirada proyectada}
+
+En el sistema legado (\texttt{ReticleDrawing.cs}) se dibuja sobre la proyección una retícula en el punto que el lector mira \citep{estay2020}. El prototipo mide el costo de dibujarla.
+
+\ficha{Retícula de mirada proyectada}{tab:ficha_f13}
+{Dibujar la retícula de mirada sin afectar la tasa de refresco de la proyección.}
+{OpenCV (prototipo); Qt (\texttt{QPainter}) en la versión final.}
+{\texttt{IEyeTracker} y pantalla de proyección.}
+{RO2; RNF-01.}
+{\tipomed{sintético} Dibujo: \FTreceTiempoMs~$\pm$~\FTreceTiempoSdMs~ms por cuadro de 950$\times$620 (máximo teórico \FTreceFpsMax~cuadros/s).\newline \pendiente{latencia de extremo a extremo eye tracker $\rightarrow$ proyector}}
+
+\paragraph{Protocolo de validación.} Se dibujaron 600 cuadros con la retícula (círculo con mezcla alfa y cruz). La tasa máxima es $\mathrm{FPS}_{\max}=1000/\bar{t}_{\text{ms}}$. El dibujo consume menos del 5\% del período de 16,6~ms de un proyector a 60~Hz; la latencia total incluye la del eye tracker y la del proyector, que solo se miden en el laboratorio.
+
+% ------------------------------------------------------------------------------------- F14
+\subsection{Prototipo F14: Búsqueda de coordenadas QuadPoints}
+
+En el sistema legado (\texttt{DigitalDocSync.cs}) se busca en el PDF, con iTextSharp, el texto reconocido en el papel y se obtienen sus coordenadas para resaltarlo. El prototipo usa PyMuPDF, que entrega directamente los QuadPoints de cada coincidencia.
+
+\ficha{Búsqueda de coordenadas QuadPoints}{tab:ficha_f14}
+{Ubicar en el PDF las coordenadas exactas de un término reconocido en el papel.}
+{PyMuPDF (\texttt{Page.search\_for(quads=True)}, \texttt{get\_textbox}).}
+{\texttt{IConsistencyProvider} (\texttt{ConsistencyPlugin}).}
+{C11, C12; RNF-01.}
+{\tipomed{pdf} \FCatorceConsultas{} consultas en \FCatorcePaginas{} páginas: \FCatorceCoincidencias{} QuadPoints cuyo texto contiene el término (coherencia \FCatorceCoherenciaPct\%).\newline Tiempo: \FCatorceTiempoMs~$\pm$~\FCatorceTiempoSdMs~ms por página.}
+
+\paragraph{Protocolo de validación.} Se buscaron 10 términos 3 veces en las \FCatorcePaginas{} páginas del PDF. Para cada QuadPoint devuelto se extrajo el texto de su rectángulo (ampliado 2~pt) y se comprobó que contuviera el término, sin distinguir tildes ni mayúsculas:
+\begin{equation}
+\mathrm{Coherencia}=\frac{N_{\text{QuadPoints cuyo texto contiene el término}}}{N_{\text{QuadPoints}}}\times100\%.
+\end{equation}
+
+\paragraph{Hallazgo.} Las incoherencias corresponden a palabras cortadas con guion al final de línea: PyMuPDF devuelve dos QuadPoints, uno por cada fragmento, y ninguno contiene el término completo. El resaltado resultante es correcto (cubre ambas partes), pero la búsqueda de una palabra reconocida en el papel puede fallar si el OCR la lee sin guion. Es un caso a considerar en las pruebas de consistencia del laboratorio.
+
+% ------------------------------------------------------------------------------------- F15
+\subsection{Prototipo F15: Sincronización de resaltado}
+
+En el sistema legado el texto resaltado en el papel se marca en el PDF con una anotación translúcida. \citet{ibaceta2023} registró que el resaltado digital no coincidía en posición ni largo con el físico (E40, E41).
+
+\ficha{Sincronización de resaltado}{tab:ficha_f15}
+{Agregar y guardar resaltados en el PDF de modo que persistan al reabrirlo.}
+{PyMuPDF (\texttt{add\_highlight\_annot}, \texttt{save}).}
+{\texttt{IConsistencyProvider} (\texttt{ConsistencyPlugin}).}
+{C11; RNF-02.}
+{\tipomed{pdf} \FQuincePersistidas{} de \FQuinceAnotaciones{} resaltados presentes al reabrir el archivo.\newline Tiempo por resaltado (agregar, guardar y reabrir): \FQuinceTiempoMs~$\pm$~\FQuinceTiempoSdMs~ms.\newline \pendiente{coincidencia en posición y largo con el papel (E40/E41)}}
+
+\paragraph{Protocolo de validación.} Se agregaron \FQuinceAnotaciones{} resaltados uno a uno sobre líneas del PDF; cada uno se guardó con escritura completa a un archivo temporal y reemplazo, y el archivo se volvió a abrir para contar los resaltados. Esta forma de guardar es la corrección del hallazgo H-02 (Sección~\ref{sec:hallazgos}): con PyMuPDF~2.1, los guardados incrementales sucesivos dañaban el archivo y se perdían anotaciones al reabrirlo. El tiempo se mide como $t=t_{\text{reapertura}}-t_{\text{inicio}}$.
+
+% ------------------------------------------------------------------------------------- F16
+\subsection{Prototipo F16: Sincronización de notas adhesivas}
+
+En el sistema legado \citep{pezoa2020} una nota adhesiva amarilla sobre el libro se detecta y se copia al PDF como comentario, y los comentarios del PDF se proyectan sobre el papel.
+
+\ficha{Sincronización de notas adhesivas}{tab:ficha_f16}
+{Detectar notas adhesivas en la imagen de la página y ubicarlas en coordenadas del PDF.}
+{OpenCV (HSV, \texttt{findContours}, \texttt{approxPolyDP}), PyMuPDF (\texttt{add\_text\_annot}).}
+{\texttt{IConsistencyProvider} (\texttt{ConsistencyPlugin}).}
+{C2, C6; RNF-01.}
+{\tipomed{sintético} \FDieciseisDetectadasPct\% de \FDieciseisNotas{} notas detectadas; error de ubicación en el PDF \FDieciseisErrorPt~pt ($\approx$ 0,24~mm).\newline \pendiente{error con la cámara real y lectura del texto manuscrito}}
+
+\paragraph{Protocolo de validación.} Se pegaron digitalmente \FDieciseisNotas{} notas cuadradas (70--110~px) en posiciones aleatorias sobre una página renderizada. Se detectaron con $H\in[18,38]$, área mayor a 2\,500~px y cuatro vértices, y su centro se convirtió a puntos del PDF:
+\begin{equation}
+\Delta=\sqrt{(x_{\text{real}}-\hat{x}_{\text{pdf}})^2+(y_{\text{real}}-\hat{y}_{\text{pdf}})^2}.
+\end{equation}
+El error es constante (desviación nula) porque corresponde a la cuantización del render: a 640~px de ancho un píxel equivale a 0,96~pt y el redondeo del centro en ambos ejes da $0{,}48\sqrt{2}\approx0{,}68$~pt. Con la cámara real se suma el error de la homografía (F7).
+
+% ------------------------------------------------------------------------------------- F17
+\subsection{Prototipo F17: Sincronización de figuras geométricas}
+
+En el sistema legado \citep{pezoa2020} las figuras dibujadas en el papel (círculos, rectángulos y triángulos) se reconocen y se reproducen en el PDF. El prototipo clasifica cada contorno por su compacidad $C=4\pi A/P^2$ y su número de vértices.
+
+\ficha{Sincronización de figuras geométricas}{tab:ficha_f17}
+{Clasificar las figuras dibujadas y reconstruirlas en el PDF con su posición y tamaño.}
+{OpenCV (\texttt{findContours}, \texttt{approxPolyDP}, \texttt{contourArea}, \texttt{arcLength}), PyMuPDF.}
+{\texttt{IConsistencyProvider} (\texttt{ConsistencyPlugin}).}
+{C1, C5; RNF-01.}
+{\tipomed{sintético} Exactitud de clasificación: \FDiecisieteExactitudPct\% de \FDiecisieteFiguras{} figuras (círculos y triángulos 100\%; 12 de 20 rectángulos clasificados como círculos).\newline IoU de las figuras bien clasificadas: \FDiecisieteIouPct~$\pm$~\FDiecisieteIouSd\%.}
+
+\paragraph{Protocolo de validación.} Se dibujaron \FDiecisieteFiguras{} figuras con trazo de 3~px (20 de cada tipo, tamaño y posición aleatorios). El prototipo clasifica como círculo si $C>0{,}69$, luego como rectángulo si tiene 4 vértices y como triángulo si tiene 3. La fidelidad de la reconstrucción se mide con
+\begin{equation}
+C=\frac{4\pi A}{P^2},\qquad \mathrm{IoU}=\frac{|F_{\text{PDF}}\cap F_{\text{real}}|}{|F_{\text{PDF}}\cup F_{\text{real}}|}\times100\%.
+\end{equation}
+
+\paragraph{Hallazgo.} Un cuadrado tiene compacidad $\pi/4\approx0{,}785$, mayor que el umbral de 0,69, por lo que el prototipo, que evalúa la compacidad antes que los vértices, clasifica los rectángulos cercanos a un cuadrado como círculos. El plugin final, portado de \texttt{FiguresDP} del C\#, evalúa primero el número de vértices y solo considera la compacidad cuando la relación de aspecto se aleja de 1, por lo que no hereda este defecto. Es un ejemplo de lo que el prototipado debe detectar: un error de orden en una regla simple que con figuras reales pasaría por un problema de iluminación.
+
+% ------------------------------------------------------------------------------------- F24
+\subsection{Prototipo F24: Comandos de voz}
+
+En el sistema legado \citep{montanares2019} el lector puede pedir una búsqueda con la voz, mediante \texttt{System.Speech}. El prototipo graba el audio del micrófono, lo transcribe con \texttt{SpeechRecognition} y lo interpreta como comando.
+
+\ficha{Comandos de voz}{tab:ficha_f24}
+{Reconocer los comandos de búsqueda dictados en español.}
+{\texttt{SpeechRecognition} (motor de Google en línea; Whisper y Vosk locales como alternativa), \texttt{sounddevice} / micrófono.}
+{\texttt{ISpeechProvider} (\texttt{SpeechPlugin}).}
+{B1--B13 (voz); RNF-02.}
+{\tipomed{laboratorio} \pendiente{exactitud y tiempo de respuesta de los 8 comandos con 3 personas}}
+
+\paragraph{Protocolo de validación.} Cada uno de los 8 comandos del módulo de búsqueda se graba 10 veces por cada una de 3 personas en la sala del laboratorio. Se registra el comando reconocido y el tiempo desde el fin de la frase hasta el texto:
+\begin{equation}
+\mathrm{Exactitud}=\frac{N_{\text{correctos}}}{N_{\text{emitidos}}}\times100\%.
+\end{equation}
+
+% ------------------------------------------------------------------------------------- F25
+\subsection{Prototipo F25: Síntesis de voz}
+
+En el sistema legado \citep{montanares2019} los resultados de búsqueda pueden leerse en voz alta con el motor de Windows. El prototipo usa \texttt{pyttsx3}, que en Windows emplea las mismas voces SAPI5.
+
+\ficha{Síntesis de voz}{tab:ficha_f25}
+{Leer en voz alta los resultados sin bloquear la interfaz.}
+{\texttt{pyttsx3} (SAPI5) / parlantes.}
+{\texttt{ISpeechProvider} (\texttt{SpeechPlugin}).}
+{B1--B13 (lector); RNF-02.}
+{\tipomed{laboratorio} \pendiente{palabras por minuto y bloqueo de la interfaz en el PC}}
+
+\paragraph{Protocolo de validación.} Se leen 10 textos de 100 palabras en un hilo aparte y se mide la duración de cada lectura, $\mathrm{WPM}=N_{\text{palabras}}/t_{\text{min}}$, verificando que la interfaz siga respondiendo durante la lectura.
+
+% ------------------------------------------------------------------------------------- F27
+\subsection{Prototipo F27: Banda de resaltado proyectada}
+
+En el sistema legado (\texttt{HighlightTool.cs}) se proyecta una banda translúcida sobre la línea que se lee. El prototipo dibuja la banda con mezcla alfa y mide su costo.
+
+\ficha{Banda de resaltado proyectada}{tab:ficha_f27}
+{Superponer una banda translúcida sobre el texto sin afectar el refresco de la proyección.}
+{OpenCV (prototipo); Qt (\texttt{QPainter}) en la versión final.}
+{Pantalla de proyección.}
+{C12; RNF-06.}
+{\tipomed{sintético} Dibujo con $\alpha=\FVeintisieteAlfa$: \FVeintisieteTiempoMs~$\pm$~\FVeintisieteTiempoSdMs~ms por cuadro de 900$\times$600.\newline \pendiente{contraste del texto bajo la banda con luxómetro}}
+
+\paragraph{Protocolo de validación.} Se dibujaron 600 cuadros con la banda (rectángulo amarillo y mezcla alfa 0,30). La legibilidad del texto bajo la luz proyectada se mide en el laboratorio con el contraste de Weber, $C_W=(L_{\text{texto}}-L_{\text{fondo}})/L_{\text{fondo}}$, con y sin la banda.
+
+\subsection{Síntesis de los prototipos}
+\label{sec:sintesis_prototipos}
+
+Los 19 prototipos confirman que las funciones críticas de EDDIE pueden reproducirse en Python con bibliotecas mantenidas. De ellos, 15 tienen resultados medidos (3 sobre el PDF real, 1 sobre el código final y 11 sintéticos) y 4 dependen por completo del hardware (F1, F9, F24 y F25); en los sintéticos, la parte que depende del sensor también queda marcada como pendiente. Además de confirmar la factibilidad, los prototipos entregaron cinco hallazgos que orientaron el diseño:
+\begin{enumerate}
+  \item La binarización global de Otsu falla con la iluminación no uniforme del proyector (F2); en la versión final se aplica solo al recorte pequeño de la palabra resaltada.
+  \item El preprocesamiento empeora el OCR sobre texto limpio (F3); se justifica solo con imágenes de cámara degradadas.
+  \item El contenido proyectado del mismo color que el lápiz anula su seguimiento (F5); la interfaz evita esos colores (RNF-06).
+  \item Evaluar la compacidad antes que los vértices clasifica los cuadrados como círculos (F17); el plugin final sigue el orden del C\#.
+  \item El clic por permanencia depende del radio, del tiempo y del ruido del sensor (F12); sus parámetros deben calibrarse con el eye tracker real.
+\end{enumerate}

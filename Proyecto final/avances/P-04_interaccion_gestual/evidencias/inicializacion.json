@@ -1,0 +1,30 @@
+{
+  "TextCamera": {
+    "status": "initialized",
+    "error": null
+  },
+  "GestureCamera": {
+    "status": "initialized",
+    "error": null
+  },
+  "ImageProcessor": {
+    "status": "initialized",
+    "error": null
+  },
+  "ColorPenRecognition": {
+    "status": "initialized",
+    "error": null
+  },
+  "HandSkinRecognition": {
+    "status": "initialized",
+    "error": null
+  },
+  "MouseRecognition": {
+    "status": "initialized",
+    "error": null
+  },
+  "ConsistencyProvider": {
+    "status": "initialized",
+    "error": null
+  }
+}

@@ -1,0 +1,423 @@
+{
+ "form": "SeleccionApis2",
+ "props": {
+  "toolTip1": {
+   "raw": "new System.Windows.Forms.ToolTip(this.components)"
+  },
+  "AutoScaleDimensions": {
+   "raw": "new System.Drawing.SizeF(6F, 13F)"
+  },
+  "AutoScaleMode": "Font",
+  "BackColor": "#cfe9f2",
+  "ClientSize": [
+   971,
+   500
+  ],
+  "FormBorderStyle": "None",
+  "Name": "SeleccionApis2",
+  "StartPosition": "CenterScreen",
+  "Text": "SeleccionApis"
+ },
+ "events": {
+  "Load": "SeleccionApis_Load"
+ },
+ "controls": [
+  {
+   "name": "InteractionsSettingsPanel1",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     12,
+     94
+    ],
+    "Size": [
+     947,
+     280
+    ],
+    "TabIndex": 49
+   },
+   "events": {
+    "Paint": "InteractionsSettingsPanel1_Paint"
+   },
+   "children": [
+    {
+     "name": "cbx_idiomaTraducir",
+     "type": "ComboBox",
+     "props": {
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       439,
+       127
+      ],
+      "Size": [
+       267,
+       25
+      ],
+      "TabIndex": 46,
+      "Text": "Select Service"
+     }
+    },
+    {
+     "name": "cbx_apisEnciclopedia",
+     "type": "ComboBox",
+     "props": {
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       25,
+       45
+      ],
+      "Size": [
+       267,
+       25
+      ],
+      "TabIndex": 35,
+      "Text": "Select Service"
+     }
+    },
+    {
+     "name": "label5",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       435,
+       84
+      ],
+      "Size": [
+       278,
+       22
+      ],
+      "TabIndex": 47,
+      "Text": "Select the language to translate to"
+     },
+     "events": {
+      "Click": "label5_Click"
+     }
+    },
+    {
+     "name": "lbl_Enciclopedias",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       21,
+       12
+      ],
+      "Size": [
+       176,
+       22
+      ],
+      "TabIndex": 36,
+      "Text": "Encyclopedia service"
+     },
+     "events": {
+      "Click": "lbl_Enciclopedias_Click"
+     }
+    },
+    {
+     "name": "label1",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       435,
+       171
+      ],
+      "Size": [
+       172,
+       22
+      ],
+      "TabIndex": 37,
+      "Text": "Video search service"
+     }
+    },
+    {
+     "name": "cbx_apisImagenes",
+     "type": "ComboBox",
+     "props": {
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       25,
+       206
+      ],
+      "Size": [
+       267,
+       25
+      ],
+      "TabIndex": 44,
+      "Text": "Select Service"
+     }
+    },
+    {
+     "name": "cbx_apisVideos",
+     "type": "ComboBox",
+     "props": {
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       439,
+       206
+      ],
+      "Size": [
+       267,
+       25
+      ],
+      "TabIndex": 38,
+      "Text": "Select Service"
+     }
+    },
+    {
+     "name": "label4",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       21,
+       171
+      ],
+      "Size": [
+       177,
+       22
+      ],
+      "TabIndex": 43,
+      "Text": "Image search service"
+     }
+    },
+    {
+     "name": "label2",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       21,
+       84
+      ],
+      "Size": [
+       156,
+       22
+      ],
+      "TabIndex": 39,
+      "Text": "Definitions service"
+     },
+     "events": {
+      "Click": "label2_Click"
+     }
+    },
+    {
+     "name": "cbx_apisTraducciones",
+     "type": "ComboBox",
+     "props": {
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       439,
+       45
+      ],
+      "Size": [
+       267,
+       25
+      ],
+      "TabIndex": 42,
+      "Text": "Select Service"
+     }
+    },
+    {
+     "name": "cbx_apisDefiniciones",
+     "type": "ComboBox",
+     "props": {
+      "Font": {
+       "family": "IBM Plex Sans",
+       "size": 9.749999,
+       "bold": false,
+       "italic": false,
+       "underline": false
+      },
+      "FormattingEnabled": true,
+      "Location": [
+       25,
+       127
+      ],
+      "Size": [
+       267,
+       25
+      ],
+      "TabIndex": 40,
+      "Text": "Select Service"
+     }
+    },
+    {
+     "name": "label3",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 12.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "Location": [
+       435,
+       12
+      ],
+      "Size": [
+       160,
+       22
+      ],
+      "TabIndex": 41,
+      "Text": "Translation service"
+     },
+     "events": {
+      "Click": "label3_Click"
+     }
+    }
+   ]
+  },
+  {
+   "name": "TittlePanel",
+   "type": "Panel",
+   "props": {
+    "BackColor": "#f8f5fa",
+    "Location": [
+     0,
+     0
+    ],
+    "Size": [
+     988,
+     74
+    ],
+    "TabIndex": 48
+   },
+   "children": [
+    {
+     "name": "pictureBox1",
+     "type": "PictureBox",
+     "props": {
+      "Cursor": "Help",
+      "Image": {
+       "resource": "informationIcon"
+      },
+      "Location": [
+       469,
+       28
+      ],
+      "Size": [
+       28,
+       24
+      ],
+      "SizeMode": "Zoom",
+      "TabIndex": 21,
+      "TabStop": false
+     },
+     "events": {
+      "Click": "pictureBox1_Click",
+      "MouseHover": "pictureBox1_Click"
+     }
+    },
+    {
+     "name": "InteractionsTittle",
+     "type": "Label",
+     "props": {
+      "AutoSize": true,
+      "Font": {
+       "family": "IBM Plex Sans SemiBold",
+       "size": 33.75,
+       "bold": true,
+       "italic": false,
+       "underline": false
+      },
+      "ForeColor": "#00003c",
+      "Location": [
+       12,
+       8
+      ],
+      "Size": [
+       451,
+       58
+      ],
+      "TabIndex": 0,
+      "Text": "Web search services"
+     }
+    }
+   ]
+  }
+ ],
+ "detached": [
+  {
+   "name": "components",
+   "type": "Container",
+   "props": {}
+  }
+ ],
+ "components": []
+}

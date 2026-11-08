@@ -1,0 +1,58 @@
+{
+  "TextCamera": {
+    "status": "initialized",
+    "error": null
+  },
+  "GestureCamera": {
+    "status": "initialized",
+    "error": null
+  },
+  "ImageProcessor": {
+    "status": "initialized",
+    "error": null
+  },
+  "ColorPenRecognition": {
+    "status": "initialized",
+    "error": null
+  },
+  "HandSkinRecognition": {
+    "status": "initialized",
+    "error": null
+  },
+  "MouseRecognition": {
+    "status": "initialized",
+    "error": null
+  },
+  "EyeTracker-GazePoint": {
+    "status": "disabled",
+    "error": null
+  },
+  "EyeTracker-EyeTribe": {
+    "status": "disabled",
+    "error": null
+  },
+  "EyeTracker-GazeCloud": {
+    "status": "disabled",
+    "error": null
+  },
+  "EyeTrackerMock": {
+    "status": "initialized",
+    "error": null
+  },
+  "GazeSession": {
+    "status": "initialized",
+    "error": null
+  },
+  "ConsistencyProvider": {
+    "status": "initialized",
+    "error": null
+  },
+  "LLM-Gemini": {
+    "status": "initialization_failed",
+    "error": "initialize() retornó False."
+  },
+  "SpeechProvider": {
+    "status": "initialized",
+    "error": null
+  }
+}

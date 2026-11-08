@@ -1,0 +1,114 @@
+{
+  "_comentario": "Plugins de EDDIE. Todos se cargan con un único mecanismo (PluginLoader/importlib).",
+  "_nota": "'simulated_class' lo usa DeviceFactory cuando EDDIE_DEVICE_MODE=sim. Los ajustes del usuario (cámara, resolución, PDF...) se superponen desde config/user_settings.json sin editar este archivo.",
+  "plugins": [
+    {
+      "name": "TextCamera",
+      "label": "Cámara de reconocimiento de texto",
+      "class": "hardware.camera_sensor.CameraSensorPlugin",
+      "simulated_class": "hardware.mock_devices.MockCameraSensor",
+      "enabled": true,
+      "config": {"camera_index": 0, "width": 640, "height": 480, "scene": "page"}
+    },
+    {
+      "name": "GestureCamera",
+      "label": "Cámara de reconocimiento gestual",
+      "class": "hardware.camera_sensor.CameraSensorPlugin",
+      "simulated_class": "hardware.mock_devices.MockCameraSensor",
+      "enabled": true,
+      "config": {"camera_index": 1, "width": 960, "height": 720, "scene": "pen"}
+    },
+    {
+      "name": "ImageProcessor",
+      "label": "Reconocimiento de texto resaltado (OCR)",
+      "class": "plugins.image_processor_plugin.ImageProcessorPlugin",
+      "enabled": true,
+      "dependencies": {"camera_sensor": "TextCamera"},
+      "config": {"ocr_language": "spa+eng", "rotate_180": true, "tesseract_path": ""}
+    },
+    {
+      "name": "ColorPenRecognition",
+      "label": "Color Pen Recognition",
+      "class": "plugins.gestures.detectors.ColorPenPlugin",
+      "enabled": true,
+      "dependencies": {"camera_sensor": "GestureCamera"},
+      "config": {"max_fps": 15, "rotate_180": false}
+    },
+    {
+      "name": "HandSkinRecognition",
+      "label": "Hand Skin Recognition",
+      "class": "plugins.gestures.detectors.HandSkinPlugin",
+      "enabled": true,
+      "dependencies": {"camera_sensor": "GestureCamera"},
+      "config": {"max_fps": 15, "rotate_180": false}
+    },
+    {
+      "name": "MouseRecognition",
+      "label": "Mouse Recognition",
+      "class": "plugins.gestures.detectors.MousePlugin",
+      "enabled": true,
+      "dependencies": {"camera_sensor": "GestureCamera"},
+      "config": {"max_fps": 15, "rotate_180": false}
+    },
+    {
+      "name": "EyeTracker-GazePoint",
+      "label": "GazePoint (Open Gaze API, puerto 4242)",
+      "class": "hardware.eye_tracker.EyeTrackerPlugin",
+      "simulated_class": "hardware.mock_devices.EyeTrackerMock",
+      "enabled": false,
+      "config": {"backend": "gazepoint", "gazepoint_host": "127.0.0.1", "gazepoint_port": 4242}
+    },
+    {
+      "name": "EyeTracker-EyeTribe",
+      "label": "TheEyeTribe (EyeTribe Server, puerto 6555)",
+      "class": "hardware.eye_tracker.EyeTrackerPlugin",
+      "simulated_class": "hardware.mock_devices.EyeTrackerMock",
+      "enabled": false,
+      "config": {"backend": "eyetribe", "eyetribe_host": "127.0.0.1", "eyetribe_port": 6555}
+    },
+    {
+      "name": "EyeTracker-GazeCloud",
+      "label": "GazeCloud (WebSocket ws://127.0.0.1:3000)",
+      "class": "hardware.eye_tracker.EyeTrackerPlugin",
+      "enabled": false,
+      "config": {"backend": "gazecloud", "gazecloud_host": "127.0.0.1", "gazecloud_port": 3000}
+    },
+    {
+      "name": "EyeTrackerMock",
+      "label": "EyeTrackerMock (cursor como mirada)",
+      "class": "hardware.mock_devices.EyeTrackerMock",
+      "enabled": false,
+      "config": {"source": "mouse"}
+    },
+    {
+      "name": "GazeSession",
+      "label": "Sesión de rastreo ocular",
+      "class": "plugins.gaze_session_plugin.GazeSessionPlugin",
+      "enabled": true,
+      "config": {}
+    },
+    {
+      "name": "ConsistencyProvider",
+      "label": "Consistencia bidireccional papel ↔ PDF",
+      "class": "plugins.consistency_plugin.ConsistencyPlugin",
+      "enabled": true,
+      "config": {"pdf_path": "", "camera_rotated_180": true, "gesture_plugin": "ColorPenRecognition",
+                 "eye_tracker_plugin": "EyeTracker-GazePoint"}
+    },
+    {
+      "name": "LLM-Gemini",
+      "label": "LLM · Google Gemini 2.5 Flash",
+      "class": "plugins.llm_search_plugin.LLMSearchPlugin",
+      "enabled": true,
+      "config": {"model": "gemini-2.5-flash", "api_key_env": "GEMINI_API_KEY", "thinking_budget": 0,
+                 "temperature": 0.2, "timeout_s": 60}
+    },
+    {
+      "name": "SpeechProvider",
+      "label": "Voz (lectura en voz alta y comandos)",
+      "class": "plugins.speech_plugin.SpeechPlugin",
+      "enabled": true,
+      "config": {"recognizer": "google", "language": "es-ES"}
+    }
+  ]
+}
