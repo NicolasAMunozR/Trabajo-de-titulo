@@ -1,0 +1,15 @@
+% Generado desde docs_data.py. No editar a mano.
+\begin{longtable}{p{1.8cm} p{12.6cm}}
+\caption{Requerimientos no funcionales y su criterio de aceptación.}\label{tab:rnf}\\
+\toprule \textbf{ID} & \textbf{Requerimiento y criterio de aceptación} \\ \midrule \endfirsthead
+\toprule \textbf{ID} & \textbf{Requerimiento y criterio de aceptación} \\ \midrule \endhead
+\bottomrule \endfoot
+RNF-01 & Latencia orquestador$\rightarrow$plugin $\leq$ 8,3 ms en el percentil 95 (50 \% de una muestra a 60 Hz). \\
+RNF-02 & Aislamiento de fallos: un plugin que falla no detiene el sistema y queda registrado. \\
+RNF-03 & Cobertura de líneas de las pruebas automatizadas $\geq$ 80 \%. \\
+RNF-04 & Extensibilidad: un plugin nuevo se agrega con una clase y una entrada en \texttt{plugins.json}, sin tocar el núcleo. \\
+RNF-05 & Validación sin laboratorio: todo el sistema se puede ejecutar y probar con dispositivos simulados. \\
+RNF-06 & Interfaz: conserva todos los controles y flujos de EDDIE-2023 (mismo nombre y comportamiento), en español, con los botones de la proyección en la franja superior, la zona de lectura y las cruces en su posición original y sin amarillo fuera del resaltado (Ibaceta, 2023). \\
+RNF-07 & Plataforma: Windows 11, Python $\geq$ 3.11, sin dependencias nativas de 32 bits. \\
+RNF-08 & Sin APIs web vencidas: los servicios de búsqueda los responde un LLM (Gemini 2.5 Flash) y la clave no se versiona. \\
+\end{longtable}

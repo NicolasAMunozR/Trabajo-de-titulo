@@ -1,21 +1,5 @@
-"""
-Prototipo F17 Sincronización de Figuras Geométricas (PDF Digital a Proyección sobre Papel)
-Permite navegar entre páginas con N / P.
-El usuario dibuja o extrae círculos, rectángulos y líneas sobre el PDF digital.
-Las figuras SE PROYECTAN INMEDIATAMENTE SOBRE LA VISTA DEL PAPEL FÍSICO con efecto de haz de luz vectorial luminoso (Halo).
-Se inyectan vectorialmente en el archivo PDF digital (draw_rect, draw_circle, draw_line).
-La cámara cenital detecta figuras dibujadas a mano en papel (rectángulos, círculos, triángulos)
-Permite transferir las figuras detectadas en papel hacia el PDF digital con la tecla 'C'.
-Controles:
-  1 / 2 / 3      : Seleccionar herramienta: 1=Rectángulo, 2=Círculo, 3=Línea de guía
-  ARRASTRAR RATÓN: Dibujar figura sobre el PDF (se proyecta de inmediato sobre el papel)
-  C              : Exportar figuras detectadas en cámara hacia el PDF real
-  N / P          : Página Siguiente / Anterior en el PDF real
-  R              : Reiniciar figuras de la sesión
-  O              : Abrir el PDF real modificado en el visor del sistema
-  S              : Guardar captura de evidencia PNG
-  Q / ESC        : Salir
-"""
+# Prototipo F17: sincronización de figuras geométricas entre el PDF y la proyección sobre el papel.
+# 1 / 2 / 3 = herramienta  |  arrastrar = dibujar  |  C = exportar figuras  |  N / P = página  |  R = reiniciar  |  Q = salir
 
 import os
 import sys
@@ -60,13 +44,13 @@ FIGURAS_SESION = [
 ]
 
 def inicializar_pdf_salida():
-    """Copia el PDF base al archivo de salida."""
+    # Copia el PDF base al archivo de salida.
     doc = fitz.open(str(PDF_ORIGINAL_PATH))
     doc.save(str(PDF_OUTPUT_PATH))
     doc.close()
 
 def sincronizar_todas_las_figuras_al_pdf():
-    """Dibuja vectorialmente todas las figuras de la sesión en el archivo PDF real en disco."""
+    # Dibuja vectorialmente todas las figuras de la sesión en el archivo PDF real en disco.
     if PDF_OUTPUT_PATH.exists():
         try:
             if PDF_BACKUP_PATH.exists():

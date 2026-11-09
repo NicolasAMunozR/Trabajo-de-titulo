@@ -1,17 +1,5 @@
-"""
-ui/menu_settings.py  (versión de avance: P-03, P-04 y P-05)
-===========================================================
-Ventana principal de EDDIE (MenuSettings.cs).
-
-En los avances intermedios solo se construyen las páginas de los módulos ya
-integrados: los demás aparecen en el menú lateral deshabilitados, con el avance en
-que se integran, y «Iniciar proyección» avisa que la proyección llega en P-06. En
-P-06 este archivo se reemplaza por la versión completa. Ayudas de flujo:
-  - "Preparar sesión": pantalla de inicio con los pasos para dejar lista una sesión de
-    lectura y el estado real de cada uno (PDF cargado, cámara, proveedor LLM...).
-  - Un punto de estado junto a cada módulo del menú lateral.
-  - El estado del sistema (módulos activos y duración del ciclo del orquestador).
-"""
+# Ventana principal de EDDIE (MenuSettings.cs), versión de avance para P-03, P-04 y P-05.
+# Los módulos aún no integrados aparecen deshabilitados en el menú lateral con el avance en que llegan.
 import importlib.util
 import logging
 import time
@@ -105,7 +93,7 @@ class MenuSettingsWindow(QWidget):
 
     # ------------------------------------------------------------------ navegación
     def open_page(self, button_name: Optional[str]) -> None:
-        """AbrirFormEnPanel: muestra la página y marca su botón; None abre «Preparar sesión»."""
+        # AbrirFormEnPanel: muestra la página y marca su botón; None abre «Preparar sesión».
         for name in NAV:
             self.form[name].set_selected(name == button_name)
         self.form.HomeButton.set_selected(button_name is None)
@@ -121,7 +109,7 @@ class MenuSettingsWindow(QWidget):
         return next((key for key, page in self.ctx.pages.items() if page is widget), None)
 
     def eventFilter(self, obj, event) -> bool:
-        """PanelBarraSuperior_MouseMove: arrastrar la ventana desde la barra superior o la lateral."""
+        # PanelBarraSuperior_MouseMove: arrastrar la ventana desde la barra superior o la lateral.
         if obj in (self.form.PanelBarraSuperior, self.form.PanelNavBar):
             if event.type() == event.Type.MouseButtonPress and event.button() == Qt.MouseButton.LeftButton:
                 self._drag_from = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
@@ -132,12 +120,12 @@ class MenuSettingsWindow(QWidget):
         return super().eventFilter(obj, event)
 
     def toast_anchor(self) -> tuple[int, int]:
-        """Los avisos aparecen sobre la barra de acciones, a la derecha."""
+        # Los avisos aparecen sobre la barra de acciones, a la derecha.
         return self.width() - 28, self.height() - 84
 
     # ------------------------------------------------------------------ estado de los módulos
     def module_status(self) -> dict[str, tuple[str, str]]:
-        """Estado (ok | warn | off) y explicación de cada módulo, a partir de los plugins en ejecución."""
+        # Estado (ok | warn | off) y explicación de cada módulo, a partir de los plugins en ejecución.
         runtime, pages = self.ctx.runtime, self.ctx.pages
         report = runtime.orchestrator.initialization_report
 
@@ -201,7 +189,7 @@ class MenuSettingsWindow(QWidget):
         self.get_all_settings()
 
     def save_clicked(self) -> None:
-        """Guardar ya no abre un cuadro que hay que cerrar: confirma con un aviso."""
+        # Guardar ya no abre un cuadro que hay que cerrar: confirma con un aviso.
         self.save_all_settings()
         message(self, "Se usarán también en las próximas sesiones.", "Ajustes guardados")
 
@@ -220,7 +208,7 @@ class MenuSettingsWindow(QWidget):
 
     # ------------------------------------------------------------------ proyección
     def start_projection(self) -> None:
-        """StartProjectionButtonModified_Click_1: abre la cámara de texto y muestra la proyección."""
+        # StartProjectionButtonModified_Click_1: abre la cámara de texto y muestra la proyección.
         if not projection_available():
             self.save_all_settings()
             message(self, "La pantalla de proyección se integra en el avance P-06. En este avance los módulos "
@@ -254,7 +242,7 @@ class MenuSettingsWindow(QWidget):
 
 
 class SessionHome(QWidget):
-    """Pantalla de inicio: los pasos para preparar una sesión de lectura y su estado actual."""
+    # Pantalla de inicio: los pasos para preparar una sesión de lectura y su estado actual.
     STEPS = [  # (página, título, explicación, obligatorio)
         ("page", "Elige el PDF del libro", "Ahí se guardan los resaltados, marcadores y comentarios.", True),
         ("text", "Revisa la cámara de texto", "Debe ver la página completa; prueba resaltando una palabra.", True),

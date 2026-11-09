@@ -1,0 +1,50 @@
+% Generado desde docs_data.py (mismos requisitos que usan los avances y las pruebas). No editar a mano.
+\begin{longtable}{p{2.1cm} p{8.6cm} p{3.6cm}}
+\caption{Requerimientos funcionales de EDDIE por módulo.}\label{tab:rf}\\
+\toprule \textbf{ID} & \textbf{Requerimiento} & \textbf{Origen} \\ \midrule \endfirsthead
+\toprule \textbf{ID} & \textbf{Requerimiento} & \textbf{Origen} \\ \midrule \endhead
+\bottomrule \endfoot
+\multicolumn{3}{l}{\textbf{Núcleo y orquestador}} \\
+N1 & Cargar todos los plugins declarados en \texttt{config/plugins.json} con un único mecanismo (\texttt{importlib}). & Nuevo (núcleo) \\
+N2 & Aislar las fallas de carga, inicialización y ejecución de un plugin sin detener el resto. & Nuevo (núcleo) \\
+N3 & Inyectar el sensor de cámara declarado a los plugins que consumen frames. & Nuevo (núcleo) \\
+N4 & Conmutar cada dispositivo entre implementación real y simulada (\texttt{DeviceFactory}). & Nuevo (HAL) \\
+N5 & Invocar operaciones de un plugin bajo demanda, con aislamiento de errores y medición de latencia. & Nuevo (núcleo) \\
+N6 & Reiniciar o detener un plugin en ejecución y reconectar a sus consumidores. & Nuevo (núcleo) \\
+N7 & Registrar una traza de ejecución (JSONL) con cada acción y su latencia. & Nuevo (núcleo) \\
+N8 & Persistir los ajustes del usuario con las mismas claves de \texttt{Settings2} del C\#. & Nuevo (núcleo) \\
+RFCO12 & Arquitectura modular para incorporar nuevos módulos/dispositivos. & Contreras (2019) \\
+\midrule
+\multicolumn{3}{l}{\textbf{Reconocimiento de texto}} \\
+FD1 & Reconocimiento del texto resaltado en el documento físico (OCR). & Carrasco (2017) RFCA2 \\
+\midrule
+\multicolumn{3}{l}{\textbf{Consistencia físico-digital}} \\
+C1 & Figuras del documento físico reflejadas en el digital. & Pezoa (2020) RFP1 \\
+C2 & Comentarios (nota adhesiva) del físico reflejados en el digital. & Pezoa (2020) RFP2 \\
+C3 & Marcador físico (banderilla azul) reflejado en el digital. & Pezoa (2020) RFP3 \\
+C5 & Figuras de una página digital reflejadas sobre el papel (proyección). & Pezoa (2020) RFP5 \\
+C6 & Comentarios de una página digital reflejados sobre el papel. & Pezoa (2020) RFP6 \\
+C7 & Listar los marcadores del documento digital. & Pezoa (2020) RFP7 \\
+C8 & Activar/desactivar las figuras proyectadas sobre el papel. & Pezoa (2020) RFP8 \\
+C9 & Eliminar un marcador del documento digital. & Pezoa (2020) RFP9 \\
+C10 & Eliminar un comentario del documento digital. & Pezoa (2020) RFP10 \\
+C11 & Resaltar en el papel y reflejarlo en el PDF. & Carrasco (2017) RFCA4 \\
+C12 & Resaltar en el PDF y reflejarlo en el papel. & Carrasco (2017) RFCA5 \\
+\midrule
+\multicolumn{3}{l}{\textbf{Interacción gestual}} \\
+G1 & Reconocimiento gestual de la mano con cámara USB. & Contreras (2019) RFCO10 \\
+G2 & Reconocimiento de la posición de un lápiz de color con cámara USB. & Contreras (2019) RFCO11 \\
+G3 & Seleccionar con el gesto un fragmento y capturarlo. & Contreras (2019) RFCO5 \\
+\midrule
+\multicolumn{3}{l}{\textbf{Rastreo ocular}} \\
+RO1–RO7 & Rastreo ocular: seguir la mirada, retícula, interacción por mirada, registro CSV, varios dispositivos, módulo de registro común y selección del dispositivo. & Estay (2020) RFE1–RFE7 \\
+\midrule
+\multicolumn{3}{l}{\textbf{Búsqueda y voz}} \\
+B1–B13 & Búsqueda: enciclopedia, definiciones, traducción, video, imágenes, selección de proveedor, visualizar/ocultar resultados, historial, voz y lector. & Montanares (2019) RFM1–RFM13 \\
+\midrule
+\multicolumn{3}{l}{\textbf{Interfaz}} \\
+RFS1–RFS8 & Interfaz: acceso a lectura aumentada, búsqueda, consistencia y rastreo; configurar, navegar, guardar y reiniciar ajustes. & Santibáñez (2020) \\
+U1 & Mostrar al abrir los pasos para preparar la sesión de lectura con el estado real de cada módulo. & Nuevo (interfaz) \\
+U2 & Fijar los puntos de calibración gestual desde la lectura actual del sensor. & Nuevo (interfaz) \\
+U3 & Informar los mensajes con avisos no modales que no detienen la lectura. & Nuevo (interfaz) \\
+\end{longtable}

@@ -1,25 +1,13 @@
-"""
-Dispositivos simulados para DeviceFactory (EDDIE_DEVICE_MODE=sim).
-
-Permiten ejecutar EDDIE completo sin el montaje del laboratorio:
-  - MockCameraSensor: escena sintética ("page" = hoja con un resaltado amarillo
-    proyectado; "pen" = fondo oscuro con un lápiz luminoso rojo en movimiento),
-    o una imagen/video real con "source": "ruta".
-  - EyeTrackerMock: usa la posición del cursor como mirada (prototipo F09) y,
-    si no hay cursor disponible, una trayectoria de lectura sintética.
-
-Ningún dato simulado se reporta como real: todos los resultados incluyen
-"simulated": True para que la traza de ejecución los distinga.
-"""
+# Dispositivos simulados para DeviceFactory.
+# Permiten ejecutar EDDIE completo sin el montaje del laboratorio:
+# MockCameraSensor: escena sintética ("page" = hoja con un resaltado amarillo proyectado, "pen" = fondo oscuro con un lápiz luminoso rojo en movimiento), o una imagen/video real con "source": "ruta". 
 import logging
 import math
 import time
 from pathlib import Path
 from typing import Optional
-
 import cv2
 import numpy as np
-
 from contracts.i_camera_sensor import CameraFrame, ICameraSensor
 from contracts.i_eye_tracker import GazePoint, IEyeTracker
 
@@ -34,7 +22,6 @@ _PAGE_LINES = [
     "El lector resalta una palabra y",
     "el sistema la reconoce con OCR.",
 ]
-
 
 def _page_scene(width: int, height: int, t: float, highlight: bool) -> np.ndarray:
     frame = np.full((height, width, 3), 235, np.uint8)
@@ -54,7 +41,6 @@ def _page_scene(width: int, height: int, t: float, highlight: bool) -> np.ndarra
     # La cámara del montaje original está invertida (OCRProcess rota 180°)
     return cv2.rotate(frame, cv2.ROTATE_180)
 
-
 def _pen_scene(width: int, height: int, t: float) -> np.ndarray:
     frame = np.full((height, width, 3), 25, np.uint8)
     cx = int(width / 2 + width * 0.3 * math.cos(t * 0.8))
@@ -64,10 +50,8 @@ def _pen_scene(width: int, height: int, t: float) -> np.ndarray:
         cv2.circle(frame, (cx, cy), max(8, width // 60), (40, 40, 255), -1)
     return frame
 
-
 class MockCameraSensor(ICameraSensor):
-    """Cámara simulada que cumple el mismo contrato ICameraSensor."""
-
+    # Camara simulada que cumple el mismo contrato ICameraSensor.
     def __init__(self) -> None:
         self._latest_frame: Optional[CameraFrame] = None
         self._capture: Optional[cv2.VideoCapture] = None
@@ -150,8 +134,7 @@ class MockCameraSensor(ICameraSensor):
 
 
 class EyeTrackerMock(IEyeTracker):
-    """Mirada simulada: cursor del sistema (F09) o trayectoria sintética de lectura."""
-
+    # Recibe su fuente de datos desde el orquestador, nunca abre un dispositivo eye tracker.
     def __init__(self) -> None:
         self._gaze: Optional[GazePoint] = None
         self._screen = (1920, 1080)

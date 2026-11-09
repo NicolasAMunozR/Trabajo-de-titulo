@@ -1,10 +1,5 @@
-"""OpenCV adapter implementing the shared camera sensor contract.
-
-Reemplaza la captura de Emgu.CV (VideoCapture + evento ImageGrabbed) del C#.
-Un hilo de captura lee la cámara continuamente; capture_frame() solo toma el
-último frame disponible, de modo que un ciclo del orquestador nunca queda
-bloqueado esperando a la cámara (presupuesto ≤ 8,3 ms por ciclo).
-"""
+# Adaptador OpenCV que implementa el contrato de sensor de cámara.
+# Un hilo lee la cámara continuamente para que un ciclo del orquestador nunca quede esperando.
 import logging
 import sys
 import threading
@@ -39,7 +34,7 @@ def _validate(frame: object) -> CameraFrame:
 
 
 class CameraSensorPlugin(ICameraSensor):
-    """Owns one physical camera and publishes one frame per orchestrator cycle."""
+    # Controla una cámara física y publica un frame por ciclo del orquestador.
 
     def __init__(self) -> None:
         self._camera_index = 0

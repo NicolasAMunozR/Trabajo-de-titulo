@@ -1,10 +1,4 @@
-"""
-ui/widgets.py
-=============
-Controles propios de la interfaz renovada (P-08). Todos conservan la API que usa la
-lógica de EDDIE (clicked, show_frame, set_images, dwell_ms...), así las páginas y la
-pantalla de proyección siguen funcionando igual con otra apariencia.
-"""
+# Controles propios de la interfaz renovada; conservan la API que usa la lógica de EDDIE.
 from typing import Optional
 
 import numpy as np
@@ -17,7 +11,7 @@ from ui.form_builder import ImageButton, bgr_to_qimage
 
 
 class ActionButton(QPushButton):
-    """Botón de acción con variante visual (primary, secondary, ghost, danger, projection)."""
+    # Botón de acción con variante visual (primary, secondary, ghost, danger, projection).
 
     def __init__(self, text: str = "", parent=None, variant: str = "secondary", icon: Optional[str] = None) -> None:
         super().__init__(text, parent)
@@ -40,7 +34,7 @@ class ActionButton(QPushButton):
 
 
 class NavButton(QPushButton):
-    """Elemento del menú lateral: icono, texto y un punto de estado del módulo."""
+    # Elemento del menú lateral: icono, texto y un punto de estado del módulo.
     STATE_COLORS = {"ok": theme.OK, "warn": "#E0A23A", "off": "#56617D"}
 
     def __init__(self, text: str = "", parent=None) -> None:
@@ -75,7 +69,7 @@ class NavButton(QPushButton):
         return self._state
 
     def set_pending(self, stage: str) -> None:
-        """Módulo aún no integrado: el botón queda deshabilitado y muestra el avance en que llega."""
+        # Módulo aún no integrado: el botón queda deshabilitado y muestra el avance en que llega.
         self.pending = stage
         self.setEnabled(False)
         self.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
@@ -113,11 +107,7 @@ class NavButton(QPushButton):
 
 
 class ToolButton(ImageButton):
-    """Botón de la proyección: icono + rótulo dibujados, estado encendido y progreso de clic por mirada.
-
-    Hereda de ImageButton para conservar el clic por permanencia de la mirada (dwell). Mientras la
-    mirada está sobre el botón se dibuja una barra que se llena: el lector ve cuándo se hará el clic.
-    """
+    # Botón de la proyección con icono, estado encendido y barra de progreso del clic por mirada.
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
@@ -215,7 +205,7 @@ class ToolButton(ImageButton):
 
 
 class FitFrameView(QLabel):
-    """ImageBox de Emgu.CV, pero sin deformar: la imagen se ajusta conservando su proporción."""
+    # ImageBox de Emgu.CV, pero sin deformar: la imagen se ajusta conservando su proporción.
 
     def __init__(self, parent=None, placeholder: str = "Sin imagen") -> None:
         super().__init__(parent)
@@ -267,7 +257,7 @@ class FitFrameView(QLabel):
 
 
 class Spinner(QWidget):
-    """Indicador de carga dibujado (reemplaza el GIF del original)."""
+    # Indicador de carga dibujado (reemplaza el GIF del original).
 
     def __init__(self, parent=None, color: str = "#FFFFFF", size: int = 22) -> None:
         super().__init__(parent)
@@ -295,7 +285,7 @@ class Spinner(QWidget):
 
 def card(title: str = "", hint: str = "", help_widget: Optional[QWidget] = None,
          title_label: Optional[QLabel] = None) -> tuple[QFrame, QVBoxLayout]:
-    """Tarjeta blanca con título (opcional), icono de ayuda y una línea de explicación."""
+    # Tarjeta blanca con título (opcional), icono de ayuda y una línea de explicación.
     frame = QFrame()
     frame.setProperty("card", True)
     layout = QVBoxLayout(frame)
@@ -336,7 +326,7 @@ def field_label(widget_or_text, text: Optional[str] = None) -> QLabel:
 
 
 def make_help(label: QLabel, size: int = 16) -> QLabel:
-    """Convierte un PictureBox de información del original en un icono de ayuda."""
+    # Convierte un PictureBox de información del original en un icono de ayuda.
     label.setPixmap(theme.icon_pixmap("circle-help", theme.APAGADO, size))
     label.setScaledContents(False)
     label.setFixedSize(size + 6, size + 6)
@@ -347,7 +337,7 @@ def make_help(label: QLabel, size: int = 16) -> QLabel:
 
 
 def segmented(*radios) -> QFrame:
-    """Agrupa radios Sí/No como un selector segmentado (y los deja exclusivos entre sí)."""
+    # Agrupa radios Sí/No como un selector segmentado (y los deja exclusivos entre sí).
     frame = QFrame()
     frame.setProperty("segmented", True)
     row = QHBoxLayout(frame)

@@ -1,22 +1,6 @@
-"""
-plugins/consistency_plugin.py
-=====================================
-Plugin de consistencia bidireccional físico-digital (IConsistencyProvider).
-
-Reemplaza con PyMuPDF (sin cargar DLLs por reflexión):
-  - ModuloConsistenciaDatos/DigitalDocSync.cs          → add_highlight, get_annotations, search_text
-  - ConsistencyLibraryPageMarkerDP / PageMarkerPD       → get_bookmarks, delete_bookmark, sync_bookmark_from_frame
-  - ConsistencyLibraryCommentsDP / CommentsPD           → get_comments, delete_comment, sync_comments_from_frame
-  - ConsistencyLibraryFiguresDP / FiguresPD             → get_figures, sync_figures_from_frame
-  - Los 6 envoltorios ConsistencyCommentsDP.cs, PageMarkerDP.cs, ... (Assembly.LoadFile, origen
-    de los errores E38/E50 "No se encuentra la carpeta PluginsConsistencia") desaparecen.
-
-Además conserva la correlación OCR + mirada + gesto por ciclo (consume_cycle_results)
-para crear resaltados automáticamente cuando existe calibración espacial.
-
-Todas las escrituras se hacen sobre el PDF elegido (como File.Replace en C#), creando
-una única copia de respaldo "<archivo>.pdf.bac" por sesión.
-"""
+# Plugin de consistencia bidireccional físico-digital (IConsistencyProvider) con PyMuPDF.
+# Reemplaza DigitalDocSync.cs y las bibliotecas de consistencia que se cargaban por reflexión.
+# Escribe sobre el PDF elegido creando una copia de respaldo "<archivo>.pdf.bac" por sesión.
 import logging
 import re
 import shutil
@@ -40,7 +24,7 @@ _BOOKMARK_LABEL = re.compile(r"^(?P<title>.*) Pag\.(?P<page>\d+)$")
 
 
 class ConsistencyPlugin(IConsistencyProvider):
-    """Sincroniza resaltados, marcadores, comentarios y figuras entre papel y PDF."""
+    # Sincroniza resaltados, marcadores, comentarios y figuras entre papel y PDF.
 
     @property
     def name(self) -> str:
@@ -116,7 +100,7 @@ class ConsistencyPlugin(IConsistencyProvider):
 
     # ------------------------------------------------------------------ correlación por ciclo
     def consume_cycle_results(self, results: dict[str, dict]) -> None:
-        """Correlate OCR, gaze and gesture outputs and commit confirmed text."""
+        # Relaciona las salidas de OCR, mirada y gesto, y guarda el texto confirmado.
         self._cycle_results = dict(results)
         gesture = results.get(self._gesture_plugin_name, {})
         is_click = bool(gesture.get("is_click"))
@@ -190,7 +174,7 @@ class ConsistencyPlugin(IConsistencyProvider):
 
     # ------------------------------------------------------------------ documento
     def load_document(self, pdf_path: str) -> bool:
-        """Carga el PDF (PageDetectionSettings → 'Select PDF' → new DigitalDocSync)."""
+        # Carga el PDF (PageDetectionSettings → 'Select PDF' → new DigitalDocSync).
         self.last_load_error = ""
         try:
             document = self._open_valid_pdf(pdf_path)
@@ -209,8 +193,7 @@ class ConsistencyPlugin(IConsistencyProvider):
 
     @staticmethod
     def _open_valid_pdf(pdf_path: str) -> fitz.Document:
-        """Abre el PDF y verifica que se pueda leer (PyMuPDF "repara" archivos dañados y los
-        devuelve con 0 páginas en vez de fallar)."""
+        # Abre el PDF y verifica que se pueda leer (PyMuPDF devuelve 0 páginas en vez de fallar si está dañado).
         if not Path(pdf_path).is_file():
             raise FileNotFoundError(f"No existe el archivo: {pdf_path}")
         damaged = ("El PDF está dañado o no tiene páginas legibles. Abra el archivo en un lector de PDF "
@@ -239,7 +222,7 @@ class ConsistencyPlugin(IConsistencyProvider):
         return document[page_number - 1]
 
     def _save(self) -> None:
-        """Guarda los cambios en el mismo archivo, con respaldo .bac la primera vez."""
+        # Guarda los cambios en el mismo archivo, con respaldo .bac la primera vez.
         document = self._require_document()
         if self._make_backup and not self._backup_done and self._pdf_path:
             shutil.copyfile(self._pdf_path, self._pdf_path + ".bac")
@@ -272,7 +255,7 @@ class ConsistencyPlugin(IConsistencyProvider):
         return float(rect.width), float(rect.height)
 
     def render_page(self, page_number: int, width: int, height: int) -> np.ndarray:
-        """Imagen BGR de la página (útil para la vista de proyección y la documentación)."""
+        # Imagen BGR de la página (útil para la vista de proyección y la documentación).
         page = self._page(page_number)
         zoom = min(width / page.rect.width, height / page.rect.height)
         pix = page.get_pixmap(matrix=fitz.Matrix(zoom, zoom), alpha=False)
@@ -281,7 +264,7 @@ class ConsistencyPlugin(IConsistencyProvider):
 
     # ------------------------------------------------------------------ resaltados (DigitalDocSync)
     def add_highlight(self, annotation: Annotation) -> bool:
-        """DigitalDocSync.SaveAnno: crea una anotación Highlight amarilla en la página."""
+        # DigitalDocSync.SaveAnno: crea una anotación Highlight amarilla en la página.
         if self._document is None:
             raise RuntimeError("No hay un PDF cargado para guardar la anotación.")
         page_idx = annotation.page_number - 1
@@ -305,7 +288,7 @@ class ConsistencyPlugin(IConsistencyProvider):
         return True
 
     def get_annotations(self, page_number: int) -> list:
-        """DigitalDocSync.GetRectAnno: todos los resaltados de la página, normalizados [0,1]."""
+        # DigitalDocSync.GetRectAnno: todos los resaltados de la página, normalizados [0,1].
         page = self._page(page_number)
         width, height = page.rect.width, page.rect.height
         found = []
@@ -319,7 +302,7 @@ class ConsistencyPlugin(IConsistencyProvider):
         return found
 
     def search_text(self, query: str) -> list[int]:
-        """DigitalDocSync.SearchTxtPdf."""
+        # DigitalDocSync.SearchTxtPdf.
         document = self._require_document()
         query = (query or "").strip().lower()
         if not query:
@@ -462,7 +445,7 @@ class ConsistencyPlugin(IConsistencyProvider):
 
     # ------------------------------------------------------------------ contrato general
     def sync_physical_to_digital(self, frame: object, page_number: int) -> list:
-        """Ejecuta las tres sincronizaciones físico→digital y retorna lo creado."""
+        # Ejecuta las tres sincronizaciones físico→digital y retorna lo creado.
         if frame is None:
             raise ValueError("Se requiere un frame de cámara para sincronizar anotaciones.")
         created = []

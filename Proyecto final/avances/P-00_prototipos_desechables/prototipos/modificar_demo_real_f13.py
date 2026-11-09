@@ -1,14 +1,6 @@
-"""
-DEMO REAL F13 – Retículo de Gaze + Overlay en Proyección
-==========================================================
-Abre una ventana que simula la superficie proyectada (libro).
-El ratón actúa como el gaze del eye tracker.
-El retículo sigue el cursor en tiempo real, resaltando
-la línea de texto más cercana.
-
-Mueve el ratón por el texto.
-S = guardar  |  Q = salir
-"""
+# Demo real F13: retícula de mirada sobre la proyección simulada del libro.
+# El ratón actúa como mirada y se resalta la línea de texto más cercana.
+# S = guardar  |  Q = salir
 import cv2, pathlib, time
 import numpy as np
 

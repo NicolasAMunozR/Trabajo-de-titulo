@@ -1,21 +1,5 @@
-"""
-tools/generar_evidencias.py — evidencias reproducibles de cada avance
-====================================================================
-Mismo script en todas las carpetas de avance. Detecta qué módulos existen en el
-avance y genera, dentro de ./evidencias:
-
-  pruebas.txt / junit.xml     Salida de pytest (unitarias, de contrato e integración)
-  cobertura.txt               Cobertura de líneas por módulo (pytest-cov), umbral ≥ 80 %
-  inicializacion.json         Reporte de carga de cada plugin (initialized / load_failed / ...)
-  latencias.csv / .json       Latencia por plugin y por ciclo del OrchestratorCore (objetivo ≤ 8,3 ms)
-  capturas/*.png              Capturas de la interfaz (solo desde P-03), con dispositivos simulados
-  resumen.json / RESULTADOS.md
-
-Uso (desde la carpeta del avance, con el .venv del proyecto activado):
-  python tools/generar_evidencias.py                  → todo, dispositivos simulados
-  python tools/generar_evidencias.py --real           → latencias con el hardware real conectado
-  python tools/generar_evidencias.py --ciclos 1000 --sin-capturas
-"""
+# Generador de evidencias reproducibles para cada avance del proyecto EDDIE.
+# Detecta qué módulos existen en el avance y genera, dentro de ./evidencias:
 import argparse
 import csv
 import importlib.util
@@ -45,7 +29,7 @@ def has(module: str) -> bool:
         return False
 
 
-# ---------------------------------------------------------------------------- 1. pruebas + cobertura
+# 1. pruebas + cobertura
 def run_tests() -> dict:
     cmd = [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", f"--junitxml={EVID / 'junit.xml'}"]
     coverage = has("pytest_cov")
@@ -74,7 +58,7 @@ def run_tests() -> dict:
     return summary
 
 
-# ---------------------------------------------------------------------------- 2. latencias
+# 2. latencias
 def _overrides(declared: set) -> dict:
     overrides = {}
     if has("app.settings_store"):
@@ -138,9 +122,9 @@ def measure_latency(cycles: int, real: bool) -> dict:
     return result
 
 
-# ---------------------------------------------------------------------------- 3. capturas de la interfaz
+# 3. capturas de la interfaz
 def hand_scene(path: Path) -> None:
-    """Escena sintética para la cámara gestual: mano (tono piel) arriba a la izquierda y el rótulo ARRIBA."""
+    # Escena sintética para la cámara gestual: mano (tono piel) arriba a la izquierda y el rótulo ARRIBA.
     import cv2
     import numpy as np
     frame = np.full((720, 960, 3), 40, np.uint8)
@@ -153,7 +137,7 @@ def hand_scene(path: Path) -> None:
 
 
 def sample_pdf(path: Path) -> Path:
-    """PDF de 3 páginas para la captura de Page detection (no se usa ningún PDF personal)."""
+    # PDF de 3 páginas para la captura de Page detection (no se usa ningún PDF personal).
     import pymupdf
     document = pymupdf.open()
     for number in range(1, 4):
@@ -170,11 +154,7 @@ def sample_pdf(path: Path) -> Path:
 
 
 def projection_flow(ctx, runtime, app, tmp: Path, grab) -> None:
-    """P-08: capturas de la proyección en uso (búsqueda, sincronizador e historial).
-
-    Las respuestas las da un LLM local de prueba (el mismo servidor falso de tests/conftest.py), así la
-    captura muestra el flujo real de la interfaz sin depender de una clave de Gemini.
-    """
+    # Captura de la proyección en uso: búsqueda de definiciones y enciclopedia, sincronizador y historial.
     if not has("tests.conftest"):
         return
     import threading
@@ -319,7 +299,7 @@ def screenshots() -> list[str]:
     return saved
 
 
-# ---------------------------------------------------------------------------- resumen
+# resumen
 def write_summary(summary: dict) -> None:
     (EVID / "resumen.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
     t, lat = summary.get("pruebas", {}), summary.get("latencias", {})

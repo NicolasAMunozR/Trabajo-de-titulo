@@ -1,15 +1,8 @@
-"""
-main.py — Avance P-01 (núcleo orquestador y contratos)
-======================================================
-Todavía no hay interfaz: el núcleo se ejecuta sin ventana y muestra en consola
-qué plugins se cargaron, cuáles fallaron (sin detener el sistema) y la latencia
-de cada ciclo.
-
-Uso:
-  python main.py                 → 300 ciclos con la configuración de config/plugins.json
-  python main.py --cycles 1000   → otra cantidad de ciclos
-  python main.py --config ruta   → otro archivo de plugins
-"""
+# Este módulo es el punto de entrada del avance P-01: el núcleo orquestador sin interfaz.
+# Uso:
+# python main.py                 → 300 ciclos con la configuración de config/plugins.json
+# python main.py --cycles 1000   → otra cantidad de ciclos
+# python main.py --config ruta   → otro archivo de plugins
 import argparse
 import json
 import logging

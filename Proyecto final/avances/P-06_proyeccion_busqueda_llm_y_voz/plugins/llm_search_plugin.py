@@ -1,22 +1,6 @@
-"""
-plugins/llm_search_plugin.py
-============================
-Búsqueda mediante un modelo de lenguaje (IWebSearchProvider): Google Gemini.
-
-Reemplaza las APIs del C# (ApiWikipedia, ApiDefinicionesGoogle, ApiTraduccionBing,
-ApiBuscarYoutube, ApiBusquedaImagenCloudVision) que se cargaban como DLLs desde la
-carpeta "Apis" con Assembly.LoadFile. Esas APIs NO se usan: cada servicio de la
-pantalla "Web search services" (enciclopedia, definiciones, traducción, video,
-imagen) lo responde el LLM.
-
-API: POST {base_url}/v1beta/models/{model}:generateContent con la cabecera
-x-goog-api-key. Modelo por defecto: gemini-2.5-flash (capa gratuita de Google AI Studio).
-
-La clave NO se escribe en plugins.json (ese archivo va al repositorio). Se busca, en orden:
-  1. config["api_key"] (solo para pruebas),
-  2. la variable de entorno indicada en config["api_key_env"] (por defecto GEMINI_API_KEY),
-  3. config/secrets.json → {"GEMINI_API_KEY": "..."} (ignorado por git).
-"""
+# Búsqueda mediante un modelo de lenguaje (IWebSearchProvider): Google Gemini.
+# Reemplaza las APIs del C#; cada servicio (enciclopedia, definición, traducción, video, imagen) lo responde el LLM.
+# La clave se busca en config["api_key"], la variable GEMINI_API_KEY o config/secrets.json.
 import base64
 import json
 import logging
@@ -77,7 +61,7 @@ def _read_secret(key: str) -> str:
 
 
 class LLMSearchPlugin(IWebSearchProvider):
-    """Proveedor de búsqueda basado en Gemini."""
+    # Proveedor de búsqueda basado en Gemini.
 
     def __init__(self) -> None:
         self._model = "gemini-2.5-flash"

@@ -1,10 +1,5 @@
-"""
-Prototipo F05 Color Pen Tracking
-Detecta un objeto de color (por defecto: rojo).
-Muestra el centroide y la trayectoria del objeto en la cámara.
-  R = detectar ROJO  |  G = detectar VERDE  |  B = detectar AZUL
-  S = guardar frame  |  Q = salir
-"""
+# Prototipo F05: seguimiento de un objeto de color (centroide y trayectoria).
+# R / G / B = color a detectar  |  S = guardar  |  Q = salir
 import cv2, pathlib, sys, collections
 import numpy as np
 

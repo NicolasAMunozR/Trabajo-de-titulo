@@ -1,4 +1,4 @@
-"""Pruebas del avance P-02: DeviceFactory (real/simulado), invocación aislada y consistencia como plugin."""
+# Pruebas del avance P-02: DeviceFactory (real/simulado), invocación aislada y consistencia como plugin.
 import importlib.util
 import json
 import sys

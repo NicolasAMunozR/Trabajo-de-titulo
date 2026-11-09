@@ -1,12 +1,5 @@
-"""
-Prototipo F09 Mouse como fallback de Gaze
-Abre una ventana de proyección. El ratón actúa como sustituto
-del eye tracker. Se registra la posición y se dibuja
-un retículo siguiendo el cursor en tiempo real.
-
-Mueve el ratón por la ventana para simular el gaze.
-S = guardar  |  Q = salir
-"""
+# Prototipo F09: el ratón reemplaza al eye tracker y una retícula sigue el cursor.
+# S = guardar  |  Q = salir
 import cv2, pathlib, collections, time
 import numpy as np
 

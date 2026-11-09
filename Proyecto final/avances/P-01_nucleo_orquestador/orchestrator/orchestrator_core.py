@@ -1,10 +1,8 @@
-"""
-Núcleo orquestador del sistema EDDIE Python (Nucleo que gestiona el ciclo de vida de los plugins Inicializar → ejecutar → liberar).
-Un bloque centralizado de manejo de excepciones.
-Aislamiento de fallos: un plugin que falla NO detiene los demás.
-Medición de latencia por ciclo (objetivo: ≤ 8.3 ms para 60Hz (Ya que es una medida estandar de latencia de 120Hz, se toma un margen conservador para 60Hz)).
-Logging estructurado en cada evento del ciclo de vida 
-"""
+# Núcleo orquestador del sistema EDDIE Python (Nucleo que gestiona el ciclo de vida de los plugins Inicializar → ejecutar → liberar).
+# Un bloque centralizado de manejo de excepciones.
+# Aislamiento de fallos: un plugin que falla NO detiene los demás.
+# Medición de latencia por ciclo (objetivo: ≤ 8.3 ms para 60Hz (Ya que es una medida estandar de latencia de 120Hz, se toma un margen conservador para 60Hz)).
+# Logging estructurado en cada evento del ciclo de vida 
 # Importaciones de librerías
 import json
 import logging
@@ -31,15 +29,10 @@ MAX_LATENCY_MS = 8.3
 
 # Clase principal del orquestador (gestiona el ciclo de vida de los plugins)
 class OrchestratorCore:
-    """
-    Coordina el ciclo de vida de todos los plugins declarados en el archivo de configuración config/plugins.json.
-    """
+    # Coordina la inicialización, ejecución y liberación de todos los plugins activos.
     # Definición del constructor de la clase OrchestratorCore
     def __init__(self, config_path: str = 'config/plugins.json'):
-        """
-        Inicializa el núcleo del orquestador con la ruta al archivo de configuración de plugins.
-        config_path (str): Ruta al archivo JSON de configuración de plugins.
-        """
+        # Inicializa los atributos de la clase OrchestratorCore
         self.config_path = Path(config_path)                # Ruta al archivo de configuración de plugins
         self._plugins: list[PluginBase] = []                # Lista de instancias de plugins cargados e inicializados
         self._loader = PluginLoader()                       # Instancia del cargador de plugins (PluginLoader)
@@ -51,12 +44,8 @@ class OrchestratorCore:
 
     # Definición de los métodos principales del ciclo de vida del orquestador: initialize(), execute_cycle(), run(), release()
     def initialize(self) -> bool:
-        """
-        Lee la configuración y carga más inicializa todos los plugins.
-        - Si un plugin falla su initialize(), se registra el error pero el sistema continúa cargando los demás plugins.
-        - Si ningún plugin se inicializa, retorna False.
-        Retorna un bool: True si al menos un plugin se inicializó correctamente.
-        """
+        # Lee la configuración de plugins desde el archivo JSON y carga todas las clases de plugins desde los módulos especificados en la configuración.
+        # Devuelve un diccionario de plugins cargados, indexado por su nombre de instancia, y un conjunto de nombres de plugins cargados exitosamente.
         plugins_config = self._load_config()                                            # Lee la configuración de plugins desde el archivo JSON
         if plugins_config is None:                                                      # No se pudo leer la configuración
             logger.error(f"No se pudo leer la configuración desde: {self.config_path}") 
@@ -205,11 +194,7 @@ class OrchestratorCore:
 
     # Definición del método execute_cycle() que ejecuta un ciclo completo del sistema llamando al método execute() de cada plugin activo y midiendo la latencia total del ciclo.
     def execute_cycle(self) -> dict:
-        """
-        Ejecuta un ciclo del sistema (llama execute() en cada plugin).
-        Mide la latencia total del ciclo y registra advertencia si supera 8.3 ms.
-        Retorna un dict: {plugin_name: resultado_execute()} para cada plugin.
-        """
+        # Marca el tiempo de inicio del ciclo para medir la latencia total del ciclo
         cycle_start = time.perf_counter()     # Marca el tiempo de inicio del ciclo para medir la latencia total del ciclo
         results = {}                          # Diccionario para almacenar los resultados de ejecución de cada plugin
         metrics = {}                          # Diccionario para almacenar métricas de ejecución de cada plugin, incluyendo el estado y la latencia en milisegundos 
@@ -285,10 +270,7 @@ class OrchestratorCore:
 
     # Definición del método release() que libera los recursos de todos los plugins en orden inverso al de inicialización, registrando errores si algún plugin falla en release().
     def release(self) -> None:
-        """
-        Libera recursos de todos los plugins en orden inverso.
-        Si un plugin falla en release(), el error se registra pero el sistema continúa liberando los demás plugins.
-        """
+        # Marca la bandera de ejecución como False para detener el loop principal si aún está activo
         logger.info(
             "Liberando recursos del sistema..."
         )
@@ -309,7 +291,7 @@ class OrchestratorCore:
 
     # Definición del método _load_config() que lee el archivo de configuración plugins.json y retorna la lista de plugins configurados.
     def _load_config(self) -> Optional[list]:
-        """Lee el archivo plugins.json y retorna la lista de plugins."""
+        # Lee el archivo plugins.json y retorna la lista de plugins.
         try:
             with open(self.config_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -327,7 +309,7 @@ class OrchestratorCore:
 
     # Definición del método _print_latency_summary() que imprime un resumen de métricas de latencia de la sesión, incluyendo promedio, máximo y mínimo.
     def _print_latency_summary(self) -> None:
-        """Imprime resumen de métricas de latencia de la sesión."""
+        # Imprime resumen de métricas de latencia de la sesión.
         if not self._latency_history:
             return
         avg = sum(self._latency_history) / len(self._latency_history)

@@ -1,13 +1,5 @@
-"""
-Prototipo F24 Comandos de voz para EDDIE
-Grabar audio real desde el micrófono.
-Guardar el WAV.
-Reconocer voz con SpeechRecognition.
-Interpretar comandos de voz en español.
-
-Requisitos:
-- pip install SpeechRecognition sounddevice opencv-python numpy
-"""
+# Prototipo F24: graba audio del micrófono, lo reconoce con SpeechRecognition e interpreta comandos en español.
+# Requisitos: pip install SpeechRecognition sounddevice opencv-python numpy
 
 import os
 import re

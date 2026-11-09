@@ -1,11 +1,5 @@
-"""
-Prototipo F04 Detección de Página/Libro
-Captura frames de DroidCam y detecta en tiempo real
-el rectángulo del libro/hoja más grande en la imagen.
-Dibuja el contorno verde sobre el objeto detectado.
-Apunta la cámara a un libro o hoja sobre fondo oscuro.
-S = guardar  |  Q = salir
-"""
+# Prototipo F04: detecta en tiempo real el rectángulo de la hoja o libro más grande de la imagen.
+# S = guardar  |  Q = salir
 import cv2, pathlib, sys
 import numpy as np
 

@@ -1,5 +1,5 @@
 {
-  "_comentario": "Avance P-01: núcleo orquestador + contratos. Plugins de prueba y dispositivos simulados; todos se cargan con un único mecanismo (PluginLoader/importlib).",
+  "_comentario": "Avance P-01: núcleo orquestador + contratos. Plugins de prueba y dispositivos simulados, todos se cargan con un único mecanismo (PluginLoader/importlib).",
   "plugins": [
     {
       "name": "TextCamera",

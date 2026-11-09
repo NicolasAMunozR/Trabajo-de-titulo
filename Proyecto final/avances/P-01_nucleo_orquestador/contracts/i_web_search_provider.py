@@ -1,26 +1,11 @@
-"""
-contracts/i_web_search_provider.py
-=====================================
-Contrato de interfaz para el módulo de búsqueda web.
-
-Las APIs externas del C# (Google, Bing, Wikipedia, YouTube, Cloud Vision) NO se usan.
-En esta versión el contrato se implementa con un modelo de lenguaje
-(plugins/llm_search_plugin.py → Google Gemini 2.5 Flash). Cada servicio (enciclopedia,
-definiciones, traducción, video, imagen) apunta a un plugin que cumple este contrato,
-así que otro LLM se agrega como un plugin más sin cambiar la interfaz.
-
-Documenta la intención de reemplazar:
-  - ModuloBusquedaWeb/* (BuscarDefinicion, BuscarEnciclopedia, etc.)
-  - ApiWikipedia, ApiTraduccionBing, ApiDefinicionesGoogle, etc.
-"""
+# Contrato para el proveedor de búsqueda web.
 from abc import abstractmethod
 from dataclasses import dataclass
 from contracts.plugin_base import PluginBase
 
-
 @dataclass
 class SearchResult:
-    """Resultado de una búsqueda web."""
+    # El contrato IWebSearchProvider define métodos para buscar en Wikipedia, obtener definiciones de palabras, reconocer imágenes, traducir texto y buscar videos en YouTube. Cada método devuelve un objeto SearchResult que contiene información relevante sobre el resultado de la búsqueda, incluyendo el término buscado, la fuente, el contenido textual, y URLs asociadas si aplican.
     query: str          # Término buscado
     source: str         # 'wikipedia', 'definition', 'youtube', 'image', 'translation'
     content: str        # Contenido textual del resultado
@@ -29,36 +14,28 @@ class SearchResult:
 
 
 class IWebSearchProvider(PluginBase):
-    """
-    Contrato para el proveedor de búsqueda web.
-
-    Implementación de referencia: LLMSearchPlugin (sin APIs de terceros vencidas).
-
-    Elimina el peligroso patrón de carga por reflexión de
-    ModuloBusquedaWeb/*.cs que era uno de los 16 errores arquitectónicos.
-    """
-
+    # Recibe su fuente de datos desde el orquestador, nunca abre un navegador ni hace scraping.
     @abstractmethod
     def search_encyclopedia(self, query: str) -> SearchResult:
-        """Busca en Wikipedia. Reemplaza ApiWikipedia.cs"""
+        # Devuelve un objeto SearchResult con el contenido de la página de Wikipedia correspondiente al término buscado.
         pass
 
     @abstractmethod
     def search_definition(self, word: str) -> SearchResult:
-        """Busca definición de una palabra. Reemplaza ApiDefinicionesGoogle.cs"""
+        # Devuelve un objeto SearchResult con la definición de la palabra buscada.
         pass
 
     @abstractmethod
     def search_image(self, image_bytes: bytes) -> SearchResult:
-        """Reconoce imagen con visión computacional. Reemplaza ApiBusquedaImagenCloudVision.cs"""
+        # Devuelve un objeto SearchResult con la descripción de la imagen reconocida mediante visión computacional.
         pass
 
     @abstractmethod
     def translate_text(self, text: str, target_language: str) -> SearchResult:
-        """Traduce texto. Reemplaza ApiTraduccionBing.cs"""
+        # Devuelve un objeto SearchResult con la traducción del texto al idioma objetivo especificado.
         pass
 
     @abstractmethod
     def search_video(self, query: str) -> SearchResult:
-        """Busca video en YouTube. Reemplaza ApiBuscarYoutube.cs"""
+        # Devuelve un objeto SearchResult con la información del video de YouTube correspondiente al término buscado.
         pass

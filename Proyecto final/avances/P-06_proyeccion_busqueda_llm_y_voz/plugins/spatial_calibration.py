@@ -1,4 +1,4 @@
-"""Manual camera/display calibration for mapping observations onto a PDF page."""
+# Calibración manual cámara/pantalla para ubicar las observaciones sobre una página del PDF.
 from dataclasses import dataclass
 from typing import Optional
 
@@ -8,7 +8,7 @@ import numpy as np
 
 @dataclass(frozen=True)
 class SpatialCalibration:
-    """Maps normalized camera/page and display/page coordinates."""
+    # Mapea coordenadas normalizadas cámara/página y pantalla/página.
 
     camera_page_corners: tuple[tuple[float, float], ...]
     gaze_viewport: tuple[float, float, float, float]
@@ -51,7 +51,7 @@ class SpatialCalibration:
         frame_width: int,
         frame_height: int,
     ) -> Optional[tuple[float, float, float, float]]:
-        """Map an OCR pixel box into normalized PDF-page coordinates."""
+        # Convierte una caja OCR en píxeles a coordenadas normalizadas de la página del PDF.
         if frame_width <= 0 or frame_height <= 0 or width <= 0 or height <= 0:
             return None
         source = np.asarray(self.camera_page_corners, dtype=np.float32)
@@ -78,7 +78,7 @@ class SpatialCalibration:
         return min_x, min_y, max_x, max_y
 
     def map_gaze(self, x: float, y: float) -> Optional[tuple[float, float]]:
-        """Map normalized display gaze into normalized PDF-page coordinates."""
+        # Convierte la mirada normalizada en pantalla a coordenadas normalizadas de la página del PDF.
         x0, y0, x1, y1 = self.gaze_viewport
         if not (x0 <= x <= x1 and y0 <= y <= y1):
             return None

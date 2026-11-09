@@ -1,21 +1,9 @@
-"""
-tools/generar_evidencias.py — evidencias reproducibles de cada avance
-====================================================================
-Mismo script en todas las carpetas de avance. Detecta qué módulos existen en el
-avance y genera, dentro de ./evidencias:
-
-  pruebas.txt / junit.xml     Salida de pytest (unitarias, de contrato e integración)
-  cobertura.txt               Cobertura de líneas por módulo (pytest-cov), umbral ≥ 80 %
-  inicializacion.json         Reporte de carga de cada plugin (initialized / load_failed / ...)
-  latencias.csv / .json       Latencia por plugin y por ciclo del OrchestratorCore (objetivo ≤ 8,3 ms)
-  capturas/*.png              Capturas de la interfaz (solo desde P-03), con dispositivos simulados
-  resumen.json / RESULTADOS.md
-
-Uso (desde la carpeta del avance, con el .venv del proyecto activado):
-  python tools/generar_evidencias.py                  → todo, dispositivos simulados
-  python tools/generar_evidencias.py --real           → latencias con el hardware real conectado
-  python tools/generar_evidencias.py --ciclos 1000 --sin-capturas
-"""
+# Genera las evidencias reproducibles de cada avance dentro de ./evidencias
+# (pruebas, cobertura, inicialización, latencias, capturas y resumen).
+# Uso:
+# python tools/generar_evidencias.py                  → todo, dispositivos simulados
+# python tools/generar_evidencias.py --real           → latencias con el hardware real conectado
+# python tools/generar_evidencias.py --ciclos 1000 --sin-capturas
 import argparse
 import csv
 import importlib.util
@@ -140,7 +128,7 @@ def measure_latency(cycles: int, real: bool) -> dict:
 
 # ---------------------------------------------------------------------------- 3. capturas de la interfaz
 def hand_scene(path: Path) -> None:
-    """Escena sintética para la cámara gestual: mano (tono piel) arriba a la izquierda y el rótulo ARRIBA."""
+    # Escena sintética para la cámara gestual: mano (tono piel) arriba a la izquierda y el rótulo ARRIBA.
     import cv2
     import numpy as np
     frame = np.full((720, 960, 3), 40, np.uint8)
@@ -153,7 +141,7 @@ def hand_scene(path: Path) -> None:
 
 
 def sample_pdf(path: Path) -> Path:
-    """PDF de 3 páginas para la captura de Page detection (no se usa ningún PDF personal)."""
+    # PDF de 3 páginas para la captura de Page detection (no se usa ningún PDF personal).
     import pymupdf
     document = pymupdf.open()
     for number in range(1, 4):
@@ -170,11 +158,7 @@ def sample_pdf(path: Path) -> Path:
 
 
 def projection_flow(ctx, runtime, app, tmp: Path, grab) -> None:
-    """P-08: capturas de la proyección en uso (búsqueda, sincronizador e historial).
-
-    Las respuestas las da un LLM local de prueba (el mismo servidor falso de tests/conftest.py), así la
-    captura muestra el flujo real de la interfaz sin depender de una clave de Gemini.
-    """
+    # Capturas de la proyección en uso (búsqueda, sincronizador e historial) con un LLM local de prueba.
     if not has("tests.conftest"):
         return
     import threading

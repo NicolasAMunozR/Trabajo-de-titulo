@@ -1,4 +1,4 @@
-"""Fixtures compartidas del avance (las del servidor LLM falso llegan en P-06)."""
+# Importaciones de módulos estándar
 import json
 import os
 import sys

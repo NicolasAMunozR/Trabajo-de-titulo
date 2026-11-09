@@ -1,4 +1,4 @@
-"""Convierte un archivo *.Designer.cs de WinForms en una descripción JSON del layout."""
+# Convierte un archivo *.Designer.cs de WinForms en una descripción JSON del layout.
 import json
 import re
 import sys

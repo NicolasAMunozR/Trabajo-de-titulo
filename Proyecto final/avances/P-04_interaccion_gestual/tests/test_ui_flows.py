@@ -1,5 +1,4 @@
-"""Pruebas de la interfaz (Qt offscreen) del avance P-04: controles de cada formulario y flujos de los
-módulos ya integrados. Las pruebas de la pantalla de proyección y de los servicios LLM llegan en P-06."""
+# Pruebas de la interfaz (Qt offscreen) del avance P-04: controles de cada formulario y flujos de los módulos integrados.
 import json
 
 import pytest
@@ -21,8 +20,7 @@ def _nodes(nodes):
 
 @pytest.mark.parametrize("name", FORMS)
 def test_every_original_control_exists_in_the_new_interface(qapp, name):
-    """P-08 cambia el diseño, pero cada control del original sigue existiendo con su nombre, un tipo
-    compatible y el mismo comportamiento (rangos, valores, ítems), porque la lógica los usa por nombre."""
+    # Cada control del original sigue existiendo con su nombre, un tipo compatible y el mismo comportamiento.
     from PySide6.QtWidgets import (QAbstractButton, QAbstractSpinBox, QCheckBox, QComboBox, QLabel, QLineEdit,
                                    QListWidget, QRadioButton, QTextEdit, QWidget)
     from ui.widgets import FitFrameView
@@ -49,7 +47,7 @@ def test_every_original_control_exists_in_the_new_interface(qapp, name):
 
 @pytest.fixture
 def eddie(qapp, tmp_path, monkeypatch):
-    """EDDIE del avance con dispositivos simulados (DeviceFactory)."""
+    # EDDIE del avance con dispositivos simulados (DeviceFactory).
     monkeypatch.setenv("EDDIE_DEVICE_MODE", "sim")
     messages = []
     import ui.dialogs as dialogs
@@ -133,7 +131,7 @@ def test_light_palette_keeps_text_readable(qapp):
 
 
 def test_text_page_recognizes_the_highlighted_word(eddie, qapp):
-    """Text recognition muestra el rectángulo detectado y el texto reconocido (antes solo desde la proyección)."""
+    # Text recognition muestra el rectángulo detectado y el texto reconocido (antes solo desde la proyección).
     ctx, window, messages = eddie
     page = ctx.pages["text"]
     window.open_page("TextRecognitiionButton")
@@ -162,8 +160,7 @@ def test_page_detection_shows_a_preview_of_the_pdf(eddie, qapp, sample_pdf):
 
 
 def test_info_icons_and_buttons_with_help_do_not_raise(eddie, qapp, monkeypatch):
-    """Regresión: clicked(bool) de los botones "Browse" llegaba como w=False a la lambda de la ayuda
-    ("'bool' object has no attribute 'mapToGlobal'")."""
+    # Regresión: el clic de los botones "Browse" llegaba como False a la ayuda y fallaba.
     import sys
     from PySide6.QtWidgets import QAbstractButton, QFileDialog
     ctx, window, messages = eddie
@@ -195,8 +192,7 @@ def _is_yellow(hex_color: str) -> bool:
 
 
 def test_interface_chrome_never_uses_yellow():
-    """Ibaceta (2023): el botón de resaltado amarillo se confundía con el resaltador. El amarillo queda solo
-    para el resaltado que busca la cámara."""
+    # El botón de resaltado ya no es amarillo, para no confundirse con el resaltador (Ibaceta, 2023).
     import re
     from ui import theme
     colors = set(re.findall(r"#[0-9A-Fa-f]{6}", theme.QSS + theme.PROJECTION_QSS))
@@ -217,7 +213,7 @@ def test_pending_modules_show_the_stage_where_they_arrive(eddie):
 
 
 def test_messages_are_non_blocking_notices(qapp, eddie, monkeypatch):
-    """message() muestra un aviso en la ventana en vez de un cuadro modal que detiene el uso."""
+    # message() muestra un aviso en la ventana en vez de un cuadro modal que detiene el uso.
     import importlib
     from PySide6.QtWidgets import QMessageBox
     ctx, window, _ = eddie

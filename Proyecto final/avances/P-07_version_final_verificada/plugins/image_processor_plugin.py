@@ -1,20 +1,6 @@
-"""
-plugins/image_processor_plugin.py
-=================================
-Reconocimiento de texto resaltado (IImageProcessor).
-
-Porta a OpenCV/pytesseract:
-  - ModuloProcesamientoImagenes/ColorRecognition.cs  → detect_highlight_region()
-      Segmenta los píxeles del resaltado proyectado (BGR (0,0,120)…(125,255,255)),
-      erosiona 1 vez, dilata 7 veces, toma el contorno de mayor área, su envolvente
-      convexa y su rectángulo, que se dibuja en rojo sobre el frame (imageBox1).
-  - ModuloProcesamientoImagenes/OCRProcess.cs        → extract_text()
-      Rota 180° (la cámara del montaje está invertida) y aplica Tesseract.
-
-El OCR es costoso, por lo que NO se ejecuta en cada ciclo: execute() solo informa el
-estado y la interfaz lo pide bajo demanda con OrchestratorCore.invoke(), igual que el
-C# lo hacía al terminar un resaltado (ButtonAction → CaptureTxt).
-"""
+# Reconocimiento de texto resaltado (IImageProcessor) con OpenCV y pytesseract.
+# Porta ColorRecognition.cs (detecta el resaltado) y OCRProcess.cs (aplica Tesseract).
+# El OCR no corre en cada ciclo: la interfaz lo pide bajo demanda con OrchestratorCore.invoke().
 import logging
 import shutil
 import sys
@@ -41,7 +27,7 @@ _WINDOWS_TESSERACT = (
 
 
 class ImageProcessorPlugin(IImageProcessor):
-    """Detecta el texto resaltado sobre el papel y lo transforma en texto con OCR."""
+    # Detecta el texto resaltado sobre el papel y lo transforma en texto con OCR.
 
     # Constantes de ColorRecognition.cs
     _ERODE_ITERATIONS = 1
@@ -134,7 +120,7 @@ class ImageProcessorPlugin(IImageProcessor):
 
     # ------------------------------------------------------------------ visión
     def detect_highlight_region(self, frame: CameraFrame) -> tuple[np.ndarray, Optional[tuple]]:
-        """ColorRecognition.DetectTxt + DetectObject. Retorna (frame anotado, caja | None)."""
+        # ColorRecognition.DetectTxt + DetectObject. Retorna (frame anotado, caja | None).
         mask = cv2.inRange(frame, self._lower, self._upper)
         already_red = cv2.inRange(frame, np.array((0, 0, 255), np.uint8), np.array((0, 0, 255), np.uint8))
         mask = cv2.bitwise_and(mask, cv2.bitwise_not(already_red))
@@ -153,7 +139,7 @@ class ImageProcessorPlugin(IImageProcessor):
         return annotated, (int(x), int(y), int(w), int(h))
 
     def preprocess(self, frame: CameraFrame) -> np.ndarray:
-        """Escala de grises + Otsu para mejorar el OCR del recorte."""
+        # Escala de grises + Otsu para mejorar el OCR del recorte.
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) if frame.ndim == 3 else frame
         if gray.shape[0] < 60:                       # recortes pequeños: Tesseract necesita ~30 px de alto
             gray = cv2.resize(gray, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
@@ -191,12 +177,7 @@ class ImageProcessorPlugin(IImageProcessor):
         return {"raw_text": " ".join(words), "text_regions": regions}
 
     def _read_highlight(self, binary: np.ndarray) -> str:
-        """OCR del recorte descartando trozos de letras vecinas cortados por el borde del resaltado.
-
-        El resaltador casi siempre toca un poco las palabras de al lado; Tesseract las lee como
-        caracteres sueltos ("1 aumentada e"). Se descartan los fragmentos de 1–2 caracteres que
-        tocan el borde izquierdo o derecho, siempre que quede al menos una palabra.
-        """
+        # OCR del recorte descartando fragmentos de letras vecinas que tocan el borde del resaltado.
         try:
             data = pytesseract.image_to_data(binary, lang=self._ocr_language,
                                              config=f"{self._tesseract_config} --psm 6".strip(),
@@ -218,7 +199,7 @@ class ImageProcessorPlugin(IImageProcessor):
         return " ".join(kept)
 
     def recognize_highlighted_text(self, frame: Optional[CameraFrame] = None) -> dict:
-        """Flujo completo de 'resaltar y reconocer' (CaptureTxt + OCRProcess.TransformImage)."""
+        # Flujo completo de 'resaltar y reconocer' (CaptureTxt + OCRProcess.TransformImage).
         if frame is None:
             frame = self._camera_sensor.capture_frame() if self._camera_sensor else None
         if frame is None:

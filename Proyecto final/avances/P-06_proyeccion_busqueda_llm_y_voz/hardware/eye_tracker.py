@@ -1,8 +1,5 @@
-"""Eye tracker adapters: GazeCloud (WebSocket), TheEyeTribe (TCP 6555) y GazePoint (Open Gaze API, TCP 4242).
-
-Reemplaza PluginGazeCloud.dll, PluginEyeTribe.dll e IntermediateClass/AppDomain del C#:
-un único plugin IEyeTracker con varios backends, cargado por el mismo PluginLoader.
-"""
+# Adaptadores de eye tracker: GazeCloud (WebSocket), TheEyeTribe (TCP 6555) y GazePoint (TCP 4242).
+# Un único plugin IEyeTracker con varios backends reemplaza los DLLs y el AppDomain del C#.
 import json
 import logging
 import re
@@ -21,7 +18,7 @@ _GAZEPOINT_ATTR = re.compile(r'(\w+)="([^"]*)"')
 
 
 class _ServerHandle:
-    """Adapta el servidor WebSocket a la interfaz close() de las conexiones."""
+    # Adapta el servidor WebSocket a la interfaz close() de las conexiones.
 
     def __init__(self, server) -> None:
         self._server = server
@@ -31,7 +28,7 @@ class _ServerHandle:
 
 
 class EyeTrackerPlugin(IEyeTracker):
-    """Reads real gaze samples from a configured tracker service."""
+    # Lee muestras reales de mirada desde el servicio del tracker configurado.
 
     BACKENDS = ("gazecloud", "gazecloud_client", "eyetribe", "gazepoint")
 
@@ -143,10 +140,7 @@ class EyeTrackerPlugin(IEyeTracker):
         self._connection.settimeout(1.0)
 
     def _start_gazecloud_server(self, host: str, port: int) -> None:
-        """Servidor WebSocket como PluginGazeCloud.cs (WatsonWsServer 127.0.0.1:3000).
-
-        La página de GazeCloudAPI abierta en el navegador se conecta y envía "x,y,timestamp".
-        """
+        # Servidor WebSocket como PluginGazeCloud.cs (127.0.0.1:3000); el navegador envía "x,y,timestamp".
         try:
             from websockets.sync.server import serve  # type: ignore
         except ImportError as exc:

@@ -1,15 +1,5 @@
-"""
-plugins/speech_plugin.py
-========================
-Interacción por voz (ISpeechProvider).
-
-  - Síntesis: pyttsx3 (en Windows usa las mismas voces SAPI5 que System.Speech).
-  - Reconocimiento: SpeechRecognition sobre audio del micrófono (sounddevice),
-    con motor "google" (en línea, gratuito) o "whisper"/"vosk" (locales).
-
-Si alguna librería falta, el plugin informa el problema en initialize() y el resto
-de EDDIE sigue funcionando (en C# la ausencia de reconocedor mostraba un error).
-"""
+# Interacción por voz (ISpeechProvider): síntesis con pyttsx3 y reconocimiento con SpeechRecognition.
+# Si falta alguna librería se informa en initialize() y el resto de EDDIE sigue funcionando.
 import logging
 import queue
 import threading

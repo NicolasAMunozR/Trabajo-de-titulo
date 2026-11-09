@@ -1,4 +1,4 @@
-"""Pruebas de los plugins que reemplazan los módulos C# de EDDIE-2023."""
+# Pruebas de los plugins que reemplazan los módulos C# de EDDIE-2023.
 import json
 import os
 
@@ -120,7 +120,7 @@ def test_device_factory_switches_to_simulated(monkeypatch):
 
 
 def test_mock_page_scene_is_ready_after_initialize():
-    """La hoja simulada se dibuja en initialize(): el primer ciclo ya no tiene un pico de ~20 ms."""
+    # La hoja simulada se dibuja en initialize(): el primer ciclo ya no tiene un pico de ~20 ms.
     camera = MockCameraSensor()
     camera.initialize({"scene": "page"})
     assert camera._still is not None
@@ -145,7 +145,7 @@ def test_damaged_pdf_is_rejected_with_a_clear_reason(tmp_path, sample_pdf):
 
 
 def _as_text_copy(pdf_path):
-    """Reproduce el daño real: un PDF comprimido copiado como texto UTF-8 (bytes → U+FFFD)."""
+    # Reproduce el daño real: un PDF comprimido copiado como texto UTF-8 (bytes → U+FFFD).
     import pymupdf
     with pymupdf.open(pdf_path) as document:
         data = document.tobytes(deflate=True, garbage=3, use_objstms=1)

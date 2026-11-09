@@ -1,20 +1,5 @@
-"""
-Prototipo F16 Sincronización Bidireccional de Notas Adhesivas (Post-It / Comentarios)
-Permite navegar entre páginas con N / P.
-Detecta notas escritas en papel físico o Post-Its amarillos mediante segmentación HSV y contornos.
-Recorta la nota física y aplica Tesseract OCR para extraer el texto manuscrito/impreso.
-Inyecta automáticamente la nota en el PDF digital real en disco como anotación tipo 'Text/Note' y estampa visual.
-Cuando el usuario hace clic en el documento digital o agrega una nota digital, esta se PROYECTA INMEDIATAMENTE SOBRE EL PAPEL FÍSICO en la Vista Proyector Simulada.
-Controles:
-  MOSTRAR NOTA EN CÁMARA : Colocar nota/papel frente a la cámara para detección
-  C                      : Capturar nota física detectada, aplicar OCR e inyectar al PDF real
-  CLIC IZQUIERDO         : (En el PDF digital) Crear nota digital y proyectarla sobre el papel
-  N / P                  : Página Siguiente / Anterior en el PDF real
-  R                      : Reiniciar notas de la sesión
-  O                      : Abrir el PDF real sincronizado en el visor del sistema
-  S                      : Guardar captura de evidencia PNG
-  Q / ESC                : Salir
-"""
+# Prototipo F16: sincronización de notas adhesivas entre el papel y el PDF (HSV + OCR).
+# C = capturar nota  |  clic = nota digital  |  N / P = página  |  R = reiniciar  |  O = abrir PDF  |  S = guardar  |  Q = salir
 
 import os
 import sys
@@ -60,13 +45,13 @@ NOTAS_SESION = [
 ]
 
 def inicializar_pdf_salida():
-    """Copia el PDF base al archivo de salida."""
+    # Copia el PDF base al archivo de salida.
     doc = fitz.open(str(PDF_ORIGINAL_PATH))
     doc.save(str(PDF_OUTPUT_PATH))
     doc.close()
 
 def sincronizar_todas_las_notas_al_pdf():
-    """Inserta todas las notas acumuladas en la sesión directamente en el PDF real en disco."""
+    # Inserta todas las notas acumuladas en la sesión directamente en el PDF real en disco.
     if PDF_OUTPUT_PATH.exists():
         try:
             if PDF_BACKUP_PATH.exists():

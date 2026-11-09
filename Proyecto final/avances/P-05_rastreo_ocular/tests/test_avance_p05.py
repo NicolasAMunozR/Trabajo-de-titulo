@@ -1,4 +1,4 @@
-"""Pruebas del avance P-05: eye trackers bajo IEyeTracker y registro de la sesión de mirada."""
+# Pruebas del avance P-05: eye trackers bajo IEyeTracker y registro de la sesión de mirada.
 import pytest
 
 from contracts.i_eye_tracker import IEyeTracker

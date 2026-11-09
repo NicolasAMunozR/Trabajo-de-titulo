@@ -1,21 +1,6 @@
-"""
-demos/demo_consistencia.py — Avance P-07
-========================================
-Demuestra el módulo de consistencia papel ↔ PDF integrado como plugin, invocado a
-través del OrchestratorCore (OrchestratorCore.invoke), sin interfaz ni cámara real.
-
-1. Genera un PDF de 3 páginas (o usa --pdf ruta).
-2. Genera tres "fotos" sintéticas de la hoja física: marcador azul, nota adhesiva
-   amarilla y figuras magenta (los colores que usaba BibliotecaConsistencia).
-3. Llama a los métodos del contrato IConsistencyProvider por el orquestador y guarda:
-   - evidencias/consistencia/resultado.pdf     (PDF con lo sincronizado)
-   - evidencias/consistencia/pagina_N.png      (render de cada página)
-   - evidencias/consistencia/frame_*.png       (frames de entrada)
-   - evidencias/consistencia/reporte.json      (resultado y latencia de cada llamada, y lo que
-                                                quedó realmente guardado en el PDF al reabrirlo)
-
-Uso:  python demos/demo_consistencia.py  [--pdf libro.pdf]
-"""
+# Demo del avance P-07: el módulo de consistencia papel ↔ PDF invocado por el OrchestratorCore, sin cámara real.
+# Genera un PDF y tres frames sintéticos (marcador, nota y figuras) y guarda el resultado en evidencias/consistencia/.
+# Uso: python demos/demo_consistencia.py [--pdf libro.pdf]
 import argparse
 import json
 import os

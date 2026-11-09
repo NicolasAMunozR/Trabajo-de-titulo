@@ -1,9 +1,5 @@
-"""Control del cursor del sistema (SetCursorPos / mouse_event de user32.dll en C#).
-
-Lo usan el reconocimiento gestual ("Recognition on") y el eye tracking ("Mouse Control").
-En Windows se usa la misma API nativa que el original; en otros sistemas se intenta
-pynput y, si no existe, se deja constancia en el log sin detener el sistema.
-"""
+# Control del cursor del sistema (SetCursorPos / mouse_event de user32.dll en C#).
+# En Windows usa la API nativa; en otros sistemas intenta pynput o lo deja registrado en el log.
 import logging
 import sys
 

@@ -1,27 +1,10 @@
-"""
-medir_prototipos.py — mediciones reproducibles de los prototipos desechables F01–F27
-=================================================================================
-Cada prototipo de P-00 es una demostración interactiva (cámara, PDF o micrófono reales) que
-confirma la factibilidad, pero no mide nada. Este script aplica **el mismo algoritmo de cada
-prototipo** (copiado de prototipos/prototipo_fXX.py, con sus parámetros) sobre datos con verdad
-terreno conocida y calcula las métricas que reporta la tesis, con fórmulas explícitas.
-
-Tres tipos de medición (cada resultado dice de cuál es):
-  "pdf"        → sobre un PDF real (--pdf); mide la biblioteca, no la cámara.
-  "codigo"     → sobre el código real del proyecto (módulos de plugins de P-07).
-  "sintetico"  → sobre imágenes o trazas generadas con verdad terreno conocida (semilla fija).
-                 Mide el algoritmo en condiciones controladas; NO reemplaza la prueba con la
-                 cámara, el proyector o lectores reales.
-  "laboratorio"→ requiere hardware o personas (cámara, micrófono, eye tracker, luxómetro). Queda
-                 "pendiente" con su protocolo y se completa en el laboratorio.
-
-Uso:
-  python mediciones\\medir_prototipos.py --pdf "ruta\\al\\libro.pdf"
-  python mediciones\\medir_prototipos.py --pdf libro.pdf --camara 0     (agrega F01 con la cámara real)
-
-Salida en evidencias/: mediciones.json, MEDICIONES.md y prototipos_datos.tex (macros LaTeX que
-usa la tesis: al volver a ejecutar el script en tu PC, la tesis toma los valores nuevos).
-"""
+# Mediciones reproducibles de los prototipos desechables F01–F27.
+# Aplica el mismo algoritmo de cada prototipo sobre datos con verdad terreno conocida y calcula las métricas de la tesis.
+# Tipos de medición: pdf, codigo, sintetico y laboratorio (este último queda pendiente con su protocolo).
+# Uso:
+# python mediciones\medir_prototipos.py --pdf "ruta\al\libro.pdf"
+# python mediciones\medir_prototipos.py --pdf libro.pdf --camara 0   → agrega F01 con la cámara real
+# Salida en evidencias/: mediciones.json, MEDICIONES.md y prototipos_datos.tex.
 import argparse
 import asyncio
 import importlib.util
@@ -57,7 +40,7 @@ def mean_sd(values) -> tuple[float, float]:
 
 
 def timed(fn, *args, repeat: int = 200, warmup: int = 10) -> tuple[float, float]:
-    """Tiempo de ejecución en ms (media ± desviación estándar), con calentamiento."""
+    # Tiempo de ejecución en ms (media ± desviación estándar), con calentamiento.
     for _ in range(warmup):
         fn(*args)
     samples = []
@@ -69,7 +52,7 @@ def timed(fn, *args, repeat: int = 200, warmup: int = 10) -> tuple[float, float]
 
 
 def levenshtein(a, b) -> int:
-    """Distancia de edición (sustituciones + supresiones + inserciones) entre dos secuencias."""
+    # Distancia de edición (sustituciones + supresiones + inserciones) entre dos secuencias.
     prev = list(range(len(b) + 1))
     for i, x in enumerate(a, 1):
         cur = [i]
@@ -147,7 +130,7 @@ def f02_pipeline(frame):
 
 
 def degrade(frame, glare: bool = True, shadow: bool = True):
-    """Simula la luz del proyector: destello elíptico (sobreexposición) y sombra parcial."""
+    # Simula la luz del proyector: destello elíptico (sobreexposición) y sombra parcial.
     h, w = frame.shape[:2]
     img = frame.astype(np.float32)
     yy, xx = np.mgrid[0:h, 0:w]
@@ -597,7 +580,7 @@ def f11(project: Path | None) -> None:
 
 # ---------------------------------------------------------------------------- F12 permanencia
 def dwell_events(trace, radius, dwell_s):
-    """Algoritmo de modificar_demo_real_f12.py: zona de radio fijo desde el punto de entrada."""
+    # Algoritmo de modificar_demo_real_f12.py: zona de radio fijo desde el punto de entrada.
     events, enter, start, fired = [], None, None, False
     for t, x, y in trace:
         if enter is None or math.hypot(x - enter[0], y - enter[1]) > radius:
@@ -609,8 +592,7 @@ def dwell_events(trace, radius, dwell_s):
 
 
 def gaze_trace(minutes: float = 3.0, hz: int = 60, noise_px: float = 10.0):
-    """Lectura simulada: fijaciones de 150–450 ms (log-normal) a 25–60 px, regresiones y, cada ~20 s, una
-    mirada voluntaria de 1,2 s sobre un botón, con ruido gaussiano de σ px."""
+    # Lectura simulada: fijaciones de 150–450 ms, regresiones y cada ~20 s una mirada de 1,2 s sobre un botón, con ruido gaussiano.
     trace, voluntary, t, x, y = [], [], 0.0, 300.0, 200.0
     next_button = 20.0
     while t < minutes * 60:

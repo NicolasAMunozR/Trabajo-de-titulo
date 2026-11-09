@@ -1,16 +1,5 @@
-"""
-ui/dialogs.py
-=============
-AlertBox, LoadingBox y avisos (P-08: interfaz renovada).
-
-- AlertBox: confirmación compacta (título, explicación y botones Cancelar/Confirmar u
-  Entendido). Conserva los nombres de control y la API `ask()` del original.
-- LoadingBox: píldora "Buscando…" con un indicador dibujado, junto al panel donde
-  aparecerá el resultado.
-- message(): en P-07 era un QMessageBox modal (MessageBox.Show del C#), que detenía la
-  lectura hasta pulsar «Aceptar». Ahora es un aviso no modal que se cierra solo (o con un
-  clic) en la esquina de la ventana; si la ventana no está visible se usa el cuadro modal.
-"""
+# AlertBox, LoadingBox y avisos de la interfaz renovada.
+# message() ahora muestra un aviso no modal en la ventana en vez de un cuadro que detiene la lectura.
 from typing import Optional
 
 from PySide6.QtCore import QEvent, QObject, QPoint, Qt, QTimer
@@ -20,7 +9,7 @@ from ui.modern_forms import build_modern
 
 
 class _Dim(QWidget):
-    """Fondo oscuro semitransparente detrás del AlertBox (como en el original)."""
+    # Fondo oscuro semitransparente detrás del AlertBox (como en el original).
 
     def __init__(self, over: QWidget) -> None:
         super().__init__(None, Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool
@@ -31,7 +20,7 @@ class _Dim(QWidget):
 
 
 class AlertBox(QDialog):
-    """Alerta con título/subtítulo y botones Entendido o Cancelar/Confirmar."""
+    # Alerta con título/subtítulo y botones Entendido o Cancelar/Confirmar.
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent, Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
@@ -64,7 +53,7 @@ class AlertBox(QDialog):
 
 
 class LoadingBox(QDialog):
-    """Indicador "Buscando…" junto al panel donde aparecerá el resultado."""
+    # Indicador "Buscando…" junto al panel donde aparecerá el resultado.
     OFFSETS = {"izquierda": QPoint(48, 150), "derecha": QPoint(990, 150), "menu": QPoint(1010, 600)}
 
     def __init__(self, parent: QWidget, side: Optional[str] = None, background: str = "#f8f5fa",
@@ -126,7 +115,7 @@ class Toast(QFrame):
 
 
 class ToastHost(QObject):
-    """Pila de avisos de una ventana (esquina inferior derecha, o donde diga `toast_anchor`)."""
+    # Pila de avisos de una ventana (esquina inferior derecha, o donde diga `toast_anchor`).
     MAX = 3
 
     def __init__(self, window: QWidget) -> None:
@@ -177,7 +166,7 @@ class ToastHost(QObject):
 
 
 def message(parent: Optional[QWidget], text: str, title: str = "EDDIE") -> None:
-    """MessageBox.Show del original, ahora como aviso no modal en la ventana del control."""
+    # MessageBox.Show del original, ahora como aviso no modal en la ventana del control.
     title = TITLES.get(title, title)
     window = parent.window() if parent is not None else None
     if window is not None and window.isVisible():

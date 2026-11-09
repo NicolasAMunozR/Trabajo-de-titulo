@@ -1,9 +1,5 @@
-"""
-Puente entre el OrchestratorCore y la interfaz visual.
-Un QTimer ejecuta orchestrator.execute_cycle() (por defecto 30 Hz) en el hilo de la interfaz; los sensores capturan en hilos propios, así un ciclo no se bloquea.
-Las acciones bajo demanda (OCR, LLM, PDF, voz) se ejecutan con run_async() en un QThreadPool mediante OrchestratorCore.invoke(), y el resultado vuelve a la interfaz por señal. Esto reemplaza los Thread/LoadingBox ad hoc del C#.
-Cada invocación queda en la traza JSONL (logs/) para la evaluación próxima.
-"""
+# Puente entre el OrchestratorCore y la interfaz visual.
+# Un QTimer ejecuta un ciclo del orquestador (30 Hz) y las acciones bajo demanda corren en un QThreadPool.
 import logging
 from pathlib import Path
 from typing import Any, Callable, Optional

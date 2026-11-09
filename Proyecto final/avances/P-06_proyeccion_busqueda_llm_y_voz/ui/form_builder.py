@@ -1,11 +1,4 @@
-"""
-ui/form_builder.py
-==================
-Construye las pantallas Qt a partir de los layouts extraídos de los *.Designer.cs
-originales (tools/winforms_to_json.py). Así la interfaz conserva exactamente las
-posiciones, tamaños, textos, colores, fuentes e imágenes de EDDIE-2023, mientras
-la lógica vive en clases Python separadas.
-"""
+# Construye las pantallas Qt a partir de los layouts extraídos de los *.Designer.cs originales.
 import json
 import logging
 from functools import lru_cache
@@ -40,18 +33,13 @@ MORADO = "#54216b"
 
 
 def load_fonts() -> None:
-    """Registra IBM Plex Sans (OFL) para que la interfaz luzca igual sin instalarla."""
+    # Registra IBM Plex Sans (OFL) para que la interfaz luzca igual sin instalarla.
     for font in (RESOURCES / "fonts").glob("*.ttf"):
         QFontDatabase.addApplicationFont(str(font))
 
 
 def apply_light_theme(app) -> None:
-    """Fija los colores de sistema de WinForms (claros).
-
-    Qt 6 en Windows 11 sigue el modo oscuro del sistema y pinta texto blanco en los campos,
-    pero los fondos de los formularios del original son claros (#f8f5fa, #cfe9f2...), así que
-    el texto quedaba ilegible. El original (WinForms) siempre usa la paleta clara.
-    """
+    # Fija los colores claros de sistema de WinForms para que el texto no quede ilegible en modo oscuro.
     from PySide6.QtGui import QColor, QPalette
     from PySide6.QtWidgets import QStyleFactory
 
@@ -117,7 +105,7 @@ def make_font(spec: Optional[dict]) -> QFont:
 
 @lru_cache(maxsize=256)
 def pixmap(name: str) -> QPixmap:
-    """Busca una imagen por nombre de recurso (Properties.Resources) o recurso .resx."""
+    # Busca una imagen por nombre de recurso (Properties.Resources) o recurso .resx.
     for candidate in (RESOURCES / f"{name}.png", RESOURCES / f"{name}.gif", RESOURCES / "resx" / f"{name}.png",
                       RESOURCES / "resx" / f"{name}.gif", RESOURCES / name):
         if candidate.exists():
@@ -145,7 +133,7 @@ def bgr_to_qimage(frame: np.ndarray) -> QImage:
 
 # ---------------------------------------------------------------------------- widgets
 class RoundedButton(QPushButton):
-    """ButtonModified.cs: botón celeste con esquinas redondeadas (radio 18) y borde de 5 px."""
+    # ButtonModified.cs: botón celeste con esquinas redondeadas (radio 18) y borde de 5 px.
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
@@ -181,11 +169,7 @@ class RoundedButton(QPushButton):
 
 
 class ImageButton(QPushButton):
-    """Botón de imagen (Button/ButtonAlt) con estados normal/hover/presionado.
-
-    Si el control por mirada está activo, permanecer sobre el botón el tiempo
-    configurado hace clic (ButtonAlt.cs + IntermediateClass.ClickTimer).
-    """
+    # Botón de imagen con estados normal/hover/presionado; con control por mirada hace clic por permanencia.
     dwell_clicked = Signal()
     dwell_ms = 0                      # global: lo fija la configuración de Eye tracking
 
@@ -239,7 +223,7 @@ class ImageButton(QPushButton):
 
 
 class FrameView(QLabel):
-    """ImageBox de Emgu.CV: muestra un frame BGR estirado al tamaño del control."""
+    # ImageBox de Emgu.CV: muestra un frame BGR estirado al tamaño del control.
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
@@ -256,7 +240,7 @@ class FrameView(QLabel):
 
 
 class MultilineTextBox(QTextEdit):
-    """TextBox con Multiline=true; conserva la API Text de WinForms (text/setText)."""
+    # TextBox con Multiline=true; conserva la API Text de WinForms (text/setText).
 
     def text(self) -> str:
         return self.toPlainText()
@@ -275,7 +259,7 @@ class ClickableLabel(QLabel):
 
 # ---------------------------------------------------------------------------- builder
 class Form:
-    """Resultado de construir un layout: raíz + acceso a controles por nombre."""
+    # Resultado de construir un layout: raíz + acceso a controles por nombre.
 
     def __init__(self, name: str, root: QWidget, data: dict) -> None:
         self.name = name
@@ -298,7 +282,7 @@ def load_layout(name: str) -> dict:
 
 
 def build_form(name: str, root: QWidget, apply_form_props: bool = True) -> Form:
-    """Crea en `root` todos los controles del layout `name` con su geometría original."""
+    # Crea en `root` todos los controles del layout `name` con su geometría original.
     data = load_layout(name)
     form = Form(name, root, data)
     props = data["props"]

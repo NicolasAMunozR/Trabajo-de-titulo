@@ -1,13 +1,5 @@
-"""
-plugins/gestures/base.py
-========================
-Lógica común de ModuloReconocimientoGestual/GestureRecognitionActivity.cs.
-
-Cada detector concreto (lápiz de color, piel de la mano, mouse) solo implementa
-_detect(frame); esta clase aplica la calibración sensor→aplicación, mueve el
-cursor ("Recognition on"), gestiona la máquina de estados de clic (AutoClick /
-DetectClick) y la captura automática del rectángulo seleccionado (AutoCamCapture).
-"""
+# Lógica común de GestureRecognitionActivity.cs para todos los detectores gestuales.
+# Aplica la calibración, mueve el cursor, maneja el clic y la captura automática; cada detector implementa _detect().
 import logging
 import time
 from abc import abstractmethod
@@ -27,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Detection:
-    """Salida de un detector (equivale a IPlugin.RunPlugin + Center/DetectGesture/DetectClick)."""
+    # Salida de un detector (equivale a IPlugin.RunPlugin + Center/DetectGesture/DetectClick).
     annotated: np.ndarray
     center: tuple[int, int]
     detect_gesture: bool
@@ -35,7 +27,7 @@ class Detection:
 
 
 class CalibratedGesturePlugin(IGesturePlugin):
-    """Base de los plugins gestuales: calibración, clic y captura."""
+    # Base de los plugins gestuales: calibración, clic y captura.
 
     AUTO_CLICK = False
     AUTO_CAM_CAPTURE = False
@@ -90,7 +82,8 @@ class CalibratedGesturePlugin(IGesturePlugin):
         return True
 
     def configure(self, config: dict) -> None:
-        """Hook para parámetros propios del detector."""
+        # Hook para parámetros propios del detector.
+        pass
 
     def release(self) -> None:
         self._active = False
@@ -173,7 +166,7 @@ class CalibratedGesturePlugin(IGesturePlugin):
         return int(x), int(y)
 
     def _update_state(self, detection: Detection) -> bool:
-        """Máquina de estados de Capture_ImageGrabbed (clic automático / detectado)."""
+        # Máquina de estados de Capture_ImageGrabbed (clic automático / detectado).
         mouse = os_mouse()
         control = self._calibration.mouse_control and mouse.available
         captured = False
@@ -216,7 +209,7 @@ class CalibratedGesturePlugin(IGesturePlugin):
         return self._selection
 
     def capture_selection(self, selection: Optional[GestureSelection] = None) -> Optional[CameraFrame]:
-        """cropColorFrame: recorta la selección; si es inválida usa el frame completo."""
+        # cropColorFrame: recorta la selección; si es inválida usa el frame completo.
         frame = self._last_frame
         if frame is None and self._camera_sensor is not None:
             frame = self._camera_sensor.get_latest_frame()
@@ -253,7 +246,8 @@ class CalibratedGesturePlugin(IGesturePlugin):
 
     @abstractmethod
     def _detect(self, frame: CameraFrame) -> Detection:
-        """Detector específico: retorna frame anotado, centro y estado del gesto."""
+        # Detector específico: retorna frame anotado, centro y estado del gesto.
+        pass
 
 
 def write_multiline(frame: np.ndarray, lines: list[str], origin: tuple[int, int]) -> None:

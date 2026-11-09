@@ -1,0 +1,71 @@
+% Anexos: material de terceros o de la propuesta. Se numeran A, B, ... (\anexo en tesis-usach.tex)
+
+\chapter{Errores de EDDIE-2023 y plantilla de trazabilidad}
+\label{an:errores}
+
+La Tabla~\ref{tab:extracto_errores} reproduce un extracto de los errores registrados por \citet{ibaceta2023evaluacion} que se citan en este documento. La matriz completa se construye con la plantilla de la Tabla~\ref{tab:plantilla_traz}, una fila por cada uno de los 67 errores, ejecutando el caso de prueba original en EDDIE-2023 y en la versión en Python.
+
+\begin{table}[H]
+\centering
+\caption{Extracto de errores encontrados en EDDIE-2023.}
+\label{tab:extracto_errores}
+\footnotesize
+\begin{tabularx}{\textwidth}{l l X c}
+\toprule
+\textbf{ID} & \textbf{Tipo} & \textbf{Descripción} & \textbf{Estado} \\ \midrule
+E7 & Interno-otro & El programa no se puede inicializar por falta de cámara disponible. & SF \\
+E8 & Interno-otro & El programa no funciona correctamente sin dos cámaras disponibles. & SF \\
+E9 & Externo & Falta de conexiones eléctricas en el laboratorio. & SP \\
+E10 & Externo & Falta de seguridad en el computador del laboratorio. & SF \\
+E11 & Interno-consistencia & La sincronización hace fallar el programa cuando no se ingresa un PDF. & SF \\
+E12 & Externo & No existe un manual de instalación. & SS \\
+E13 & Externo & No existe un manual de uso. & SS \\
+E14 & Interno-otro & Los mensajes de error están en un idioma distinto al resto de la aplicación. & SF \\
+E15 & Externo & No se reconoce el eye tracker en el computador. & SF \\
+E16 & Externo & La conexión de la cámara digital es inestable. & SP \\
+E21 & Interno-consistencia & El botón de búsqueda hace fallar el programa si no se sube un PDF. & SF \\
+E22 & Interno-consistencia & La revisión del contenido del PDF falla si no existe el archivo. & SF \\
+E27 & Interno-otro & Faltan comentarios en el código. & SS \\
+E28 & Interno-otro & Variables y funciones sin nombres representativos. & SS \\
+E30 & Interno-consistencia & El contenido del PDF falla si no se indica una página. & SF \\
+E48 & Interno-consistencia & La consistencia de comentarios falla con datos correctos. & SF \\
+E49 & Externo & Con TheEyeTribe no se detecta la parte inferior de la proyección. & SS \\
+E50 & Interno-consistencia & No se encuentra la carpeta \texttt{PluginsConsistencia}. & SF \\ \bottomrule
+\end{tabularx}
+\fuente{\citet{ibaceta2023evaluacion}. SF: solución final; SP: solución parcial; SS: sin solución.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Plantilla de la matriz de trazabilidad.}
+\label{tab:plantilla_traz}
+\footnotesize
+\begin{tabularx}{\textwidth}{l l c c c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{ID} & \textbf{Módulo} & \textbf{Estado C\#} & \textbf{Cat.} & \textbf{¿Reproducido?} & \textbf{Resultado en Python} & \textbf{Evidencia} \\ \midrule
+E\textit{n} & \dots & SF/SP/SS & (a)--(g) & Sí/No & Corregido / Persiste / Fuera de alcance & Prueba, log o nota de alcance \\ \bottomrule
+\end{tabularx}
+\fuente{Propuesta de tesis (Tabla 3.3).}
+\end{table}
+
+\chapter{Plan de trabajo}
+\label{an:plan}
+
+\begin{table}[H]
+\centering
+\caption{Plan de trabajo.}
+\label{tab:plan_trabajo}
+\footnotesize
+\begin{tabularx}{\textwidth}{l l >{\raggedright\arraybackslash}X c c >{\raggedright\arraybackslash}p{3cm}}
+\toprule
+\textbf{Semanas} & \textbf{Fase} & \textbf{Actividades} & \textbf{OE} & \textbf{Horas} & \textbf{Entregable} \\ \midrule
+1--3 & Plan & Diagnóstico de la arquitectura en C\# mediante la reclasificación de errores y prototipos desechables de factibilidad. & OE1 & 108 & Diagnóstico y resultados de prototipos \\ \midrule
+4--6 & Do (diseño) & Diseño del núcleo y de los contratos de interfaz; primer prototipo funcional. & OE2 & 108 & Arquitectura y contratos \\ \midrule
+7--10 & Do (implem.) & Núcleo, capa de abstracción de sensores, consistencia, reconocimiento de texto e interacción gestual. & OE3 & 144 & Prototipos funcionales del núcleo con módulos \\ \midrule
+11--12 & Do (implem.) & Rastreo ocular con hardware físico; contingencia: validación con \texttt{EyeTrackerMock}. & OE3 & 72 & Prototipo integrado \\ \midrule
+13--14 & Check & Pruebas de software: cobertura, trazabilidad, latencia y métricas de sincronización y visión. & OE4 & 72 & Reporte de pruebas de software \\ \midrule
+15--16 & Check & MECIVA PS por módulo, validez y confiabilidad, pruebas de aceptación. & OE4 & 72 & Reporte de verificación y validación \\ \midrule
+17 & Act & Ajustes finales, cierre de la documentación y entrega. & OE4 & 36 & Documentación y entrega final \\ \bottomrule
+\end{tabularx}
+\fuente{Propuesta de tesis (Tabla 6.1).}
+\end{table}

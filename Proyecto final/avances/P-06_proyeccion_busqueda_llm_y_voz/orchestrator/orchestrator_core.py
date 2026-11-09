@@ -1,10 +1,8 @@
-"""
-Núcleo orquestador del sistema EDDIE Python (Nucleo que gestiona el ciclo de vida de los plugins Inicializar → ejecutar → liberar).
-Un bloque centralizado de manejo de excepciones.
-Aislamiento de fallos: un plugin que falla NO detiene los demás.
-Medición de latencia por ciclo (objetivo: ≤ 8.3 ms para 60Hz (Ya que es una medida estandar de latencia de 120Hz, se toma un margen conservador para 60Hz)).
-Logging estructurado en cada evento del ciclo de vida 
-"""
+# Núcleo orquestador del sistema EDDIE Python (Nucleo que gestiona el ciclo de vida de los plugins Inicializar → ejecutar → liberar).
+# Un bloque centralizado de manejo de excepciones.
+# Aislamiento de fallos: un plugin que falla NO detiene los demás.
+# Medición de latencia por ciclo (objetivo: ≤ 8.3 ms para 60Hz).
+# Logging estructurado en cada evento del ciclo de vida
 # Importaciones de librerías
 import json
 import logging
@@ -34,7 +32,7 @@ MAX_LATENCY_MS = 8.3
 
 @dataclass
 class InvocationResult:
-    """Resultado de una llamada bajo demanda a un plugin (OrchestratorCore.invoke)."""
+    # Resultado de una llamada bajo demanda a un plugin (OrchestratorCore.invoke).
     ok: bool
     value: Any
     error: Optional[str]
@@ -42,18 +40,10 @@ class InvocationResult:
 
 # Clase principal del orquestador (gestiona el ciclo de vida de los plugins)
 class OrchestratorCore:
-    """
-    Coordina el ciclo de vida de todos los plugins declarados en el archivo de configuración config/plugins.json.
-    """
+    # Coordina el ciclo de vida de todos los plugins declarados en el archivo de configuración config/plugins.json.
     # Definición del constructor de la clase OrchestratorCore
     def __init__(self, config_path: str = 'config/plugins.json', config_overrides: Optional[dict] = None):
-        """
-        Inicializa el núcleo del orquestador con la ruta al archivo de configuración de plugins.
-        config_path (str): Ruta al archivo JSON de configuración de plugins.
-        config_overrides (dict | None): Ajustes del usuario que se superponen a plugins.json
-            sin modificar el archivo, con forma {nombre_plugin: {"enabled": bool, "config": {...}}}.
-            Reemplaza a los Properties.Settings del C# legado (índice de cámara, resolución, etc.).
-        """
+        # Inicializa el núcleo con la ruta a plugins.json y los ajustes del usuario que se superponen sin modificar el archivo.
         self.config_path = Path(config_path)                # Ruta al archivo de configuración de plugins
         self._config_overrides: dict = dict(config_overrides or {})  # Ajustes de usuario superpuestos a plugins.json
         self._plugins_config: list[dict] = []               # Configuración efectiva (plugins.json + overrides) usada en initialize()
@@ -67,12 +57,8 @@ class OrchestratorCore:
 
     # Definición de los métodos principales del ciclo de vida del orquestador: initialize(), execute_cycle(), run(), release()
     def initialize(self) -> bool:
-        """
-        Lee la configuración y carga más inicializa todos los plugins.
-        - Si un plugin falla su initialize(), se registra el error pero el sistema continúa cargando los demás plugins.
-        - Si ningún plugin se inicializa, retorna False.
-        Retorna un bool: True si al menos un plugin se inicializó correctamente.
-        """
+        # Lee la configuración, carga e inicializa todos los plugins.
+        # Si un plugin falla se registra el error y se sigue con los demás. Devuelve True si al menos uno se inicializó.
         plugins_config = self._load_config()                                            # Lee la configuración de plugins desde el archivo JSON
         if plugins_config is None:                                                      # No se pudo leer la configuración
             logger.error(f"No se pudo leer la configuración desde: {self.config_path}")
@@ -223,11 +209,8 @@ class OrchestratorCore:
 
     # Definición del método execute_cycle() que ejecuta un ciclo completo del sistema llamando al método execute() de cada plugin activo y midiendo la latencia total del ciclo.
     def execute_cycle(self) -> dict:
-        """
-        Ejecuta un ciclo del sistema (llama execute() en cada plugin).
-        Mide la latencia total del ciclo y registra advertencia si supera 8.3 ms.
-        Retorna un dict: {plugin_name: resultado_execute()} para cada plugin.
-        """
+        # Ejecuta un ciclo del sistema (llama execute() en cada plugin) y mide su latencia.
+        # Devuelve un diccionario {plugin_name: resultado} para cada plugin.
         cycle_start = time.perf_counter()     # Marca el tiempo de inicio del ciclo para medir la latencia total del ciclo
         results = {}                          # Diccionario para almacenar los resultados de ejecución de cada plugin
         metrics = {}                          # Diccionario para almacenar métricas de ejecución de cada plugin, incluyendo el estado y la latencia en milisegundos 
@@ -303,10 +286,7 @@ class OrchestratorCore:
 
     # Definición del método release() que libera los recursos de todos los plugins en orden inverso al de inicialización, registrando errores si algún plugin falla en release().
     def release(self) -> None:
-        """
-        Libera recursos de todos los plugins en orden inverso.
-        Si un plugin falla en release(), el error se registra pero el sistema continúa liberando los demás plugins.
-        """
+        # Libera recursos de todos los plugins en orden inverso, aunque alguno falle.
         logger.info(
             "Liberando recursos del sistema..."
         )
@@ -327,7 +307,7 @@ class OrchestratorCore:
 
     # Definición del método _load_config() que lee el archivo de configuración plugins.json y retorna la lista de plugins configurados.
     def _load_config(self) -> Optional[list]:
-        """Lee el archivo plugins.json y retorna la lista de plugins."""
+        # Lee el archivo plugins.json y retorna la lista de plugins.
         try:
             with open(self.config_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -345,7 +325,7 @@ class OrchestratorCore:
 
     # Definición del método _print_latency_summary() que imprime un resumen de métricas de latencia de la sesión, incluyendo promedio, máximo y mínimo.
     def _print_latency_summary(self) -> None:
-        """Imprime resumen de métricas de latencia de la sesión."""
+        # Imprime resumen de métricas de latencia de la sesión.
         if not self._latency_history:
             return
         avg = sum(self._latency_history) / len(self._latency_history)
@@ -364,7 +344,7 @@ class OrchestratorCore:
     # Extensiones para la aplicación interactiva (interfaz EDDIE)
     # ------------------------------------------------------------------
     def _apply_overrides(self, plugins_config: list) -> list:
-        """Combina plugins.json con los ajustes de usuario sin mutar el archivo original."""
+        # Combina plugins.json con los ajustes de usuario sin mutar el archivo original.
         merged = []
         for plugin_conf in plugins_config:
             conf = dict(plugin_conf)
@@ -379,19 +359,15 @@ class OrchestratorCore:
         return merged
 
     def get_plugin(self, name: str) -> Optional[PluginBase]:
-        """Retorna el plugin activo con ese nombre de instancia, o None."""
+        # Retorna el plugin activo con ese nombre de instancia, o None.
         return next((p for p in self._plugins if p.instance_name == name), None)
 
     def get_plugins_by_contract(self, contract: type) -> list[PluginBase]:
-        """Retorna los plugins activos que implementan un contrato (IEyeTracker, IGesturePlugin, ...)."""
+        # Retorna los plugins activos que implementan un contrato (IEyeTracker, IGesturePlugin, ...).
         return [p for p in self._plugins if isinstance(p, contract)]
 
     def declared_plugins(self, contract: Optional[type] = None) -> list[dict]:
-        """Lista las entradas de plugins.json (activas o no) con su estado de inicialización.
-
-        Permite que la interfaz muestre los plugins disponibles por categoría (equivalente a
-        los combobox que en C# se llenaban recorriendo carpetas de DLLs).
-        """
+        # Lista las entradas de plugins.json (activas o no) con su estado de inicialización.
         declared = []
         for conf in self._plugins_config:
             name = conf.get("name")
@@ -419,12 +395,7 @@ class OrchestratorCore:
             return False
 
     def invoke(self, plugin_name: str, method: str, *args, **kwargs) -> "InvocationResult":
-        """Llama un método de servicio de un plugin bajo el manejo centralizado de excepciones.
-
-        Las acciones bajo demanda de la interfaz (OCR de un resaltado, consulta al LLM,
-        sincronización con el PDF) no ocurren en cada ciclo; pasan por aquí para que una
-        falla quede aislada, registrada y medida igual que en execute_cycle().
-        """
+        # Llama un método de servicio de un plugin bajo el manejo centralizado de excepciones (acciones bajo demanda).
         plugin = self.get_plugin(plugin_name)
         if plugin is None:
             error = f"El plugin '{plugin_name}' no está activo."
@@ -441,11 +412,7 @@ class OrchestratorCore:
             return InvocationResult(False, None, str(exc), round(latency, 3))
 
     def restart_plugin(self, name: str, config: Optional[dict] = None) -> bool:
-        """Libera y vuelve a inicializar un plugin con nueva configuración (p. ej. otra cámara).
-
-        Los plugins que consumen frames de un sensor reiniciado se vuelven a enlazar a la
-        nueva instancia.
-        """
+        # Libera y vuelve a inicializar un plugin con nueva configuración (p. ej. otra cámara).
         conf = next((c for c in self._plugins_config if c.get("name") == name), None)
         if conf is None:
             logger.error("No existe el plugin declarado '%s'.", name)
@@ -502,7 +469,7 @@ class OrchestratorCore:
         return True
 
     def stop_plugin(self, name: str) -> None:
-        """Libera un plugin activo y lo retira del ciclo (p. ej. desconectar un eye tracker)."""
+        # Libera un plugin activo y lo retira del ciclo (p. ej. desconectar un eye tracker).
         plugin = self.get_plugin(name)
         if plugin is None:
             return

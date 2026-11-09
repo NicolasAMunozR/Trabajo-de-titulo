@@ -1,11 +1,5 @@
-"""
-Prototipo F02 Preprocesamiento y Binarización
-Captura un frame REAL de DroidCam y muestra en tiempo real:
-  - Ventana izquierda: frame original de la cámara
-  - Ventana derecha:   frame binarizado (Otsu) en tiempo real
-Apunta la cámara a un texto impreso (libro, hoja, etc.)
-Presiona S para guardar evidencia, Q para salir.
-"""
+# Prototipo F02: preprocesamiento y binarización (Otsu) del frame de la cámara en tiempo real.
+# S = guardar evidencia  |  Q = salir
 import cv2, time, pathlib, sys
 import numpy as np
 

@@ -1,4 +1,4 @@
-"""Append-only JSONL execution traces for reproducible plugin-flow inspection."""
+# Trazas de ejecución en JSONL (solo se agregan líneas) para revisar el flujo de los plugins.
 import json
 import logging
 from dataclasses import asdict, is_dataclass
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def json_safe(value: Any) -> Any:
-    """Convert plugin outputs to JSON without embedding raw image arrays."""
+    # Convierte las salidas de los plugins a JSON sin incluir los arreglos de imagen.
     if is_dataclass(value) and not isinstance(value, type):
         return json_safe(asdict(value))
     if isinstance(value, dict):
@@ -36,7 +36,7 @@ def json_safe(value: Any) -> Any:
 
 
 def redact_sensitive(value: Any) -> Any:
-    """Redact common credential fields before writing configuration to disk."""
+    # Oculta los campos de credenciales antes de escribir la configuración a disco.
     sensitive_names = ("api_key", "apikey", "token", "password", "secret")
     if is_dataclass(value) and not isinstance(value, type):
         return redact_sensitive(asdict(value))
@@ -55,7 +55,7 @@ def redact_sensitive(value: Any) -> Any:
 
 
 class ExecutionTrace:
-    """Writes run lifecycle, per-plugin cycle outputs and errors to JSONL."""
+    # Escribe en JSONL el inicio y fin de la ejecución, las salidas de cada ciclo y los errores.
 
     def __init__(self, directory: str | Path) -> None:
         trace_directory = Path(directory)

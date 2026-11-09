@@ -1,4 +1,4 @@
-"""Pruebas de la interfaz renovada (P-08, Qt offscreen): controles del original y flujos completos de EDDIE."""
+# Pruebas de la interfaz renovada (P-08, Qt offscreen): controles del original y flujos completos de EDDIE.
 import json
 import os
 import shutil
@@ -24,8 +24,7 @@ def _nodes(nodes):
 
 @pytest.mark.parametrize("name", FORMS)
 def test_every_original_control_exists_in_the_new_interface(qapp, name):
-    """P-08 cambia el diseño, pero cada control del original sigue existiendo con su nombre, un tipo
-    compatible y el mismo comportamiento (rangos, valores, ítems), porque la lógica los usa por nombre."""
+    # Cada control del original sigue existiendo con su nombre, un tipo compatible y el mismo comportamiento.
     from PySide6.QtWidgets import (QAbstractButton, QAbstractSpinBox, QCheckBox, QComboBox, QLabel, QLineEdit,
                                    QListWidget, QRadioButton, QTextEdit, QWidget)
     from ui.widgets import FitFrameView
@@ -52,7 +51,7 @@ def test_every_original_control_exists_in_the_new_interface(qapp, name):
 
 @pytest.fixture
 def eddie(qapp, tmp_path, monkeypatch, fake_llm):
-    """EDDIE completo con dispositivos simulados y un LLM local falso."""
+    # EDDIE completo con dispositivos simulados y un LLM local falso.
     monkeypatch.setenv("EDDIE_DEVICE_MODE", "sim")
     messages = []
     import ui.dialogs as dialogs
@@ -241,7 +240,7 @@ def test_eye_tracking_export_import_settings_format(eddie, tmp_path, monkeypatch
 
 
 def test_light_palette_keeps_text_readable(qapp):
-    """En Windows con modo oscuro Qt pintaba texto blanco sobre los fondos claros del original."""
+    # En Windows con modo oscuro Qt pintaba texto blanco sobre los fondos claros del original.
     from PySide6.QtGui import QPalette
     palette = qapp.palette()
     assert palette.color(QPalette.ColorRole.Text).name() == "#000000"
@@ -261,7 +260,7 @@ def test_damaged_pdf_shows_message_instead_of_breaking_projection(eddie, qapp, t
 
 
 def _as_text_copy(pdf_path):
-    """Reproduce el daño real: un PDF comprimido copiado como texto UTF-8 (bytes → U+FFFD)."""
+    # Reproduce el daño real: un PDF comprimido copiado como texto UTF-8 (bytes → U+FFFD).
     import pymupdf
     with pymupdf.open(pdf_path) as document:
         data = document.tobytes(deflate=True, garbage=3, use_objstms=1)
@@ -269,7 +268,7 @@ def _as_text_copy(pdf_path):
 
 
 def test_text_page_recognizes_the_highlighted_word(eddie, qapp):
-    """Text recognition muestra el rectángulo detectado y el texto reconocido (antes solo desde la proyección)."""
+    # Text recognition muestra el rectángulo detectado y el texto reconocido (antes solo desde la proyección).
     ctx, window, messages = eddie
     page = ctx.pages["text"]
     window.open_page("TextRecognitiionButton")
@@ -298,8 +297,7 @@ def test_page_detection_shows_a_preview_of_the_pdf(eddie, qapp, sample_pdf):
 
 
 def test_info_icons_and_buttons_with_help_do_not_raise(eddie, qapp, monkeypatch):
-    """Regresión: clicked(bool) de los botones "Browse" llegaba como w=False a la lambda de la ayuda
-    ("'bool' object has no attribute 'mapToGlobal'")."""
+    # Regresión: el clic de los botones "Browse" llegaba como False a la ayuda y fallaba.
     import sys
     from PySide6.QtWidgets import QAbstractButton, QFileDialog
     ctx, window, messages = eddie

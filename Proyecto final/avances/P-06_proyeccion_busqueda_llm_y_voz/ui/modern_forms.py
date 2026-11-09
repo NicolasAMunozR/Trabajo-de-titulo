@@ -1,19 +1,5 @@
-"""
-ui/modern_forms.py
-==================
-Constructor de la interfaz renovada (P-08).
-
-En P-07 cada pantalla se reconstruía con las posiciones absolutas de los *.Designer.cs
-(ui/form_builder.build_form). Aquí se crean **los mismos controles, con el mismo nombre y
-el mismo tipo de comportamiento** (rangos, ítems, estados del layout original), pero se
-ordenan con layouts de Qt en tarjetas, con textos en español y con el sistema visual de
-ui/theme.py. Como la lógica (settings_pages, menu_settings, projection_screen) accede a
-los controles por nombre (self.form.<nombre>), sigue funcionando igual.
-
-Los controles del original que el diseño nuevo no necesita (rótulos de unidades,
-paneles decorativos, el GIF de carga...) se crean igual, pero quedan en un contenedor
-oculto (`form.spare`): ninguna referencia de la lógica queda rota.
-"""
+# Constructor de la interfaz renovada: crea los mismos controles del original, con el mismo nombre,
+# ordenados con layouts de Qt en tarjetas. Los controles que no se usan quedan ocultos en form.spare.
 import logging
 from typing import Callable, Optional
 
@@ -31,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class ModernForm(Form):
-    """Form con "ranuras" (slots): lugares del diseño donde la lógica agrega sus controles nuevos."""
+    # Form con "ranuras" (slots): lugares del diseño donde la lógica agrega sus controles nuevos.
 
     def __init__(self, name: str, root: QWidget, data: dict) -> None:
         super().__init__(name, root, data)
@@ -42,7 +28,7 @@ class ModernForm(Form):
         self.spare.hide()
 
     def place(self, slot: str, *widgets: QWidget) -> None:
-        """Agrega `widgets` a la ranura `slot` y los registra por su objectName."""
+        # Agrega `widgets` a la ranura `slot` y los registra por su objectName.
         layout = self.slots.get(slot)
         for widget in widgets:
             if layout is not None:
@@ -88,7 +74,7 @@ def _walk(nodes):
 
 
 def _make(form: ModernForm, node: dict, cls=None) -> Optional[QWidget]:
-    """Mismo mapeo de tipos WinForms → Qt que form_builder._create, sin geometría ni estilos del original."""
+    # Mismo mapeo de tipos WinForms → Qt que form_builder._create, sin geometría ni estilos del original.
     kind, props = node["type"], node["props"]
     text = props.get("Text", "").replace("\r\n", "\n") if isinstance(props.get("Text"), str) else ""
     if cls is not None:
@@ -157,7 +143,7 @@ def _make(form: ModernForm, node: dict, cls=None) -> Optional[QWidget]:
 
 # ============================================================================ páginas de configuración
 def _page(form: ModernForm, root: QWidget, title: str, subtitle: str, help_name: Optional[str] = None) -> QVBoxLayout:
-    """Encabezado (título + ayuda + bajada) y cuerpo desplazable de una página de configuración."""
+    # Encabezado (título + ayuda + bajada) y cuerpo desplazable de una página de configuración.
     outer = QVBoxLayout(root)
     outer.setContentsMargins(32, 4, 32, 0)
     outer.setSpacing(4)

@@ -1,11 +1,9 @@
-"""Contract for plugins that consume outputs produced earlier in a cycle."""
+# Dependencias de contratos de inyección de dependencias para plugins que consumen resultados de ciclo.
 from abc import ABC, abstractmethod
 
-
 class ICycleResultConsumer(ABC):
-    """Receives the results accumulated by the orchestrator for one cycle."""
-
+    # Recibe los resultados acumulados por el orquestador para un ciclo.
     @abstractmethod
     def consume_cycle_results(self, results: dict[str, dict]) -> None:
-        """Consume outputs from plugins executed earlier in this cycle."""
+        # Consume los resultados de un ciclo del orquestador. Cada resultado es un diccionario con la clave del plugin y su resultado.
         raise NotImplementedError

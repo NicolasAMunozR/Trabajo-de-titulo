@@ -1,24 +1,5 @@
-"""
-ui/settings_pages.py
-====================
-Páginas de configuración embebidas en la ventana principal de EDDIE.
-
-P-08 (interfaz renovada): la lógica es la de P-07; cambia la capa visual. Cada página se
-construye con ui/modern_forms.build_modern (mismos nombres de control, otro diseño), los
-textos están en español y los controles que agrega la lógica se ubican en "ranuras" del
-diseño (form.place) en vez de posiciones absolutas. Mejoras de flujo nuevas:
-  - Interacción y Servicios de búsqueda muestran si la voz y los proveedores LLM están listos.
-  - Gesture recognition: botones «Fijar inicio» / «Fijar fin» copian la lectura del sensor a la
-    calibración (antes había que leer los números y escribirlos a mano).
-
-
-  InteractionPage        ← SeleccionInteraccionPorVoz2.cs ("Interactions WS")
-  WebSearchPage          ← SeleccionApis2.cs ("Web search services"; ahora proveedores LLM)
-  EyeTrackingPage        ← EyeTrackingConfiguration2.cs
-  TextRecognitionPage    ← TextRecognitionSettings.cs
-  GestureRecognitionPage ← GestureRecognitionSettings.cs
-  PageDetectionPage      ← PageDetectionSettings.cs
-"""
+# Páginas de configuración embebidas en la ventana principal de EDDIE.
+# Cada página reemplaza un formulario del C# (Interacción, Búsqueda, Eye tracking, Texto, Gestos y PDF).
 import json
 import logging
 import time
@@ -69,13 +50,16 @@ class SettingsPage(QWidget):
                         w.mapToGlobal(QPoint(0, w.height())), t, w))
 
     def load_settings(self) -> None:
-        """GetAllSettings (parte correspondiente a esta página)."""
+        # GetAllSettings (parte correspondiente a esta página).
+        pass
 
     def save_settings(self) -> None:
-        """SaveAllSettings (parte correspondiente a esta página)."""
+        # SaveAllSettings (parte correspondiente a esta página).
+        pass
 
     def on_cycle(self, results: dict) -> None:
-        """Actualización periódica (vistas de cámara, coordenadas del sensor)."""
+        # Actualización periódica (vistas de cámara, coordenadas del sensor).
+        pass
 
 
 # ---------------------------------------------------------------------------- cámaras
@@ -107,11 +91,7 @@ class TextRecognitionPage(SettingsPage):
         self._add_recognition_controls()
 
     def _add_recognition_controls(self) -> None:
-        """Controles nuevos (no existían en el C#): probar el OCR desde esta página y ver el texto.
-
-        En EDDIE-2023 el reconocimiento solo se disparaba desde la pantalla de proyección
-        (modo resaltado → CaptureTxt), así que en esta página nunca se veía el texto reconocido.
-        """
+        # Controles nuevos: probar el OCR desde esta página y ver el texto reconocido.
         button = ActionButton("Reconocer texto", variant="primary", icon="scan-text")
         button.setObjectName("buttonRecognizeText")
         button.setToolTip("Detecta el resaltado amarillo en la cámara de texto y aplica OCR (Tesseract).")
@@ -158,7 +138,7 @@ class TextRecognitionPage(SettingsPage):
         self.save_settings()
 
     def apply_camera(self) -> None:
-        """Abre la cámara elegida si cambió (ProyectionActivityBt: new VideoCapture(CameraNumber))."""
+        # Abre la cámara elegida si cambió (ProyectionActivityBt: new VideoCapture(CameraNumber)).
         self.save_settings()
         s, sensor = self.ctx.settings, self.ctx.runtime.plugin("TextCamera")
         wanted = {"camera_index": int(s["cameraTextIndex"]), "width": int(s["cameraTextWidth"]),
@@ -167,7 +147,7 @@ class TextRecognitionPage(SettingsPage):
             self.ctx.runtime.restart("TextCamera", wanted)
 
     def show_recognition(self, result: dict) -> None:
-        """imageBox1 = frame con el rectángulo; imageBox3 = recorte reconocido (TextImage); texto abajo."""
+        # imageBox1 = frame con el rectángulo; imageBox3 = recorte reconocido (TextImage); texto abajo.
         if result.get("annotated") is not None:
             self.form.imageBox1.show_frame(result["annotated"])
         crop = result.get("upright_crop") if result.get("upright_crop") is not None else result.get("crop")
@@ -229,7 +209,7 @@ class GestureRecognitionPage(SettingsPage):
         self.get_calibration_settings()
 
     def _add_calibration_buttons(self) -> None:
-        """Nuevo en P-08: copia la lectura actual del sensor al inicio o al fin de la calibración."""
+        # Nuevo en P-08: copia la lectura actual del sensor al inicio o al fin de la calibración.
         start = ActionButton("Fijar inicio", variant="secondary", icon="locate-fixed")
         start.setObjectName("buttonSetStart")
         start.setToolTip("Copia «Sensor X/Y» a «Sensor inicio» (cruz superior izquierda).")
@@ -324,7 +304,7 @@ class GestureRecognitionPage(SettingsPage):
             plugin.set_calibration(self.calibration())
 
     def start_recognition(self) -> None:
-        """comenzarToolStripMenuItem_Click: abre la cámara gestual y activa el plug-in."""
+        # comenzarToolStripMenuItem_Click: abre la cámara gestual y activa el plug-in.
         self.save_settings()
         if self.form.comboBox1.currentIndex() < 0:
             message(self, "Antes de iniciar, elige un complemento de reconocimiento.", "Problema")
@@ -351,7 +331,7 @@ class GestureRecognitionPage(SettingsPage):
             plugin.set_recognition_active(False)
 
     def capture(self) -> None:
-        """button4_Click → PutRectangle(RectangularSelection): recorta y guarda la imagen a buscar."""
+        # button4_Click → PutRectangle(RectangularSelection): recorta y guarda la imagen a buscar.
         plugin = self.active_plugin()
         if plugin is None:
             message(self, "Antes de capturar, elige un complemento de reconocimiento.", "Problema")
@@ -403,7 +383,7 @@ class PageDetectionPage(SettingsPage):
     PREVIEW_SIZE = (380, 420)                   # tamaño máximo con que se renderiza la página
 
     def _add_preview_controls(self) -> None:
-        """Vista previa del PDF cargado (nueva: el C# solo mostraba la ruta y el tamaño de página)."""
+        # Vista previa del PDF cargado (nueva: el C# solo mostraba la ruta y el tamaño de página).
         view = FitFrameView(placeholder="Elige un PDF para ver sus páginas")
         view.setObjectName("pdfPreview")
         view.setMinimumHeight(330)
@@ -448,7 +428,7 @@ class PageDetectionPage(SettingsPage):
             self._show_document(path)
 
     def select_pdf(self) -> None:
-        """PDFSelectBt_Click → new DigitalDocSync(file)."""
+        # PDFSelectBt_Click → new DigitalDocSync(file).
         path, _ = QFileDialog.getOpenFileName(self, "Elegir el PDF del libro", "", "PDF (*.pdf)")
         if path:
             self.open_pdf(path)
@@ -478,7 +458,7 @@ class PageDetectionPage(SettingsPage):
                 self.ctx.projection.highlight.page_size = (width, height)
 
     def resize_highlight(self) -> None:
-        """Resize_Click → Highlight.RuntimeFinalLocation(FinalLocateX, FinalLocateY)."""
+        # Resize_Click → Highlight.RuntimeFinalLocation(FinalLocateX, FinalLocateY).
         if self.ctx.projection is not None:
             self.ctx.projection.highlight.runtime_final_location(self.form.FinalLocateX.value(),
                                                                  self.form.FinalLocateY.value())

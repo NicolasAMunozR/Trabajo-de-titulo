@@ -1,4 +1,4 @@
-"""Pruebas del avance P-01: el núcleo carga, ejecuta y libera plugins con un único mecanismo."""
+# Pruebas del avance P-01: el núcleo carga, ejecuta y libera plugins con un único mecanismo.
 import statistics
 
 import pytest
@@ -68,7 +68,7 @@ CONTRACTS = {
 
 @pytest.mark.parametrize("module, name", CONTRACTS.items())
 def test_cada_contrato_extiende_plugin_base_y_no_se_puede_instanciar(module, name):
-    """Diseño (OE2): todos los módulos heredados se integran por un contrato sobre PluginBase."""
+    # Diseño (OE2): todos los módulos heredados se integran por un contrato sobre PluginBase.
     import importlib
     from contracts.plugin_base import PluginBase
     contract = getattr(importlib.import_module(module), name)

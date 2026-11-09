@@ -1,10 +1,5 @@
-"""
-DEMO REAL F11 – Plugin Dynamic Loading (importlib)
-====================================================
-Carga en tiempo real los módulos del proyecto EDDIE-Python
-usando importlib. Muestra el árbol de plugins disponibles,
-sus interfaces y los métodos que exponen.
-"""
+# Demo real F11: carga dinámica de plugins con importlib.
+# Muestra el árbol de plugins disponibles, sus interfaces y los métodos que exponen.
 import importlib, importlib.util, pathlib, sys, time
 import cv2, numpy as np
 

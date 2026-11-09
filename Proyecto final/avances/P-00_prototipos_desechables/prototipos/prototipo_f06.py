@@ -1,10 +1,5 @@
-"""
-Prototipo F06 Hand/Skin Segmentation mejorada
-Muestra en tiempo real la segmentación de piel (mano)
-usando YCrCb + HSV combinados con filtros más robustos.
-
-S = guardar  |  Q = salir
-"""
+# Prototipo F06: segmentación de piel (mano) en tiempo real con YCrCb + HSV.
+# S = guardar  |  Q = salir
 
 import cv2
 import pathlib

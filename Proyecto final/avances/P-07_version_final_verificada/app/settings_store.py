@@ -1,11 +1,5 @@
-"""
-app/settings_store.py
-=====================
-Ajustes persistentes del usuario.
-
-Reemplaza Properties.Settings2 / Properties.Settings (App.config userSettings) con las
-mismas claves y valores por defecto, guardados en config/user_settings.json.
-"""
+# Ajustes persistentes del usuario, guardados en config/user_settings.json.
+# Reemplaza Properties.Settings del C# con las mismas claves y valores por defecto.
 import json
 import logging
 from copy import deepcopy
@@ -66,7 +60,7 @@ class SettingsStore:
         self.path.write_text(json.dumps(self._values, indent=2, ensure_ascii=False), encoding="utf-8")
 
     def reset(self) -> None:
-        """Properties.Settings2.Default.Reset()."""
+        # Properties.Settings2.Default.Reset().
         self._values = deepcopy(DEFAULTS)
         self.save()
 
@@ -85,7 +79,7 @@ class SettingsStore:
         return dict(self._values)
 
     def plugin_overrides(self) -> dict:
-        """Traduce los ajustes a overrides de plugins.json para el OrchestratorCore."""
+        # Traduce los ajustes a overrides de plugins.json para el OrchestratorCore.
         overrides = {
             "TextCamera": {"config": {"camera_index": int(self["cameraTextIndex"]),
                                       "width": int(self["cameraTextWidth"]),

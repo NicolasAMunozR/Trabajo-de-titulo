@@ -1,4 +1,4 @@
-"""Pruebas del diseño de la interfaz: zona de lectura fija, botones arriba, sin amarillo y flujos asistidos."""
+# Pruebas del diseño de la interfaz: zona de lectura fija, botones arriba, sin amarillo y flujos asistidos.
 import colorsys
 import re
 
@@ -14,8 +14,7 @@ def _is_yellow(hex_color: str) -> bool:
 
 
 def test_interface_chrome_never_uses_yellow():
-    """Ibaceta (2023): el botón de resaltado era amarillo como el resaltador y confundía al OCR.
-    En P-08 el amarillo queda solo para el resaltado; ningún color del sistema visual lo es."""
+    # El amarillo queda solo para el resaltado; ningún color del sistema visual lo usa (Ibaceta, 2023).
     from ui import theme
     colors = set(re.findall(r"#[0-9A-Fa-f]{6}", theme.QSS + theme.PROJECTION_QSS))
     colors |= {value for name, value in vars(theme).items()
@@ -24,8 +23,7 @@ def test_interface_chrome_never_uses_yellow():
 
 
 def test_projection_keeps_reading_area_and_moves_buttons_to_the_upper_band(eddie, qapp):
-    """La zona de lectura y las cruces no se mueven (montaje y calibración); los botones van arriba,
-    donde el eye tracker fue 100 % válido, y la franja inferior central queda libre."""
+    # La zona de lectura y las cruces no se mueven; los botones van arriba y la franja inferior central queda libre.
     from ui.widgets import ToolButton
     ctx, window, _ = eddie
     window.start_projection()
@@ -82,7 +80,7 @@ def test_synchronizer_shows_its_card_and_keeps_one_panel_per_side(eddie, qapp, s
 
 
 def test_messages_are_non_blocking_notices(qapp, eddie, monkeypatch):
-    """message() ya no abre un cuadro modal: muestra un aviso en la ventana y la ejecución sigue."""
+    # message() ya no abre un cuadro modal: muestra un aviso en la ventana y la ejecución sigue.
     import importlib
     from PySide6.QtWidgets import QMessageBox
     ctx, window, _ = eddie

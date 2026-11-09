@@ -1,11 +1,5 @@
-"""
-DEMO REAL F10 – Eye Tracker real con diagnóstico de conexión
-==========================================================
-1) prueba GazeCloud WebSocket en ws://127.0.0.1:3000
-2) si no responde, prueba EyeTribe TCP en 127.0.0.1:6555
-3) si ninguno responde, activa un fallback local con OpenCV para que GazeCloud siga funcionando
-4) si hay conexión real, dibuja el gaze recibido
-"""
+# Demo real F10: eye tracker real con diagnóstico de conexión.
+# Prueba GazeCloud (ws://127.0.0.1:3000), luego EyeTribe (127.0.0.1:6555) y si ninguno responde usa un fallback con OpenCV.
 
 import asyncio
 import json
@@ -202,7 +196,7 @@ def ensure_websockets_dependency():
 
 
 def estimate_camera_gaze(frame_size=(900, 500)):
-    """Usa OpenCV + Haar cascades para estimar una mirada rudimentaria desde la cara."""
+    # Usa OpenCV + Haar cascades para estimar una mirada rudimentaria desde la cara.
     width, height = frame_size
     cap = getattr(estimate_camera_gaze, "_cap", None)
     if cap is None:
@@ -241,7 +235,7 @@ def estimate_camera_gaze(frame_size=(900, 500)):
 
 
 def build_camera_gaze_server():
-    """Lanza un servidor local GazeCloud compatible con la cámara del equipo."""
+    # Lanza un servidor local GazeCloud compatible con la cámara del equipo.
     if not ensure_websocket_dependency() or not ensure_websockets_dependency():
         return False
 

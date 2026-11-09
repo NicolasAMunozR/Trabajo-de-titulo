@@ -1,8 +1,5 @@
-"""Enumeración de cámaras con su nombre (reemplaza CameraActivity.cs / DirectShow.NET).
-
-En Windows el orden de DirectShow coincide con el índice de OpenCV usando CAP_DSHOW,
-que es el backend por defecto de CameraSensorPlugin en ese sistema.
-"""
+# Enumeración de cámaras con su nombre (reemplaza CameraActivity.cs / DirectShow.NET).
+# En Windows el orden de DirectShow coincide con el índice de OpenCV usando CAP_DSHOW.
 import logging
 import subprocess
 import sys
@@ -50,7 +47,7 @@ def _probe_indices(max_index: int = 5) -> list[str]:
 
 
 def list_cameras() -> list[tuple[int, str]]:
-    """Retorna [(índice, nombre)] como CameraActivity.ListCameras()."""
+    # Retorna [(índice, nombre)] como CameraActivity.ListCameras().
     names: list[str] = []
     if sys.platform == "win32":
         names = _directshow_names() or _powershell_names()

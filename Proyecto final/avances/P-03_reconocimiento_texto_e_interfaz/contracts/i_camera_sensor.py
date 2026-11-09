@@ -1,4 +1,4 @@
-"""Shared contract for camera and other frame-producing sensor adapters."""
+# Comparte los contratos de sensores de cámara y otros adaptadores de sensores que producen frames.
 from abc import abstractmethod
 from typing import Optional, TypeAlias
 
@@ -12,19 +12,14 @@ CameraFrame: TypeAlias = ImageArray
 
 
 class ICameraSensor(PluginBase):
-    """Provides camera frames independently of the consumers that process them.
-
-    A returned frame is a non-empty HxWx3 uint8 NumPy array in BGR order,
-    matching OpenCV's native image format. ``None`` means that no frame was
-    captured; implementations must not return generated data as a real sample.
-    """
+    # Entrega frames de cámara (BGR uint8 de HxWx3) independiente de quién los procesa; None si no hay frame.
 
     @abstractmethod
     def capture_frame(self) -> Optional[CameraFrame]:
-        """Capture one frame and make it the latest sample."""
+        # Captura un frame y lo hace la última muestra disponible.
         raise NotImplementedError
 
     @abstractmethod
     def get_latest_frame(self) -> Optional[CameraFrame]:
-        """Return the frame captured during the current orchestrator cycle."""
+        # Devuelve el frame capturado durante el ciclo actual del orquestador.
         raise NotImplementedError

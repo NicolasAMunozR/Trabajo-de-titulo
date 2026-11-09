@@ -1,13 +1,4 @@
-"""
-contracts/i_gesture_plugin.py
-================================
-Contrato para el módulo de reconocimiento gestual.
-
-Reemplaza:
-  - ModuloReconocimientoGestual/GestureRecognitionActivity.cs
-  - ColorPenRecognition, HandSkinRecognition, LeapMotionRecognition
-  - PluginFramework/IFilter.cs (IPlugin con RunPlugin(VideoCapture))
-"""
+# Contrato para el módulo de reconocimiento gestual.
 from abc import abstractmethod
 from dataclasses import dataclass, field
 from typing import Optional
@@ -15,10 +6,9 @@ from contracts.i_camera_frame_consumer import ICameraFrameConsumer
 from contracts.i_camera_sensor import CameraFrame
 from contracts.plugin_base import PluginBase
 
-
 @dataclass
 class GestureResult:
-    """Resultado de un ciclo de reconocimiento gestual."""
+    # Resultado de un ciclo de reconocimiento gestual.
     gesture_name: str   # Nombre del gesto: 'point', 'scroll_up', 'scroll_down', 'none'
     confidence: float   # Confianza [0.0, 1.0]
     position_x: int     # Coordenada X en píxeles (espacio de pantalla)
@@ -28,12 +18,8 @@ class GestureResult:
 
 @dataclass
 class GestureCalibration:
-    """Transformación lineal sensor → aplicación de GestureRecognitionActivity.cs.
-
-    x_app = |(x_sensor - sensor_start_x) * (app_end_x - app_start_x)
-             / (sensor_end_x - sensor_start_x) + app_start_x|
-    Solo se aplica en los ejes con transform_x / transform_y activos.
-    """
+    # Coordenadas de calibración del sensor y de la aplicación (pantalla).
+    # Se usan para mapear las coordenadas del sensor a las coordenadas de la aplicación.
     sensor_start_x: float = 0
     sensor_end_x: float = 0
     app_start_x: float = 0
@@ -49,7 +35,7 @@ class GestureCalibration:
 
 @dataclass
 class GestureSelection:
-    """Rectángulo seleccionado con el gesto (RectangularSelection en C#)."""
+    # Rectángulo en coordenadas de cámara (píxeles) que representa la selección del usuario.
     x: int = 0
     y: int = 0
     width: int = 0
@@ -58,70 +44,50 @@ class GestureSelection:
 
 
 class IGesturePlugin(PluginBase, ICameraFrameConsumer):
-    """
-    Contrato para el módulo de reconocimiento gestual.
-
-    Unifica los distintos plugins gestuales del C# (ColorPen, HandSkin,
-    LeapMotion, Mouse) bajo una única interfaz, eliminando el patrón
-    IPlugin.RunPlugin(VideoCapture) que tenía acoplamiento a Emgu.CV.
-    """
-
+    # Recibe su fuente de frames desde el orquestador, nunca abre una cámara.
+    # Devuelve un resultado de reconocimiento gestual o None si no hay gesto válido.
     @abstractmethod
     def detect_gesture(self, frame: CameraFrame) -> GestureResult:
-        """
-        Analiza un frame y retorna el gesto detectado.
-
-        Args:
-            frame: Frame BGR uint8 entregado por ICameraSensor.
-
-        Returns:
-            GestureResult: Resultado del reconocimiento.
-        """
+        # Devuelve el resultado del reconocimiento gestual para el frame dado, o None si no se detecta un gesto válido.
         pass
 
     @abstractmethod
     def set_recognition_active(self, active: bool) -> None:
-        """Inicia/detiene el reconocimiento (botones Start/Stop Recognition)."""
+        # Inicia o detiene el reconocimiento gestual. Cuando está activo, el plugin procesa los frames entrantes y genera resultados de gestos.
         pass
 
     @abstractmethod
     def set_calibration(self, calibration: GestureCalibration) -> None:
-        """Aplica la calibración sensor → pantalla configurada por el usuario."""
+        # La calibración se aplica a las coordenadas de los gestos detectados.
         pass
 
     @abstractmethod
     def get_preview_frame(self) -> Optional[CameraFrame]:
-        """Último frame anotado por el plugin (imageBox2 en la interfaz)."""
+        # Devuelve el último frame procesado por el plugin para previsualización, o None si no hay frame disponible.
         pass
 
     @abstractmethod
     def mark_selection_start(self) -> None:
-        """Primer clic sobre el área de resaltado (FinalToRectXY)."""
+        # Marca el inicio de la selección gestual (StartToRectXY). El plugin debe registrar la posición inicial del gesto.
         pass
 
     @abstractmethod
     def mark_selection_end(self) -> GestureSelection:
-        """Fin de la selección (FinalToRectWH); retorna el rectángulo en píxeles de cámara."""
+        # Marca el final de la selección gestual (EndToRectWH). El plugin debe calcular el rectángulo de selección basado en la posición inicial y final del gesto, y devolverlo.
         pass
 
     @abstractmethod
     def capture_selection(self, selection: Optional[GestureSelection] = None) -> Optional[CameraFrame]:
-        """Recorta del frame actual el rectángulo seleccionado (CaptureImage)."""
+        # Recorta del frame actual el rectángulo seleccionado (CaptureImage). Si no se proporciona un rectángulo, utiliza la selección marcada por mark_selection_start/end. Devuelve el frame recortado o None si no hay selección válida.
         pass
 
     @property
     @abstractmethod
     def auto_cam_capture(self) -> bool:
-        """True si el plugin captura imagen automáticamente al soltar el gesto."""
+        # Devuelve true si el plugin captura automáticamente la imagen al soltar el gesto, o False si requiere un comando explícito de captura.
         pass
 
     @abstractmethod
     def get_error_rate(self) -> float:
-        """
-        Retorna la tasa de error gestual acumulada en la sesión actual.
-        Métrica requerida por el informe de seminario.
-
-        Returns:
-            float: Tasa de error [0.0, 1.0] (0 = sin errores).
-        """
+        # Devuelve la tasa de error gestual acumulada en la sesión actual.
         pass

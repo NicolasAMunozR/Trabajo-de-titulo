@@ -1,14 +1,5 @@
-"""
-plugins/consistency/vision.py
-=============================
-Detección de marcas físicas en el papel (lado físico → digital, "PD").
-
-Porta los filtros HSV + morfología de BibliotecaConsistencia:
-  - ConsistencyLibraryPageMarkerPD/PageMarkerPD.cs → detect_bookmark()   (azul, H 90–120)
-  - ConsistencyLibraryCommentsPD/CommentsPD.cs     → detect_comments()   (amarillo, H 0–30)
-  - ConsistencyLibraryFiguresPD/FiguresPD.cs       → detect_figures()    (magenta, H ≥ 150)
-OpenCV usa H en [0, 180] para imágenes de 8 bits, igual que Emgu.CV.
-"""
+# Detección de marcas físicas en el papel (lado físico → digital).
+# Porta los filtros HSV de BibliotecaConsistencia: marcador azul, notas amarillas y figuras magenta.
 import math
 from dataclasses import dataclass
 
@@ -26,7 +17,7 @@ def _hsv_mask(frame: np.ndarray, hue: tuple[int, int], value: tuple[int, int], s
 
 
 def _smooth_threshold(mask: np.ndarray, level: int) -> np.ndarray:
-    """SmoothGaussian(5) + ThresholdBinary(level) del C#."""
+    # SmoothGaussian(5) + ThresholdBinary(level) del C#.
     blurred = cv2.GaussianBlur(mask, (5, 5), 0)
     _, binary = cv2.threshold(blurred, level, 255, cv2.THRESH_BINARY)
     return binary
@@ -46,7 +37,7 @@ def detect_bookmark(frame: np.ndarray, min_area: float = 1000) -> bool:
 
 
 def detect_comments(frame: np.ndarray, min_area: float = 15000) -> list[tuple[int, int, int, int]]:
-    """Notas adhesivas: contornos de 4 vértices sobre un filtro de tono amarillo/naranjo."""
+    # Notas adhesivas: contornos de 4 vértices sobre un filtro de tono amarillo/naranjo.
     mask = _hsv_mask(frame, (0, 30), (100, 255), 10)
     mask = cv2.erode(mask, _rect(3, 2), iterations=3)
     mask = cv2.dilate(mask, _rect(3, 2), iterations=4)
@@ -72,7 +63,7 @@ class Figure:
 
 
 def detect_figures(frame: np.ndarray, min_area: float = 1000) -> list[Figure]:
-    """Clasifica figuras dibujadas en rosado/magenta: triángulo→rect, 4 vértices→rect/elipse, ≥5→elipse."""
+    # Clasifica figuras dibujadas en rosado/magenta: triángulo→rect, 4 vértices→rect/elipse, ≥5→elipse.
     mask = _hsv_mask(frame, (150, 255), (100, 255), 20)
     mask = cv2.erode(mask, _rect(3, 2), iterations=2)
     mask = cv2.dilate(mask, _rect(3, 3), iterations=3, borderType=cv2.BORDER_REPLICATE)

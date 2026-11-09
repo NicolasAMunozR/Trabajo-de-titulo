@@ -1,4 +1,4 @@
-"""Hardware real emulado (cámara, GazePoint, EyeTribe) y extensiones del OrchestratorCore."""
+# Hardware real emulado (cámara, GazePoint, EyeTribe) y extensiones del OrchestratorCore.
 import json
 import socket
 import threading

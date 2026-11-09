@@ -1,0 +1,185 @@
+\chapter{Evaluación}
+\label{cap:evaluacion}
+
+Este capítulo corresponde a la etapa \textit{Check} del ciclo PDCA y al cuarto objetivo específico. La evaluación se organiza en los tres niveles del diseño experimental de la propuesta: pruebas de software, verificación y validación con MECIVA PS, y pruebas de aceptación en el laboratorio. El primer nivel se ejecutó completo con dispositivos simulados; los dos siguientes requieren el hardware del laboratorio, y para ellos se presentan el protocolo, los instrumentos ya construidos y los resultados que faltan, marcados como \pendiente{laboratorio}.
+
+\section{Plan de evaluación}
+
+La Tabla~\ref{tab:plan_eval} resume las métricas comprometidas, su criterio de aceptación y su estado. Todas las métricas automatizadas se regeneran con \texttt{python tools/generar\_evidencias.py} en cada avance, y los resultados de este capítulo provienen de la carpeta \texttt{evidencias/} del avance P-07 (\PSieteEntorno, \PSieteFecha).
+
+\begin{table}[H]
+\centering
+\caption{Métricas de evaluación, criterio de aceptación y estado.}
+\label{tab:plan_eval}
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.2cm}}
+\toprule
+\textbf{Métrica} & \textbf{Criterio} & \textbf{Estado} \\ \midrule
+\multicolumn{3}{l}{\textbf{Nivel 1: pruebas de software}} \\
+Cobertura de líneas & $\geq$ 80\% (RNF-03) & \PSieteCobertura\%, cumple \\
+Latencia orquestador $\rightarrow$ plugin & p95 $\leq$ 8,3~ms (RNF-01) & \PSieteCicloPnoventaycinco~ms el ciclo completo, cumple \\
+Aislamiento de fallos & Una falla no detiene el sistema (RNF-02) & Verificado por pruebas \\
+Matriz de trazabilidad & Cada caso: corregido, persistente o fuera de alcance & Parcial (Sección~\ref{sec:trazabilidad}) \\
+Desfase entre sensores y pérdida de eventos & Desfase máximo (ms) y tasa de pérdida en captura simultánea & \pendiente{laboratorio} \\
+Precisión y recall del OCR & $\geq$ 10 palabras de distinto largo & Métrica implementada; \pendiente{cámara} \\
+Tasa de error gestual & Gestos bien clasificados / ejecutados & \pendiente{laboratorio} \\ \midrule
+\multicolumn{3}{l}{\textbf{Nivel 2: verificación y validación (MECIVA PS)}} \\
+Requisitos críticos & 100\% de las ejecuciones & \pendiente{laboratorio} \\
+Validez funcional & \% de requisitos heredados cumplidos & \pendiente{laboratorio} \\
+Confiabilidad & CV o tasa de éxito, $\geq$ 10 ejecuciones por caso & \pendiente{laboratorio} \\ \midrule
+\multicolumn{3}{l}{\textbf{Nivel 3: pruebas de aceptación}} \\
+Requisitos secundarios & Escala A--E (Tabla~\ref{tab:escala}) & \pendiente{laboratorio} \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir de la propuesta de tesis.}
+\end{table}
+
+\section{Pruebas de software}
+
+\subsection{Pruebas automatizadas y cobertura}
+
+La versión final tiene \PSietePruebas{} pruebas automatizadas con pytest, organizadas en cinco archivos: núcleo y cargador (\texttt{test\_orchestrator.py}), hardware y núcleo extendido (\texttt{test\_hardware\_and\_core.py}), contratos y plugins (\texttt{test\_plugins\_eddie.py}), flujos de la interfaz (\texttt{test\_ui\_flows.py}) e interfaz rediseñada (\texttt{test\_interfaz.py}). Las pruebas de interfaz ejecutan los flujos reales de la aplicación (abrir un PDF, sincronizar un resaltado, calibrar un gesto, abrir la proyección) con dispositivos simulados y sin pantalla. Todas aprueban y la cobertura de líneas es de \PSieteCobertura\%, sobre el umbral de 80\% comprometido.
+
+La Tabla~\ref{tab:avances} (Capítulo~\ref{cap:diseno}) muestra la evolución por avance. La cobertura de P-02 a P-05 está bajo el umbral porque esos avances contienen código de interfaz o de dispositivos que todavía no tenía pruebas de flujo completas; el umbral se exige a la versión final, que es la que se entrega.
+
+\subsection{Latencia del orquestador}
+
+Se midieron \PSieteCiclos{} ciclos completos del orquestador, tras 10 de calentamiento, con todos los plugins activos y el reconocimiento con lápiz encendido (Tabla~\ref{tab:latencias}). El ciclo completo, que incluye a todos los plugins, tiene una latencia de \PSieteCicloMedia~ms en promedio y \PSieteCicloPnoventaycinco~ms en el percentil 95, con un máximo de \PSieteCicloMax~ms. Ningún plugin superó los 8,3~ms en ningún ciclo, por lo que RNF-01 se cumple con margen: el ciclo completo usa menos del 10\% del período entre dos muestras del eye tracker.
+
+\begin{table}[H]
+\centering
+\caption{Latencia por plugin en \PSieteCiclos{} ciclos del orquestador (ms).}
+\label{tab:latencias}
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Plugin} & \textbf{Media} & \textbf{p95} & \textbf{Máx.} \\ \midrule
+\PSieteTablaLatencias \\ \midrule
+\textbf{Ciclo completo} & \PSieteCicloMedia & \PSieteCicloPnoventaycinco & \PSieteCicloMax \\ \bottomrule
+\end{tabular}
+\fuente{Elaboración propia, \texttt{evidencias/latencias.json} de P-07 (dispositivos simulados).}
+\end{table}
+
+Dos limitaciones acotan este resultado. Primero, se midió con dispositivos simulados: la latencia de captura de la cámara real y la del eye tracker ocurren en hilos propios y no forman parte del ciclo, pero el costo del reconocimiento sobre imágenes reales puede ser mayor. Segundo, en P-06 se registró un ciclo aislado de 10,28~ms con un percentil 95 de 1,49~ms; corresponde a una pausa del sistema operativo o del recolector de memoria y no se repitió en P-07, pero muestra que el máximo debe medirse también en el PC del laboratorio con \texttt{generar\_evidencias.py --real}.
+
+\subsection{Aislamiento de fallos}
+
+El aislamiento de fallos (RNF-02) se verifica con pruebas que provocan fallas en cada fase del ciclo de vida: una clase que no existe o un módulo inválido (\texttt{test\_load\_invalid\_module}, \texttt{test\_load\_all\_missing\_class\_key}), un archivo de configuración ausente (\texttt{test\_initialize\_with\_missing\_config\_file}), un plugin cuya inicialización falla (\texttt{test\_initialize\_plugin\_init\_fail\_does\_not\_stop\_system}), una excepción en \texttt{execute()} (\texttt{test\_execute\_plugin\_exception\_isolation}), una excepción al liberar (\texttt{test\_release\_exception\_does\_not\_stop\_others}) y una operación bajo demanda que falla (\texttt{test\_invoke\_isolates\_failures}). En todos los casos el resto de los plugins sigue funcionando y la falla queda registrada con su causa.
+
+El informe de inicialización de P-07 muestra el mismo comportamiento en la aplicación real: sin clave de Gemini configurada, el plugin de búsqueda queda como \texttt{initialization\_failed} y los otros trece plugins se inicializan normalmente. En EDDIE-2023, una situación equivalente (una DLL o carpeta de plugins faltante, E50) impedía usar el módulo completo.
+
+\subsection{Matriz de trazabilidad}
+\label{sec:trazabilidad}
+
+La propuesta compromete reejecutar los casos de prueba documentados por \citet{pezoa2020implementacion}, \citet{contreras2019desarrollo} y \citet{estay2020modulo} en EDDIE-2023 y en la versión en Python, y registrar cada error de \citet{ibaceta2023evaluacion} como corregido, persistente o fuera de alcance, con su evidencia. La Tabla~\ref{tab:trazabilidad} presenta la parte de la matriz que puede respaldarse con pruebas automatizadas; los casos que dependen del hardware quedan como pendientes hasta su ejecución en el laboratorio. La matriz completa de los 67 errores se construye con la plantilla del Anexo~\ref{an:errores}.
+
+\begin{table}[H]
+\centering
+\caption{Matriz de trazabilidad (parcial) de errores de EDDIE-2023.}
+\label{tab:trazabilidad}
+\scriptsize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{1.5cm} >{\raggedright\arraybackslash}p{3.1cm} c >{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Error} & \textbf{Descripción} & \textbf{Cat.} & \textbf{Resultado} & \textbf{Evidencia} \\ \midrule
+E50 & Carpeta \texttt{PluginsConsistencia} no encontrada & (a) & Corregido por diseño & \texttt{test\_load\_invalid\_module}, \texttt{test\_load\_all\_missing\_class\_key} \\ \midrule
+E7, E8 & No inicia sin cámara o sin dos cámaras & (d) & Corregido & \texttt{test\_camera\_sensor\_fails\_cleanly\_when\_camera\_missing}; modo simulado \\ \midrule
+E11, E21, E22, E30 & Fallas al sincronizar, buscar o revisar sin PDF o sin página & (d) & Corregido & \texttt{test\_missing\_pdf\_is\_reported\_not\_crashing}, \texttt{test\_pdf\_tools\_require\_pdf\_and\_page\_number} \\ \midrule
+E12, E13 & Sin manual de instalación ni de uso & (c) & Corregido & README del repositorio y manual del Apéndice~\ref{ap:manual} \\ \midrule
+E14 & Mensajes en otro idioma & (e) & Corregido & Interfaz y mensajes en español (RNF-06) \\ \midrule
+EFD2 & La cámara detecta botones de la interfaz & (e) & Corregido por diseño; \pendiente{verificar con cámara} & \texttt{test\_interface\_chrome\_never\_uses\_yellow} \\ \midrule
+E27, E28 & Código sin comentarios ni nombres representativos & (d) & \pendiente{SonarQube} & Docstrings y análisis estático \\ \midrule
+E40, E41 & Resaltado digital no coincide con el físico & (d) & \pendiente{laboratorio} & Prueba de aceptación de consistencia \\ \midrule
+E15, E16 & Eye tracker no reconocido; cámara inestable & (b) & \pendiente{laboratorio} & Modo real vs.\ simulado (DeviceFactory) \\ \midrule
+E49 & No se detecta la parte inferior de la proyección & (b) & Mitigado por diseño; \pendiente{laboratorio} & Controles en la franja superior; prueba con GazePoint \\ \midrule
+APIs de búsqueda & Credenciales vencidas & (g) & Corregido por reemplazo & \texttt{test\_gemini\_key\_from\_secrets\_file\_or\_missing} y servidor de prueba \\ \midrule
+E9, E10 & Conexiones eléctricas y seguridad del equipo & (f) & Fuera de alcance & Infraestructura del laboratorio \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia a partir de \citet{ibaceta2023evaluacion} y de las pruebas de P-07. Categorías de la Tabla~\ref{tab:reclasificacion}: (a) carga y despliegue, (b) hardware, (c) documentación, (d) práctica de código, (e) interfaz e idioma, (f) infraestructura, (g) servicios externos.}
+\end{table}
+
+\subsection{Hallazgos de la verificación}
+\label{sec:hallazgos}
+
+Durante el desarrollo y la verificación se encontraron tres defectos que las pruebas automatizadas no habían detectado. Cada uno se documentó con una prueba que lo reproduce y se corrigió (Tabla~\ref{tab:hallazgos_verif}).
+
+\begin{table}[H]
+\centering
+\caption{Hallazgos de la verificación y su corrección.}
+\label{tab:hallazgos_verif}
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{1.1cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{ID} & \textbf{Problema} & \textbf{Corrección y prueba} \\ \midrule
+H-01 & Al calibrar con la mano la imagen aparecía rotada 180°: el plugin heredó de \texttt{HandSkinRecognition.cs} una rotación fija pensada para la cámara invertida del laboratorio. & La rotación pasa a ser una opción común de los tres plugins gestuales, desactivada por defecto, con una casilla en la interfaz. Pruebas \texttt{test\_gesture\_preview\_keeps\_camera\_orientation\_by\_default} y relacionadas. \\ \midrule
+H-02 & Con PyMuPDF 2.1, desde el segundo guardado incremental el PDF quedaba con su tabla de referencias dañada y al reabrirlo se perdían anotaciones. & Cada guardado escribe una copia completa y reemplaza el original, con reintento si el archivo está bloqueado. Pruebas \texttt{test\_successive\_saves\_keep\_every\_annotation\_on\_disk} y relacionadas. \\ \midrule
+H-03 & Los botones de ayuda de Rastreo ocular lanzaban una excepción en cada clic porque la señal de Qt reemplazaba el argumento del \textit{callback}. & La función ignora los argumentos de la señal. Prueba \texttt{test\_info\_icons\_and\_buttons\_with\_help\_do\_not\_raise}. \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia.}
+\end{table}
+
+Los tres hallazgos tienen un rasgo común: el programa parecía funcionar. En H-02 el documento en memoria era correcto y el daño solo aparecía al reabrir el archivo; en H-03 la acción del botón se ejecutaba y la excepción quedaba en el registro. Esto refuerza la necesidad de las pruebas de aceptación con el hardware real, porque hay defectos que solo se observan al operar el sistema completo.
+
+\section{Verificación y validación con MECIVA PS}
+
+\subsection{Protocolo}
+
+La verificación replica la fase de diagnóstico de MECIVA PS \citep{ibaceta2023evaluacion} para cada módulo del MVP: consistencia, reconocimiento de texto, interacción gestual y rastreo ocular. Para cada módulo:
+
+\begin{enumerate}
+  \item Se clasifican sus requisitos en \textbf{críticos}, que deben cumplirse en el 100\% de las ejecuciones y cuyo incumplimiento es bloqueante (por ejemplo, que los plugins del MVP carguen sin fallas, o que el error espacial del rastreo ocular esté dentro del margen definido), y \textbf{secundarios}, que se evalúan con la escala de la Tabla~\ref{tab:escala}.
+  \item Se ejecuta cada caso al menos 10 veces con el hardware real (\texttt{EDDIE\_DEVICE\_MODE=real}) y se registra el resultado en la plantilla de diagnóstico de MECIVA PS (funcionalidad, resultado esperado, método, pruebas, resultados y nivel de funcionamiento).
+  \item Se calcula la \textbf{validez funcional} como el porcentaje de requisitos heredados que el módulo cumple, y la \textbf{confiabilidad} como el coeficiente de variación $\mathrm{CV}=\sigma/\mu$ para variables continuas (por ejemplo, las coordenadas de una fijación sobre un punto fijo) o como la tasa de éxito para resultados binarios (por ejemplo, que un comentario se sincronice).
+\end{enumerate}
+
+Para el reconocimiento de texto se usa el mismo conjunto de \citet{ibaceta2023evaluacion}: diez palabras de distinto largo (Control, Arte, Lectura, Jerusalén, Esponja, Pastilla, Caramelo, Metodología, Consistencia y Cama) en nueve posiciones de la zona de lectura, con diez repeticiones por posición. Así los resultados son directamente comparables con la línea base de 2023, en que la validez varió entre 10\% y 100\% según la posición. El plugin calcula precisión y recall con \texttt{get\_precision\_recall} (verificado en \texttt{test\_precision\_recall\_metric}):
+\begin{equation}
+\mathrm{Precisión}=\frac{|P_{\text{reconocidas}}\cap P_{\text{esperadas}}|}{|P_{\text{reconocidas}}|},\qquad
+\mathrm{Recall}=\frac{|P_{\text{reconocidas}}\cap P_{\text{esperadas}}|}{|P_{\text{esperadas}}|}.
+\end{equation}
+
+\subsection{Resultados}
+
+\pendiente{Tabla de validez y confiabilidad por módulo, con la línea base de \citet{ibaceta2023evaluacion} en una columna para comparar.}
+
+\section{Pruebas de aceptación}
+
+Las pruebas de aceptación se realizan en la sala del laboratorio InTeractiOn con el profesor guía como evaluador, siguiendo la práctica de los trabajos anteriores del laboratorio \citep{estay2020modulo,pezoa2020implementacion,figueroa2025arquitectura}. Cada prueba tiene precondiciones, pasos, requisitos abordados y resultado esperado, y se califica con la escala de la Tabla~\ref{tab:escala}. Los escenarios cubren la operación simultánea de módulos, la recuperación ante la falla parcial de un sensor (desconectar una cámara durante la sesión) y la sincronización de datos entre componentes de frecuencias distintas.
+
+\begin{table}[H]
+\centering
+\caption{Escala de evaluación de las pruebas de aceptación.}
+\label{tab:escala}
+\small
+\begin{tabular}{clc}
+\toprule
+\textbf{Evaluación} & \textbf{Significado} & \textbf{Cumplimiento} \\ \midrule
+A & Completa & 85--100\% \\
+B & Aceptada con observaciones & 55--84,9\% \\
+C & Incompleta & 45--54,9\% \\
+D & Insuficiente & 15--44,9\% \\
+E & No aceptada & 0--14,9\% \\ \bottomrule
+\end{tabular}
+\fuente{\citet{estay2020modulo}.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Pruebas de aceptación planificadas.}
+\label{tab:aceptacion}
+\footnotesize
+\begin{tabularx}{\textwidth}{l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.2cm} c}
+\toprule
+\textbf{ID} & \textbf{Prueba} & \textbf{Requisitos} & \textbf{Resultado} \\ \midrule
+PA-01 & Arrancar con todos los plugins del MVP, desconectar una cámara durante la sesión y reconectarla desde la interfaz. & N1, N2, N6, RNF-02 & \pendiente{} \\
+PA-02 & Resaltar una palabra en el papel y obtener su texto, su definición y su traducción. & FD1, B1--B13 & \pendiente{} \\
+PA-03 & Sincronizar resaltado, comentario, marcador y figura del papel al PDF y del PDF al papel. & C1--C12 & \pendiente{} \\
+PA-04 & Calibrar el lápiz y la mano, seleccionar un fragmento y capturarlo. & G1--G3, U2 & \pendiente{} \\
+PA-05 & Conectar GazePoint y TheEyeTribe, ver la retícula y activar un botón de la proyección con la mirada. & RO1--RO7 & \pendiente{} \\
+PA-06 & Registrar una sesión de lectura y verificar el CSV de mirada y la traza del orquestador. & RO4, N7 & \pendiente{} \\
+PA-07 & Preparar una sesión completa desde la pantalla de inicio siguiendo el manual. & U1, U3, RFS1--RFS8 & \pendiente{} \\ \bottomrule
+\end{tabularx}
+\fuente{Elaboración propia.}
+\end{table}
+
+\section{Síntesis de la evaluación}
+
+Las pruebas de software muestran que la arquitectura cumple los requisitos no funcionales que pueden verificarse sin el laboratorio: cobertura de \PSieteCobertura\% (RNF-03), latencia del ciclo completo de \PSieteCicloPnoventaycinco~ms en el percentil 95 (RNF-01), aislamiento de fallos en todas las fases del ciclo de vida (RNF-02), extensibilidad por configuración (RNF-04) y ejecución completa con dispositivos simulados (RNF-05). De los errores de EDDIE-2023, los de carga y despliegue, práctica de código, documentación e idioma que se pudieron reproducir quedan corregidos y respaldados por pruebas. Los errores de hardware y la coincidencia física del resaltado (E40, E41, E49) solo pueden cerrarse con las pruebas del laboratorio, para las que el protocolo y los instrumentos de medición ya están disponibles.

@@ -1,4 +1,4 @@
-"""Hallazgos conocidos en P-06 (código previo a la verificación). Se espera que fallen; P-07 los corrige."""
+# Hallazgos conocidos en P-06 (código previo a la verificación). Se espera que fallen; P-07 los corrige.
 import cv2
 import numpy as np
 import pymupdf

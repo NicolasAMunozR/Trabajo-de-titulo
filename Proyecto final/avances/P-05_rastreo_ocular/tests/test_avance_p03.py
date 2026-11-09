@@ -1,4 +1,4 @@
-"""Pruebas del avance P-03: reconocimiento de texto resaltado (IImageProcessor) sobre la cámara declarada."""
+# Pruebas del avance P-03: reconocimiento de texto resaltado (IImageProcessor) sobre la cámara declarada.
 import os
 
 import pytest

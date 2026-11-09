@@ -1,4 +1,4 @@
-"""Pruebas de los plugins que reemplazan los módulos C# de EDDIE-2023."""
+# Pruebas de los plugins que reemplazan los módulos C# de EDDIE-2023.
 import json
 import os
 
@@ -73,7 +73,7 @@ def test_ocr_reads_highlighted_word(frames):
 @pytest.mark.skipif(os.system("tesseract --version >/dev/null 2>&1") != 0
                     and os.system("tesseract --version >NUL 2>&1") != 0, reason="Tesseract no instalado")
 def test_ocr_drops_letter_fragments_cut_by_the_highlight():
-    """El resaltado toca letras de las palabras vecinas: no deben aparecer como "1 aumentada e"."""
+    # El resaltado toca letras de las palabras vecinas: no deben aparecer como "1 aumentada e".
     camera = MockCameraSensor()
     camera.initialize({"scene": "page"})
     plugin = ImageProcessorPlugin()
@@ -150,7 +150,7 @@ def _skin_frame_top_left() -> np.ndarray:
 
 @pytest.mark.parametrize("cls", [HandSkinPlugin, ColorPenPlugin])
 def test_gesture_preview_keeps_camera_orientation_by_default(cls):
-    """Regresión: la vista de calibración de Hand Skin salía rotada 180° respecto de la cámara."""
+    # Regresión: la vista de calibración de Hand Skin salía rotada 180° respecto de la cámara.
     frame = _skin_frame_top_left()
     cv2.circle(frame, (140, 110), 10, (40, 40, 255), -1)            # punta luminosa para Color Pen
     plugin = _gesture(cls, frame, processing_scale=1.0)
@@ -244,7 +244,7 @@ def test_physical_figures_become_digital_figures(sample_pdf, frames):
 
 
 def test_successive_saves_keep_every_annotation_on_disk(sample_pdf, frames):
-    """Regresión H-02: con saveIncr() el segundo guardado dañaba el PDF y se perdían los cambios previos."""
+    # Regresión H-02: con saveIncr() el segundo guardado dañaba el PDF y se perdían los cambios previos.
     plugin = _consistency(sample_pdf)
     assert plugin.add_highlight(Annotation(1, 0.1, 0.1, 0.5, 0.15, "highlight", "lectura"))
     plugin.add_bookmark("Introducción", 1)
@@ -258,7 +258,7 @@ def test_successive_saves_keep_every_annotation_on_disk(sample_pdf, frames):
 
 
 def test_locked_pdf_reports_a_clear_error_and_keeps_working(sample_pdf, monkeypatch):
-    """Si el PDF está bloqueado por otro programa (Windows), se informa y el plugin sigue utilizable."""
+    # Si el PDF está bloqueado por otro programa (Windows), se informa y el plugin sigue utilizable.
     from pathlib import Path
     plugin = _consistency(sample_pdf)
 
@@ -381,7 +381,7 @@ def test_device_factory_switches_to_simulated(monkeypatch):
 
 
 def test_mock_page_scene_is_ready_after_initialize():
-    """La hoja simulada se dibuja en initialize(): el primer ciclo ya no tiene un pico de ~20 ms."""
+    # La hoja simulada se dibuja en initialize(): el primer ciclo ya no tiene un pico de ~20 ms.
     camera = MockCameraSensor()
     camera.initialize({"scene": "page"})
     assert camera._still is not None
@@ -425,7 +425,7 @@ def test_damaged_pdf_is_rejected_with_a_clear_reason(tmp_path, sample_pdf):
 
 
 def _as_text_copy(pdf_path):
-    """Reproduce el daño real: un PDF comprimido copiado como texto UTF-8 (bytes → U+FFFD)."""
+    # Reproduce el daño real: un PDF comprimido copiado como texto UTF-8 (bytes → U+FFFD).
     import pymupdf
     with pymupdf.open(pdf_path) as document:
         data = document.tobytes(deflate=True, garbage=3, use_objstms=1)

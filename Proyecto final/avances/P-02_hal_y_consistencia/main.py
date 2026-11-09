@@ -1,16 +1,9 @@
-"""
-main.py — Avance P-02 (capa de abstracción de hardware + módulo de consistencia)
-================================================================================
-Sigue sin interfaz gráfica. El núcleo ya usa DeviceFactory: la cámara puede ser la
-real (OpenCV) o la simulada sin cambiar código, y el plugin de consistencia (PDF)
-se carga con el mismo mecanismo que el resto.
-
-Uso:
-  python main.py --sim                 → cámara simulada, 300 ciclos
-  python main.py                       → cámara real (índice de config/plugins.json)
-  python main.py --sim --cycles 1000
-  python demos/demo_consistencia.py    → demostración papel ↔ PDF con frames sintéticos
-"""
+# Este módulo es el punto de entrada del avance P-02: capa de abstracción de hardware + módulo de consistencia.
+# Uso:
+# python main.py --sim                 → cámara simulada, 300 ciclos
+# python main.py                       → cámara real (índice de config/plugins.json)
+# python main.py --sim --cycles 1000
+# python demos/demo_consistencia.py    → demostración papel ↔ PDF con frames sintéticos
 import argparse
 import json
 import logging

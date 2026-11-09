@@ -1,33 +1,14 @@
-"""
-plugins/demo_plugins.py  (solo avance P-01)
-==========================================
-Plugins mínimos para validar el núcleo antes de migrar los módulos reales de EDDIE.
-
-  FrameStatisticsPlugin  Consume la cámara declarada como dependencia (ICameraFrameConsumer)
-                         y calcula el brillo medio del frame. Valida la inyección de
-                         dependencias sensor → consumidor sin que el plugin abra la cámara.
-  CycleSummaryPlugin     Implementa ICycleResultConsumer: recibe lo que produjeron los demás
-                         plugins en el mismo ciclo. Valida el orden de ejecución del ciclo.
-  FaultInjectionPlugin   Lanza una excepción cada N ciclos. Valida el aislamiento de fallos:
-                         el resto de los plugins debe seguir ejecutándose.
-
-Ninguno de estos plugins existe en EDDIE-2023; se usan como "plugins de prueba" del
-núcleo, igual que el primer prototipo de Figueroa Contreras (2025) usó plugins básicos
-de mouse/teclado para validar la arquitectura de MO.
-"""
+# Plugins de demostración para el núcleo orquestador, sin dependencias externas.
+# No se importan módulos de EDDIE, solo dependencias de contratos (interfaces) y utilidades estándar.
 from typing import Optional
-
 import numpy as np
-
 from contracts.i_camera_frame_consumer import ICameraFrameConsumer
 from contracts.i_camera_sensor import ICameraSensor
 from contracts.i_cycle_result_consumer import ICycleResultConsumer
 from contracts.plugin_base import PluginBase
 
-
 class FrameStatisticsPlugin(PluginBase, ICameraFrameConsumer):
-    """Lee el último frame del sensor inyectado y reporta tamaño y brillo medio."""
-
+    # Lee el último frame del sensor inyectado y reporta tamaño y brillo medio.
     def __init__(self) -> None:
         self._sensor: Optional[ICameraSensor] = None
         self._frames = 0
@@ -55,8 +36,7 @@ class FrameStatisticsPlugin(PluginBase, ICameraFrameConsumer):
 
 
 class CycleSummaryPlugin(PluginBase, ICycleResultConsumer):
-    """Resume, al final de cada ciclo, qué plugins produjeron resultados y cuáles fallaron."""
-
+    # Resume, al final de cada ciclo, qué plugins produjeron resultados y cuáles fallaron.
     def __init__(self) -> None:
         self._seen: dict[str, dict] = {}
 
@@ -79,8 +59,7 @@ class CycleSummaryPlugin(PluginBase, ICycleResultConsumer):
 
 
 class FaultInjectionPlugin(PluginBase):
-    """Falla de forma controlada cada `fail_every` ciclos (prueba de aislamiento de fallos)."""
-
+    # Falla de forma controlada cada `fail_every` ciclos (prueba de aislamiento de fallos).
     def __init__(self) -> None:
         self._every = 10
         self._count = 0

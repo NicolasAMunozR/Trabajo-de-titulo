@@ -1,4 +1,4 @@
-"""Pruebas del avance P-04: los tres plug-ins gestuales comparten la cámara gestual declarada."""
+# Pruebas del avance P-04: los tres plug-ins gestuales comparten la cámara gestual declarada.
 import cv2
 import numpy as np
 import pytest

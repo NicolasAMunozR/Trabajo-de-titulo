@@ -1,4 +1,4 @@
-"""Estado compartido entre pantallas (lo que en C# se pasaba entre formularios por referencia)."""
+# Estado compartido entre pantallas (lo que en C# se pasaba entre formularios por referencia).
 from dataclasses import dataclass, field
 from typing import Optional
 

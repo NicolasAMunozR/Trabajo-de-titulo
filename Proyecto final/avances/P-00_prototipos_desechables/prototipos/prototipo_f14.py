@@ -1,17 +1,5 @@
-"""
-Prototipo F14 Búsqueda y Mapeo de Coordenadas QuadPoints en PDF Real
-Permite navegar por todas las páginas del PDF (teclas N / P).
-El usuario puede escribir cualquier término de búsqueda en tiempo real directamente en la interfaz.
-Panel Izquierdo: Vista Proyector Simulada.
-Panel Central: Inspector Digital del PDF con los 4 vértices del QuadPoint (TL, TR, BL, BR).
-Panel Derecho: Consola de telemetría de coordenadas y caja de entrada de texto interactiva.
-Controles:
-  N / P           : Página Siguiente / Página Anterior en el PDF real
-  CLIC IZQUIERDO  : Hacer clic sobre cualquier palabra del PDF para seleccionarla
-  O               : Abrir el PDF real modificado en el visor del sistema (Adobe Reader/Edge)
-  S               : Guardar captura de evidencia PNG
-  Q / ESC         : Salir
-"""
+# Prototipo F14: búsqueda de un término en el PDF real y mapeo de sus QuadPoints.
+# N / P = página  |  clic = seleccionar palabra  |  O = abrir PDF  |  S = guardar  |  Q / ESC = salir
 
 import os
 import sys
@@ -53,10 +41,7 @@ PDF_OUTPUT_PATH = EVID_DIR / "f14_synced.pdf"
 PDF_BACKUP_PATH = EVID_DIR / "f14_synced.pdf.bac"
 
 def buscar_y_aplicar_quadpoints(pdf_path, search_term, page_num=5, color=(1.0, 0.9, 0.0)):
-    """
-    Busca el término en la página del PDF real, extrae sus QuadPoints exactos
-    y aplica la anotación Highlight en el archivo de salida en disco.
-    """
+    # Busca el término en la página, obtiene sus QuadPoints y guarda el resaltado en el PDF de salida.
     if not search_term or not search_term.strip():
         return [], 0, 0
 
@@ -127,7 +112,7 @@ def renderizar_pagina_real(pdf_path, page_num=5, dpi=120):
         doc.close()
 
 def obtener_palabra_en_coordenada(pdf_path, page_num, click_pt):
-    """Detecta qué palabra del PDF real fue cliqueada y retorna su texto y Bounding Box."""
+    # Detecta qué palabra del PDF real fue cliqueada y retorna su texto y Bounding Box.
     doc = fitz.open(str(pdf_path))
     page_num = max(0, min(len(doc) - 1, page_num))
     page = doc[page_num]

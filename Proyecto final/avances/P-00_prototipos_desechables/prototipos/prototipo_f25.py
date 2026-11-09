@@ -1,8 +1,4 @@
-"""
-Prototipo F25 Text-to-Speech (TTS) real
-Hace hablar al sistema con pyttsx3 (SAPI5 en Windows).
-Dice frases relacionadas con EDDIE y muestra el texto
-"""
+# Prototipo F25: texto a voz con pyttsx3 (SAPI5 en Windows).
 import pathlib
 import time
 

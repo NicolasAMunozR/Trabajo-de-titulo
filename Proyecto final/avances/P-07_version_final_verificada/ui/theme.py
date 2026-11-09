@@ -1,24 +1,5 @@
-"""
-ui/theme.py
-===========
-Sistema visual de la interfaz renovada (P-08).
-
-La idea que ordena todo el diseño: EDDIE es un escritorio de lectura. En la ventana de
-configuración el "lomo" del libro es la barra lateral en tinta azul; en la proyección el
-fondo es negro (el proyector no emite luz ahí) y solo se iluminan la zona de lectura y las
-notas que el lector pidió. El amarillo queda reservado para el resaltador, que es lo que la
-cámara busca: ningún botón ni acento de la interfaz usa amarillo (hallazgo de Ibaceta, 2023).
-
-Tokens
-------
-TINTA       #1B2440  barra lateral, títulos y texto principal
-TINTA_2     #2A3558  estados hover sobre la tinta
-LIENZO      #EEF1F6  fondo del área de trabajo
-PAPEL       #FFFFFF  superficie de las tarjetas
-LINEA       #D6DCE6  bordes y divisores
-APAGADO     #5B6478  texto secundario
-ACENTO      #0B7A87  acción principal y selección (verde azulado, nunca amarillo)
-"""
+# Sistema visual de la interfaz renovada (colores, fuentes e iconos).
+# El amarillo queda reservado para el resaltador: ningún botón de la interfaz lo usa.
 from functools import lru_cache
 from pathlib import Path
 
@@ -66,7 +47,7 @@ def font(size: float = 10, weight: QFont.Weight = QFont.Weight.Normal) -> QFont:
 
 @lru_cache(maxsize=512)
 def icon_pixmap(name: str, color: str = TINTA, size: int = 20) -> QPixmap:
-    """Icono Lucide (ISC) pintado en `color`. Devuelve un pixmap vacío si no existe."""
+    # Icono Lucide (ISC) pintado en `color`. Devuelve un pixmap vacío si no existe.
     path = ICONS / f"{name}.svg"
     pm = QPixmap(QSize(size * 2, size * 2))
     pm.fill(Qt.GlobalColor.transparent)
@@ -86,7 +67,7 @@ def icon(name: str, color: str = TINTA, size: int = 20) -> QIcon:
 
 
 def target_pixmap(size: int = 60, color: str = PROY_TEXTO) -> QPixmap:
-    """Cruz de calibración clara (sobre fondo negro la del original, azul oscuro, no se veía)."""
+    # Cruz de calibración clara (sobre fondo negro la del original, azul oscuro, no se veía).
     pm = QPixmap(size, size)
     pm.fill(Qt.GlobalColor.transparent)
     p = QPainter(pm)
@@ -228,7 +209,7 @@ QLabel#syncPDFLabel, QLabel#PagesLabel {{ color: {TINTA}; font-weight: 600; }}
 
 
 def apply_theme(app) -> None:
-    """Paleta clara legible (también en Windows con modo oscuro) + estilo Fusion + QSS del sistema visual."""
+    # Paleta clara legible (también en Windows con modo oscuro) + estilo Fusion + QSS del sistema visual.
     try:
         app.styleHints().setColorScheme(Qt.ColorScheme.Light)          # Qt ≥ 6.8
     except AttributeError:

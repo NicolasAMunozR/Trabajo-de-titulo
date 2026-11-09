@@ -1,13 +1,4 @@
-"""
-ui/projection_widgets.py
-========================
-Controles de la pantalla proyectada portados desde ModuloVisualizacionDatos y la UI C#:
-  - HighlightTool  (HighlightTool.cs): área blanca donde se resalta o captura con el puntero.
-  - FiguresOverlay (FiguresDP.cs): dibuja sobre el papel las figuras del PDF.
-  - LineCanvas     (Line_Paint_*): líneas que conectan un resultado con su botón.
-  - RecentSearchItem (busquedasRecientes2.cs): tarjeta del historial de búsquedas.
-  - ReticleOverlay (ReticleDrawing.cs): retícula de la mirada sobre toda la pantalla.
-"""
+# Controles de la pantalla proyectada: HighlightTool, FiguresOverlay, LineCanvas, RecentSearchItem y ReticleOverlay.
 from dataclasses import dataclass
 from typing import Callable, Optional
 
@@ -20,7 +11,7 @@ from ui.modern_forms import build_modern
 
 @dataclass
 class NormRect:
-    """Struct NormRect de HighlightTool.cs (izquierda, y/alto, ancho/alto, alto/alto)."""
+    # Struct NormRect de HighlightTool.cs (izquierda, y/alto, ancho/alto, alto/alto).
     left: float = 0.0
     bottom: float = 0.0
     right: float = 0.0
@@ -48,12 +39,12 @@ class HighlightTool(QWidget):
         self.on_num_clicks: Optional[Callable[[], None]] = None
 
     def runtime_final_location(self, x: int, y: int) -> None:
-        """RuntimeFinalLocation: la esquina inferior derecha pasa a (x, y)."""
+        # RuntimeFinalLocation: la esquina inferior derecha pasa a (x, y).
         self.resize(max(1, x - self.x()), max(1, y - self.y()))
         self.update()
 
     def get_rectangle(self) -> QRect:
-        """GetRectangle(HighlightHeight): banda del alto de una línea de texto."""
+        # GetRectangle(HighlightHeight): banda del alto de una línea de texto.
         rect = QRect(min(self._start.x(), self._end.x()), self._start.y(),
                      abs(self._start.x() - self._end.x()), abs(self.highlight_height))
         self.rect_drawn = rect
@@ -62,14 +53,14 @@ class HighlightTool(QWidget):
         return rect
 
     def normalized_selection(self) -> Optional[tuple[float, float, float, float]]:
-        """Rectángulo resaltado en coordenadas de página normalizadas (x0, y0, x1, y1)."""
+        # Rectángulo resaltado en coordenadas de página normalizadas (x0, y0, x1, y1).
         n = self.norm_rect
         if n.right <= 0:
             return None
         return n.left, n.bottom, min(1.0, n.left + n.right), min(1.0, n.bottom + n.top)
 
     def set_page_rectangles(self, rects: list[tuple[float, float, float, float]]) -> None:
-        """GetRectangles: resaltados del PDF (normalizados) proyectados sobre el área."""
+        # GetRectangles: resaltados del PDF (normalizados) proyectados sobre el área.
         w, h = self.width(), self.height()
         self.rectangles = [QRect(int(x0 * w), int(y0 * h), int((x1 - x0) * w), int((y1 - y0) * h))
                            for x0, y0, x1, y1 in rects]
@@ -110,7 +101,7 @@ class HighlightTool(QWidget):
 
 
 class FiguresOverlay(QWidget):
-    """FiguresDP: rectángulos y elipses del PDF proyectados en negro sobre fondo blanco."""
+    # FiguresDP: rectángulos y elipses del PDF proyectados en negro sobre fondo blanco.
 
     def __init__(self, figures: dict, parent=None) -> None:
         super().__init__(parent)
@@ -133,7 +124,7 @@ class FiguresOverlay(QWidget):
 
 
 class LineCanvas(QWidget):
-    """Panel con fondo de la interfaz donde se trazan las líneas guía de un resultado."""
+    # Panel con fondo de la interfaz donde se trazan las líneas guía de un resultado.
 
     def __init__(self, panel: QWidget) -> None:
         super().__init__(panel)
@@ -158,7 +149,7 @@ class LineCanvas(QWidget):
 
 
 class RecentSearchItem(QFrame):
-    """busquedasRecientes2: fecha y hora, término buscado y servicio utilizado."""
+    # busquedasRecientes2: fecha y hora, término buscado y servicio utilizado.
 
     def __init__(self, date_time: str, term: str, service: str) -> None:
         super().__init__()
@@ -174,7 +165,7 @@ class RecentSearchItem(QFrame):
 
 
 class ReticleOverlay(QWidget):
-    """Ventana transparente, siempre encima y sin capturar el mouse, que dibuja la retícula."""
+    # Ventana transparente, siempre encima y sin capturar el mouse, que dibuja la retícula.
 
     def __init__(self, reticle_path: str) -> None:
         super().__init__(None, Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint

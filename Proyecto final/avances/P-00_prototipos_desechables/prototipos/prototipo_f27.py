@@ -1,13 +1,5 @@
-"""
-Prototipo F27 Highlight Digital sobre cámara
-Captura frames. Cuando el ratón
-se detiene sobre una línea de texto, EDDIE proyecta una
-banda de highlight semitransparente sobre esa zona.
-
-Simula lo que se vería proyectado sobre el libro físico.
-Mueve el ratón por la ventana para cambiar la línea resaltada.
-S = guardar  |  Q = salir
-"""
+# Prototipo F27: proyecta una banda de resaltado sobre la línea de texto donde se detiene el ratón.
+# S = guardar  |  Q = salir
 import cv2, pathlib, time, sys
 import numpy as np
 

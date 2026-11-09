@@ -1,16 +1,6 @@
-"""
-Dispositivos simulados para DeviceFactory (EDDIE_DEVICE_MODE=sim).
-
-Permiten ejecutar EDDIE completo sin el montaje del laboratorio:
-  - MockCameraSensor: escena sintética ("page" = hoja con un resaltado amarillo
-    proyectado; "pen" = fondo oscuro con un lápiz luminoso rojo en movimiento),
-    o una imagen/video real con "source": "ruta".
-  - EyeTrackerMock: usa la posición del cursor como mirada (prototipo F09) y,
-    si no hay cursor disponible, una trayectoria de lectura sintética.
-
-Ningún dato simulado se reporta como real: todos los resultados incluyen
-"simulated": True para que la traza de ejecución los distinga.
-"""
+# Dispositivos simulados para DeviceFactory (EDDIE_DEVICE_MODE=sim).
+# MockCameraSensor genera una escena sintética y EyeTrackerMock usa el cursor como mirada.
+# Todos los resultados incluyen "simulated": True para distinguirlos de los reales.
 import logging
 import math
 import time
@@ -66,7 +56,7 @@ def _pen_scene(width: int, height: int, t: float) -> np.ndarray:
 
 
 class MockCameraSensor(ICameraSensor):
-    """Cámara simulada que cumple el mismo contrato ICameraSensor."""
+    # Cámara simulada que cumple el mismo contrato ICameraSensor.
 
     def __init__(self) -> None:
         self._latest_frame: Optional[CameraFrame] = None
@@ -150,7 +140,7 @@ class MockCameraSensor(ICameraSensor):
 
 
 class EyeTrackerMock(IEyeTracker):
-    """Mirada simulada: cursor del sistema (F09) o trayectoria sintética de lectura."""
+    # Mirada simulada: cursor del sistema (F09) o trayectoria sintética de lectura.
 
     def __init__(self) -> None:
         self._gaze: Optional[GazePoint] = None

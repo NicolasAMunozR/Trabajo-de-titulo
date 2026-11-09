@@ -1,13 +1,6 @@
-"""
-DEMO REAL F12 – Dwell Time Detection (ratón como gaze)
-=======================================================
-Abre una página de texto. Cuando el ratón (gaze proxy)
-permanece MÁS DE 600ms en la misma zona, se activa el
-evento de "dwell" y se resalta la palabra/zona.
-
-Mueve el ratón lentamente y detente sobre una línea.
-S = guardar  |  Q = salir
-"""
+# Demo real F12: detección de permanencia (dwell) usando el ratón como mirada.
+# Si el ratón queda más de 600 ms en la misma zona se resalta esa línea.
+# S = guardar  |  Q = salir
 import cv2, pathlib, time, collections
 import numpy as np
 

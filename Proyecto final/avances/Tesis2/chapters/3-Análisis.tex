@@ -1,0 +1,874 @@
+\chapter{Análisis}
+\label{cap:cuerpo}
+\label{cap:analisis}
+
+%Este capítulo corresponde a la etapa \textit{Plan} del ciclo PDCA y al primer objetivo específico. Presenta el diagnóstico de la arquitectura en C\#, la captura de requerimientos de la nueva versión, el análisis de factibilidad y los prototipos desechables con los que se evaluó la migración de cada función crítica.
+
+\section{Diagnóstico}
+
+%\label{sec:diagnostico}
+
+%\subsection{Reclasificación de los errores de EDDIE-2023}
+
+%\citet{ibaceta2023evaluacion} registró 67 errores al evaluar EDDIE con MECIVA PS, organizados según el módulo en que aparecieron (consistencia, rastreo ocular, documento físico, otros). Esa organización indica \emph{dónde} se manifiesta cada falla, pero no \emph{por qué} ocurre, que es lo que determina si una reconstrucción del núcleo puede corregirla. Por ello se reclasificaron los 67 errores según su causa raíz (Tabla~\ref{tab:reclasificacion}; el detalle por error está en el Anexo~\ref{an:errores}).
+
+%\begin{table}[H]
+%\centering
+%\caption{Reclasificación por causa de los 67 errores documentados por \citet{ibaceta2023evaluacion}.}
+%\label{tab:reclasificacion}
+%\small
+%\begin{tabularx}{\textwidth}{p{4.2cm} c c X}
+%\toprule
+%\textbf{Causa} & \textbf{N.\textsuperscript{o}} & \textbf{\%} & \textbf{Ejemplos y relación con la reconstrucción} \\ \midrule
+%Carga y despliegue & 16 & 23,9 & DLL o carpeta de plugins faltante (E50), rutas absolutas de desarrolladores anteriores, ensamblados copiados a mano. Los corrige el diseño: un único cargador y un único archivo de configuración. \\ \midrule
+%Práctica de código & 26 & 38,8 & Variables con valor nulo, excepciones no capturadas, acciones sobre un PDF no cargado (E11). Los corrige el aislamiento de fallos del orquestador y las validaciones de cada plugin. \\ \midrule
+%Hardware y sensores & 9 & 13,4 & Eye tracker no reconocido (E15), cámara inestable (E16), zona inferior de la proyección no detectable (E49). Requieren el laboratorio. \\ \midrule
+%Servicios externos & 8 & 11,9 & APIs de búsqueda con credenciales vencidas. Se reemplazan por un modelo de lenguaje. \\ \midrule
+%Interfaz e idioma & 3 & 4,5 & Mensajes en un idioma distinto (E14). \\ \midrule
+%Infraestructura de laboratorio & 3 & 4,5 & Equipo, montaje y red de la sala. Fuera del alcance del software. \\ \midrule
+%Documentación & 2 & 3,0 & Sin manual de instalación ni de uso (E12, E13). \\ \midrule
+%\textbf{Total} & \textbf{67} & \textbf{100} & \\ \bottomrule
+%\end{tabularx}
+%\fuente{Elaboración propia a partir de \citet{ibaceta2023evaluacion}.}
+%\end{table}
+
+%La reclasificación muestra que las dos causas más frecuentes, práctica de código (26) y carga y despliegue (16), suman 42 errores (62,7\%) que dependen de la arquitectura y no del hardware. Son las que una reconstrucción del núcleo puede atacar de forma estructural. Los errores de hardware e infraestructura (12) solo pueden verificarse en el laboratorio, y los de servicios externos (8) se resuelven cambiando de proveedor.
+
+%\subsection{Arquitectura en C\#}
+
+%EDDIE-2023 es una solución de Visual Studio con 26 proyectos y unas 45\,000 líneas de C\#. La aplicación principal (\texttt{AugmentedReadingApp}) contiene la interfaz WinForms, la proyección y la lógica de coordinación, y carga los módulos de tres formas distintas (Figura~\ref{fig:arq_legada}): los plugins de consistencia con \texttt{Assembly.LoadFrom} desde una carpeta que debía existir en el equipo, los de rastreo ocular en un \texttt{AppDomain} subordinado mediante una clase intermedia \texttt{MarshalByRefObject}, y los de búsqueda con \texttt{Assembly.LoadFile}. Ninguno de los tres comparte una interfaz común con los otros, por lo que cada nuevo módulo agregó su propio punto de falla.
+
+%\begin{figure}[H]
+%\centering
+%\begin{tikzpicture}[
+%  box/.style={draw=eddietinta, rounded corners=2pt, align=center, font=\footnotesize, minimum height=0.9cm, text width=3.0cm},
+%  app/.style={box, fill=eddietinta!8, text width=8.6cm, minimum height=1.1cm},
+%  arr/.style={-{Stealth[length=2mm]}, thick, eddietinta}]
+%\node[app] (app) at (0,0) {\textbf{AugmentedReadingApp} (WinForms)\\ interfaz + proyección + coordinación de módulos};
+%\node[box] (c) at (-4,-2.2) {Consistencia\\ \nolinkurl{Assembly.LoadFrom}};
+%\node[box] (e) at (0,-2.2) {Rastreo ocular\\ \texttt{AppDomain} + proxy};
+%\node[box] (b) at (4,-2.2) {Búsqueda web\\ \nolinkurl{Assembly.LoadFile}};
+%\node[box, fill=red!6] (c2) at (-4,-4.5) {\nolinkurl{PluginsConsistencia/}\\ \textit{carpeta creada a mano}};
+%\node[box, fill=red!6] (e2) at (0,-4.5) {DLL por dispositivo\\ \textit{ruta fija}};
+%\node[box, fill=red!6] (b2) at (4,-4.5) {APIs REST\\ \textit{credenciales vencidas}};
+%\foreach \x in {c,e,b} \draw[arr] (app.south -| \x) -- (\x);
+%\draw[arr] (c) -- (c2); \draw[arr] (e) -- (e2); \draw[arr] (b) -- (b2);
+%\node[box, text width=2.0cm] (g) at (-6.4,0) {Gestos y OCR\\ \textit{en la aplicación}};
+%\draw[arr] (g) -- (app);
+%\end{tikzpicture}
+%\caption{Arquitectura de EDDIE-2023: tres mecanismos de carga independientes.}
+%\label{fig:arq_legada}
+%\fuente{Elaboración propia a partir del repositorio EDDIE-2023.}
+%\end{figure}
+
+
+\section{Captura de requerimientos}
+
+La captura de requerimientos tuvo por objetivo definir qué debe hacer la nueva versión de EDDIE (augmEnteD reaDIng dEsk) y bajo qué condiciones de calidad debe hacerlo. El punto de partida fue el sistema legado, un desarrollo monolítico en C\# ubicado en el repositorio EDDIE-2023. Dado que la actualización exige conocer tanto las capacidades que deben conservarse como las deficiencias que deben corregirse, el proceso se llevó a cabo mediante un enfoque multifacético y defensivo, con el fin de asegurar una cobertura completa y actualizada de las necesidades científicas y operativas del proyecto.
+ 
+El proceso persiguió dos metas complementarias. La primera fue consolidar las funcionalidades de interacción físico-digital sobre papel impreso que el sistema ya ofrecía. La segunda fue resolver de manera estructural los 67 errores documentados por \cite{ibaceta2023evaluacion}, entre los que se cuentan variables con valor nulo, rutas locales de desarrolladores anteriores, y la falta de manuales de instalación y de uso. Ambas metas confluyen en una decisión arquitectónica: adoptar un diseño extensible basado en plugins sobre Python, línea inspirada en la evolución de Multimodal Observer \citep{figueroa2025arquitectura}.
+ 
+Las fuentes de información y las etapas metodológicas empleadas se detallan a continuación.
+ 
+\subsection{Fuentes y etapas del proceso}
+ 
+\begin{description}
+    \item[Revisión de requerimientos e historial legado.] Se analizaron los requerimientos funcionales y no funcionales del desarrollo original de la plataforma, compilados en los trabajos de titulación previos de EDDIE \citep{carrasco2017diseno,contreras2019desarrollo,montanares2019desarrollo,pezoa2020implementacion,estay2020integracion,santibanez2020rediseno} y reunidos y diagnosticados por \cite{ibaceta2023evaluacion}. Esta revisión permitió establecer una línea base de las capacidades que debían mantenerse, como el trazado de destacados, la lectura de QuadPoints y el manejo de notas adhesivas, y distinguirlas de aquellas que requerían una reestructuración crítica, como la carga dinámica de ensamblados DLL y la gestión de punteros nulos.
+    % VERIFICAR: confirmar con el repositorio/tesis de Pezoa que QuadPoints formaba parte del sistema legado.
+ 
+    \item[Directrices del profesor guía y diagnóstico arquitectónico.] Se integraron las prioridades surgidas del diagnóstico de la arquitectura en C\#, tomando como referencia las siete categorías de errores internos definidas por \cite{ibaceta2023evaluacion}. Como resultado, se estableció como requisito el desacoplamiento del núcleo respecto de bibliotecas de terceros del sistema legado, reemplazando iTextSharp por PyMuPDF y Emgu CV por OpenCV, y se incorporó un orquestador central que coordina los módulos.
+    % VERIFICAR: (1) que las 7 categorias de tu texto sean las 7 internas de Ibaceta; (2) respaldo de las directrices del profesor guia (acta de reunion o correo).
+ 
+    \item[Referentes de arquitectura y estado del arte.] Como referente se consideró Multimodal Observer (MO), plataforma de captura y análisis multimodal desarrollada en el mismo laboratorio, InTeractiOn. El estado del arte de MO \citep{figueroa2025arquitectura} describe herramientas como NoldusHub, OpenSignals y OBS Studio, y su diseño incorpora la sincronización temporal entre fuentes de captura, el registro de eventos en archivos JSON y la separación entre plugins de captura (Capture Plugins) y vistas de reproducción (Playback Views). Este referente es pertinente para EDDIE, ya que, este ya contaba con una arquitectura modular pensada para incorporar nuevos módulos (Contreras, 2019, requisitos RFCO12 y RFCO13 según \cite{ibaceta2023evaluacion}) y con plugins por dispositivo de rastreo ocular, cargados como bibliotecas mediante la interfaz IEyeTracking \citep{estay2020integracion}. Segundo, de MO se adopta la idea de extensibilidad por plugins, que en EDDIE se generaliza desde el módulo de rastreo ocular hacia el resto de los módulos.
+    % VERIFICAR: Tobii Pro Lab se retiro de la lista porque no aparece en ninguna fuente disponible. Si lo analizaste, agrega la referencia.
+ 
+    \item[Estandarización y especificación de historias de usuario.] Todos los requisitos recopilados se formalizaron y se clasificaron por módulos funcionales. Se eliminaron las ambigüedades y se redactó cada requisito de modo que fuese verificable, ya sea mediante pruebas unitarias con pytest o mediante los prototipos funcionales desarrollados bajo la metodología RAD.
+\end{description}
+
+\subsection{Requerimientos funcionales}
+ 
+Los requerimientos funcionales describen las operaciones concretas que la plataforma debe realizar. La Tabla~\ref{tab:rf_resumen} presenta un resumen de los 55 requerimientos identificados, agrupados en siete módulos: Núcleo, Organización, Captura, Consistencia Físico-Digital, Visualización y los plugins de captura y de visualización. Para cada módulo se indica la cantidad de requerimientos y un conjunto de ejemplos representativos.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Resumen de requerimientos funcionales por módulo.}
+    \label{tab:rf_resumen}
+    \begin{small}
+    \begin{tabular}{|L{3.0cm}|L{1.4cm}|L{9.4cm}|}
+        \hline
+        \textbf{Módulo} & \textbf{Cantidad de RF} & \textbf{Ejemplos de requerimientos representativos} \\ \hline
+        Organización y Gestión Experimental & 12 & Crear, editar, eliminar, visualizar y proteger (bloqueo de solo lectura) proyectos de investigación, participantes y protocolos experimentales. \\ \hline
+        Núcleo y Orquestador Central & 10 & Administrar el ciclo de vida de plugins (initialize, execute, release), gestionar la persistencia en preferences.json, soportar el cambio dinámico de idioma (español/inglés) e integrar la bandeja del sistema (System Tray). \\ \hline
+        Captura de Datos y Sensores & 9 & Iniciar, pausar, reanudar y detener capturas síncronas de video de cámara y pantalla; registrar eventos de teclado y mouse en archivos JSON estructurados; gestionar sesiones de captura. \\ \hline
+        Consistencia Físico-Digital (F14--F17) & 11 & Búsqueda y mapeo de QuadPoints exactos en PDFs reales (F14); sincronización del destacado físico $\leftrightarrow$ digital; detección de post-its en papel con Tesseract OCR e inyección de anotaciones; clasificación de figuras geométricas mediante el índice de circularidad $C = 4\pi A/P^{2}$ y proyección de halos de luz. \\ \hline
+        Visualización y Reproducción Síncrona & 7 & Reproducir sesiones capturadas en una línea de tiempo unificada (Timeline Scrubber); sincronizar video, trazo del cursor del mouse y reconstrucción del texto del teclado; organizar espacios de trabajo en ventanas independientes. \\ \hline
+        Plugins de Captura y Hardware (HAL) & 3 & Extender conectores de hardware para rastreo ocular (EyeTracker), sensores gestuales y procesadores de imagen mediante contratos de interfaz estrictamente definidos (PluginBase). \\ \hline
+        Plugins de Visualización y Proyección & 3 & Desplegar overlays de proyección sobre el papel físico y vistas en miniatura de los canales de captura en tiempo real. \\ \hline
+        \textbf{TOTAL} & \textbf{55} & \\ \hline
+    \end{tabular}
+    \end{small}
+    \fuente{Elaboración propia, 2026.}
+\end{table}
+ 
+La distribución de los requerimientos muestra que los módulos de Organización (12), Consistencia Físico-Digital (11) y Núcleo (10) suman 33 de los 55 requerimientos. La consistencia entre el formato físico y el digital es, según \cite{pezoa2020implementacion}, uno de los aspectos que distinguen a EDDIE como propuesta para investigar el efecto de la lectura aumentada en la comprensión lectora. Los módulos de plugins cuentan con tres requerimientos cada uno porque, como indica la Tabla~\ref{tab:rf_resumen}, establecen contratos de interfaz (PluginBase) y no funciones específicas de cada dispositivo.
+ 
+\subsection{Requerimientos no funcionales}
+ 
+Los requerimientos no funcionales establecen las cualidades que debe cumplir el sistema independientemente de las funciones que ofrezca. La Tabla~\ref{tab:rnf} especifica los ocho requerimientos que rigen el diseño y la operación de la nueva arquitectura en Python, derivados de las restricciones de calidad, rendimiento y mantenibilidad establecidas para el proyecto. Los requerimientos RNF-01 a RNF-05 guardan correspondencia con los requerimientos no funcionales de Multimodal Observer \citep{figueroa2025arquitectura}.
+% VERIFICAR: confirmar que RNF-01 a RNF-05 fueron adaptados de Figueroa (2025) y no de otra fuente.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Requerimientos no funcionales.}
+    \label{tab:rnf}
+    \begin{small}
+    \begin{tabular}{|L{1.2cm}|L{3.0cm}|L{9.5cm}|}
+        \hline
+        \textbf{ID} & \textbf{Requerimiento no funcional} & \textbf{Criterio de aceptación / Fuente} \\ \hline
+        RNF-01 & Multiplataforma & El sistema debe ejecutarse en Windows 10/11, Linux (Ubuntu) y macOS utilizando un runtime estándar de Python 3.14 y paquetes multiplataforma de PyPI. (Adaptado de Figueroa Contreras, 2025) \\ \hline
+        RNF-02 & Modularidad y extensibilidad estricta & El sistema debe permitir integrar nuevas funcionalidades mediante plugins desacoplados que hereden de  PluginBase, sin requerir modificaciones en el código fuente del núcleo. \\ \hline
+        RNF-03 & Internacionalización (i18n) & La interfaz y los módulos deben soportar el cambio dinámico de idioma entre español e inglés mediante diccionarios JSON traducibles. \\ \hline
+        RNF-04 & Documentación y mantenibilidad & El código fuente debe contar con una cobertura del 100\,\% de comentarios docstring bajo el estándar PEP~257, junto con las convenciones de estilo de PEP~8, e incluir guías claras para el desarrollo de nuevos plugins. \\ \hline
+        RNF-05 & Carga dinámica en tiempo de ejecución & El módulo PluginLoader debe poder instanciar, cargar y descargar plugins en tiempo de ejecución, sin recompilar la aplicación ni usar dominios de aplicación inestables (AppDomains). \\ \hline
+        RNF-06 & Consistencia espacio-temporal físico-digital & La conversión de coordenadas entre la superficie del papel impreso y los documentos PDF digitales debe ser homotética y exacta, utilizando puntos tipográficos (pt) y QuadPoints de ocho vértices sin desalineación. \\ \hline
+        RNF-07 & Eficiencia y gestión de memoria & El procesamiento de imágenes con OpenCV debe liberar explícitamente los buffers de memoria (arreglos NumPy), evitando congelamientos o degradación del sistema por uso prolongado. \\ \hline
+        RNF-08 & Resiliencia y tolerancia a fallos & La falla o excepción en la ejecución de un plugin no debe provocar la caída global del sistema; el orquestador debe aislar el error, registrar el evento en el log y continuar la ejecución de forma defensiva. \\ \hline
+    \end{tabular}
+    \end{small}
+    \fuente{Elaboración propia, 2026.}
+\end{table}
+ 
+Varios de los requerimientos no funcionales se relacionan con errores documentados en el sistema legado por \cite{ibaceta2023evaluacion}. Los requerimientos RNF-02 y RNF-05 se vinculan con la carga de plugins como archivos .dll que debían compilarse y ubicarse manualmente en carpetas específicas, lo que produjo errores como la ausencia de la carpeta PluginsConsistencia (EC15), de los plugins de rastreo ocular (ERO2) y del plugin consistencyLibraryFiguresDP.dll (EC24). El RNF-08 se relaciona con las fallas provocadas por variables con valor nulo (ERO3 a ERO6 y EC17 a EC19). El RNF-06 se relaciona con el error de destacado de texto que no coincidía en posición ni largo entre el formato físico y el digital (EC6), y el RNF-07 con el error de reconocimiento de texto que dejaba de funcionar tras un uso prolongado (EFD3). Finalmente, el RNF-03 se relaciona con los mensajes de error en un idioma distinto al del resto de la aplicación (EO6), y el RNF-04 con la falta de comentarios en el código, de nombres representativos y de manuales de instalación y de uso (EO11, EO12, EE6 y EE7).
+ 
+Estos ocho requerimientos constituyen además el criterio de verificación de la fase siguiente: cada prototipo se evalúa explícitamente frente a aquellos que le son aplicables, como se aprecia en las fichas de validación de la sección de prototipado.
+
+\section{Factibilidad técnica}
+
+
+
+\section{Prototipado}
+Esta sección presenta la fase de prototipado del proyecto, cuyo propósito es reducir la incertidumbre técnica antes de abordar el diseño e implementación de la solución definitiva. Dado que el sistema EDDIE-2023 fue desarrollado originalmente en C\# y depende de bibliotecas específicas de Windows, resulta necesario comprobar, de manera temprana y con bajo costo, que sus funciones esenciales pueden reproducirse en Python sin pérdida de capacidades. Con este fin se construyeron prototipos de carácter desechable (throwaway), es decir, piezas de software acotadas cuyo valor reside en los hallazgos que entregan y no en el código que producen.
+ 
+Durante las primeras semanas del proyecto, cada prototipo se desarrolló en un entorno Python aislado de las dependencias de hardware y de interfaz gráfica del sistema legado. Este aislamiento permitió evaluar la factibilidad técnica de cada función en función de tres criterios: (i) la equivalencia funcional respecto de la implementación en C\#, (ii) la compatibilidad de las bibliotecas disponibles en el ecosistema Python con los requerimientos del sistema, y (iii) el cumplimiento de los Requisitos Funcionales (RF) de cada módulo (Tabla~\ref{tab:rf_resumen}) y de los Requisitos No Funcionales de calidad y rendimiento (RNF-01 a RNF-08, Tabla~\ref{tab:rnf}).
+ 
+Como paso previo, se realizó un levantamiento exhaustivo de las funciones que componen el código original. Este inventario permitió identificar cuáles resultan relevantes para el alcance del proyecto y cuáles quedan fuera de él, ya sea por depender de hardware no disponible o por tratarse de servicios externos que pueden integrarse sin un prototipo previo. Las funciones se agruparon en siete subsistemas según su responsabilidad dentro de la arquitectura y se presentan en las Tablas~\ref{tab:func_procesamiento_imagenes} a~\ref{tab:func_gui_proyeccion}. Cada tabla indica el identificador de la función, su equivalente en el código legado, una descripción, el hardware que requiere y la decisión de prototiparla o no, junto con la tecnología Python propuesta como reemplazo.
+ 
+% tablas por verificar que corresponde a ese numero
+
+% ==========================================
+% SUBSISTEMA 1: PROCESAMIENTO DE IMÁGENES Y VISIÓN COMPUTACIONAL
+% ==========================================
+\begin{table}[H]
+    \centering
+    \caption{Funciones del subsistema de procesamiento de imágenes y visión computacional.}
+    \label{tab:func_procesamiento_imagenes}
+    \begin{small}
+    \begin{tabular}{|L{0.6cm}|L{2.2cm}|L{2.2cm}|L{4.1cm}|L{1.6cm}|L{1.8cm}|}
+        \hline
+        \textbf{ID} & \textbf{Función EDDIE-2023} & \textbf{Archivos C\# Legacy} & \textbf{Descripción de la Función} & \textbf{Hardware Requerido} & \textbf{¿Prototipar?} \\ \hline
+        F1 & Enumeración e Inicialización de Cámaras & Módulo Procesamiento Imágenes / CameraActivity.cs & Detecta, enumera y configura las cámaras conectadas mediante DirectShow. & Cámara 1 (Texto) y/o Cámara 2 (Gestos) & SÍ (OpenCV cv2.Video Capture) \\ \hline
+        F2 & Pre-procesamiento y Binarización de Texto & Módulo Procesamiento Imágenes / ColorRecognition.cs & Recorta la imagen del papel, convierte BGR a escala de grises, aplica filtro Gaussiano y binarización Otsu para aislar el texto impreso. & Cámara 1 (Texto / Documentos) & SÍ (OpenCV cv2.threshold) \\ \hline
+        F3 & Reconocimiento Óptico de Caracteres (OCR) & Módulo Procesamiento Imágenes / OCRProcess.cs & Convierte la imagen recortada y preprocesada en texto legible en español e inglés usando el motor Tesseract. & Ninguno (solo software / Tesseract binary) & SÍ (PyTesseract / EasyOCR) \\ \hline
+        F4 & Detección Automática de Páginas del Libro & Augmented ReadingApp / PageDetectionSettings.cs & Detecta los bordes del libro impreso para ajustar el área de proyección y compensar la deformación de la página. & Cámara 1 (Texto) + Proyector & SÍ (OpenCV findContours) \\ \hline
+    \end{tabular}
+    \end{small}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+El subsistema de procesamiento de imágenes constituye la base perceptiva de EDDIE, pues es el encargado de transformar lo que la cámara observa sobre el escritorio en información que el resto del sistema puede interpretar. Sus cuatro funciones forman una cadena de dependencias: la correcta inicialización de las cámaras (F1) habilita la captura de imágenes, el pre-procesamiento y la binarización (F2) mejoran su calidad, el OCR (F3) extrae el texto y la detección de páginas (F4) delimita el área de trabajo. Dado que un fallo en cualquiera de estos eslabones degrada todas las funcionalidades posteriores, se decidió prototipar las cuatro funciones. Además, todas cuentan con alternativas maduras en Python, principalmente OpenCV y Tesseract, lo que hace esperable una migración sin pérdida de funcionalidad.
+ 
+% ==========================================
+% SUBSISTEMA 2: RECONOCIMIENTO GESTUAL E INTERACCIÓN SIN CONTACTO
+% ==========================================
+\begin{table}[H]
+    \centering
+    \caption{Funciones del subsistema de reconocimiento gestual e interacción sin contacto.}
+    \label{tab:func_reconocimiento_gestual}
+    \begin{small}
+    \begin{tabular}{|L{0.6cm}|L{2.2cm}|L{2.2cm}|L{4.1cm}|L{1.6cm}|L{1.8cm}|}
+        \hline
+        \textbf{ID} & \textbf{Función EDDIE-2023} & \textbf{Archivos C\# Legacy} & \textbf{Descripción de la Función} & \textbf{Hardware Requerido} & \textbf{¿Prototipar?} \\ \hline
+        F5 & Seguimiento de Puntero / Lápiz de Color (ColorPen) & ColorPen Recognition / ColorPen.cs & Segmenta un marcador o lápiz de color (azul/rojo) en el espacio HSV/RGB para usarlo como puntero interactivo sobre el papel. & Cámara 2 (Gestos / Escritorio) & SÍ (OpenCV inRange HSV) \\ \hline
+        F6 & Segmentación de Mano y Apuntado con Dedo (HandSkin) & Hand Skin Recognition / YCrCbSkin Detector.cs & Aísla la piel humana en espacio YCrCb, calcula contornos y defectos de convexidad para detectar la punta del dedo índice y contar dedos levantados. & Cámara 2 (Gestos / Escritorio) & SÍ (OpenCV YCrCb + convexity Defects) \\ \hline
+        F7 & Mapeo de Coordenadas de Gestos a Pantalla & Módulo Reconocimiento Gestual / GestureRecognitionActivity.cs & Transforma las coordenadas (X,Y) del sensor de cámara a la resolución del proyector y simula clics mediante Win32 P/Invoke. & Cámara 2 + Proyector & SÍ (Calibración cv2.find Homography) \\ \hline
+        F8 & Reconocimiento Gestual 3D (LeapMotion) & Leap Motion Recognition / Leap Motion Plugin.cs & Captura gestos de las manos en 3D mediante el sensor nativo Leap Motion. & Controller Leap Motion 3D & No (Fuera de alcance MVP laboratorio) \\ \hline
+        F9 & Fallback de Entrada por Mouse (Mouse Recognition) & Mouse Recognition / Mouse Plugin.cs & Permite usar el puntero del ratón como dispositivo de interacción secundario. & Mouse / Teclado & SÍ (Mouse fallback integrado) \\ \hline
+    \end{tabular}
+    \end{small}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+Este subsistema permite al lector interactuar con el documento sin contacto con dispositivos tradicionales, ya sea mediante un lápiz de color (F5) o mediante su propia mano (F6). La función F7 completa el flujo al traducir las coordenadas de la cámara al espacio del proyector, de modo que el gesto detectado se convierta en una acción sobre la interfaz proyectada. Se seleccionaron para prototipado cuatro de las cinco funciones. La excepción es F8 (Leap Motion), descartada por depender de un sensor 3D propietario que escapa al alcance del MVP de laboratorio. En su lugar, la función F9 incorpora el ratón como mecanismo de respaldo, garantizando que el sistema pueda operarse incluso cuando el reconocimiento por cámara no esté disponible.
+ 
+% ==========================================
+% SUBSISTEMA 3: RASTREO OCULAR Y ATENCIÓN VISUAL
+% ==========================================
+\begin{table}[H]
+    \centering
+    \caption{Funciones del subsistema de rastreo ocular y atención visual (Eye Tracking).}
+    \label{tab:func_rastreo_ocular}
+    \begin{small}
+    \begin{tabular}{|L{0.6cm}|L{2.2cm}|L{2.2cm}|L{4.1cm}|L{1.6cm}|L{1.8cm}|}
+        \hline
+        \textbf{ID} & \textbf{Función EDDIE-2023} & \textbf{Archivos C\# Legacy} & \textbf{Descripción de la Función} & \textbf{Hardware Requerido} & \textbf{¿Prototipar?} \\ \hline
+        F10 & Conexión a Rastreador Ocular por Socket / WebSocket & Plugin GazeCloud (WatsonWsServer) y Plugin EyeTribe & Abre un servidor socket local en puerto 3000 (GazeCloud) o 6555 (EyeTribe TCP) para recibir coordenadas de mirada en tiempo real (30-60 Hz). & Eye Tracker (GazeCloud / EyeTribe) & SÍ (Sockets  asyncio / websockets) \\ \hline
+        F11 & Carga y Aislamiento de Plugins Eyetracker & Módulo Rastreo Ocular / IntermediateClass.cs & Instancia DLLs de rastreo ocular en dominios de aplicación C\# (AppDomain / MarshalByRefObject). & Ninguno (Arquitectura) & SÍ (Reemplazar por importlib de Python) \\ \hline
+        F12 & Detección de Fijación Atencional (Dwell Time) & Módulo Rastreo Ocular / MouseControl.cs & Mide si la mirada permanece fija en un radio de píxeles durante >400 ms para gatillar la selección o despliegue de ayuda. & Eye Tracker / Mouse & SÍ (Filtro temporal Dwell) \\ \hline
+        F13 & Renderizado de Retículo de Mirada proyectado & Módulo Rastreo Ocular / ReticleDrawing.cs & Dibuja una mira o retículo visual en el proyector exactamente sobre el punto donde el lector fija su mirada. & Eye Tracker + Proyector Superior & SÍ (Overlay visual PyGame / OpenCV) \\ \hline
+    \end{tabular}
+    \end{small}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+El rastreo ocular es el subsistema que distingue a EDDIE como herramienta de investigación, ya que genera los datos de atención visual con los que se estudia la comprensión lectora. Las cuatro funciones se prototiparon, pues cubren el ciclo completo: recepción de coordenadas desde el dispositivo (F10), carga dinámica de los controladores específicos de cada rastreador (F11), interpretación de la mirada como acción mediante el tiempo de fijación (F12) y retroalimentación visual al lector (F13). Una consideración particular es la función F11, que no depende de hardware sino de la arquitectura de plugins; su migración a importlib es clave para conservar la extensibilidad del sistema, es decir, la capacidad de integrar nuevos dispositivos sin modificar el núcleo.
+ 
+% ==========================================
+% SUBSISTEMA 4: CONSISTENCIA FÍSICO-DIGITAL EN PDFS
+% ==========================================
+\begin{table}[H]
+    \centering
+    \caption{Funciones del subsistema de consistencia físico-digital en PDFs.}
+    \label{tab:func_consistencia_pdf}
+    \begin{small}
+    \begin{tabular}{|L{0.6cm}|L{2.2cm}|L{2.2cm}|L{4.1cm}|L{1.6cm}|L{1.8cm}|}
+        \hline
+        \textbf{ID} & \textbf{Función EDDIE-2023} & \textbf{Archivos C\# Legacy} & \textbf{Descripción de la Función} & \textbf{Hardware Requerido} & \textbf{¿Prototipar?} \\ \hline
+        F14 & Búsqueda y Mapeo de Coordenadas QuadPoints en PDF & Módulo Consistencia Datos / DigitalDocSync.cs & Busca palabras dentro del PDF digital usando iTextSharp y recupera las coordenadas exactas (QuadPoints / bounding boxes) de cada línea. & Ninguno (Archivo PDF) & SÍ (PyMuPDF fitz.search \_for) \\ \hline
+        F15 & Sincronización de Destacado (Highlight) & Módulo Consistencia Datos / DigitalDocSync.cs & Estampa franjas de subrayado amarillo translúcido en el archivo PDF digital cuando el usuario subraya sobre el papel físico. & Cámara 1 + Proyector + PDF & SÍ (PyMuPDF add\_highlight \_annot) \\ \hline
+        F16 & Sincronización de Notas Adhesivas (Post-It / Comentarios) & Consistency Library CommentsDP / CommentsPD.cs & Sincroniza notas escritas en el papel hacia el PDF digital como anotaciones de texto, o proyecta post-its digitales sobre el libro físico. & Cámara 1 + Proyector + PDF & SÍ (PyMuPDF add\_text \_annot) \\ \hline
+        F17 & Sincronización de Figuras Geométricas & Consistency Library FiguresDP / FiguresPD.cs & Extrae o dibuja círculos y rectángulos sobre el PDF y los proyecta sobre el libro de texto impreso. & Proyector + Archivo PDF & SÍ (PyMuPDF add\_rect \_annot) \\ \hline
+        F18 & Sincronización de Marcapáginas & Consistency Library Page MarkerDP / PageMarkerPD.cs & Sincroniza las pestañas de separación y marcadores de página entre la versión impresa y la versión PDF. & Archivo PDF & No (PyMuPDF TOC / Bookmarks) \\ \hline
+    \end{tabular}
+    \end{small}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+El módulo de consistencia mantiene la equivalencia entre el documento impreso y su versión digital, de manera que las marcas realizadas en uno se reflejen en el otro. Su funcionamiento descansa en la capacidad de localizar texto dentro del PDF y obtener sus coordenadas exactas (F14); sobre esa base se construyen la sincronización de destacados (F15), de notas (F16) y de figuras (F17). Estas cuatro funciones se prototiparon aprovechando que PyMuPDF ofrece, en una única biblioteca, tanto la búsqueda con coordenadas como la creación de anotaciones, lo que simplifica la migración respecto de iTextSharp. La función F18 (marcapáginas) se excluyó del prototipado porque su equivalente en Python, la gestión de marcadores y tabla de contenidos de PyMuPDF, es una operación directa que no presenta riesgo técnico relevante.
+ 
+% ==========================================
+% SUBSISTEMA 5: BÚSQUEDA WEB Y APIS REST
+% ==========================================
+\begin{table}[H]
+    \centering
+    \caption{Funciones del subsistema de búsqueda web de conocimiento y APIs REST.}
+    \label{tab:func_busqueda_web}
+    \begin{small}
+    \begin{tabular}{|L{0.6cm}|L{2.2cm}|L{2.2cm}|L{4.1cm}|L{1.6cm}|L{1.8cm}|}
+        \hline
+        \textbf{ID} & \textbf{Función EDDIE-2023} & \textbf{Archivos C\# Legacy} & \textbf{Descripción de la Función} & \textbf{Hardware Requerido} & \textbf{¿Prototipar?} \\ \hline
+        F19 & Búsqueda Enciclopédica (Wikipedia REST API) & Módulo Búsqueda Web / ApiWikipedia.cs & Consulta la API REST de Wikipedia en español para traer resúmenes de términos seleccionados. & Conexión a Internet & No ( urllib + Regex Sanitizer) \\ \hline
+        F20 & Búsqueda de Definiciones Conceptuales & Módulo Búsqueda Web / ApiDefinicionesGoogle.cs & Consulta diccionarios JSON en línea para mostrar significados de palabras (Propuesto migrar a Ollama LLM local). & Internet / Servidor Ollama & No (Conector REST Ollama localhost:11434) \\ \hline
+        F21 & Traducción de Texto (Bing / Azure Translator) & Módulo Búsqueda Web / ApiTraduccionBing.cs & Traduce fragmentos de texto seleccionados de inglés a español. & Conexión a Internet & No (API REST Azure / DeepL / Local) \\ \hline
+        F22 & Reconocimiento de Imágenes de Libros (Cloud Vision) & Módulo Búsqueda Web / ApiBusquedaImagenCloudVision.cs & Codifica la foto de una ilustración o esquema en Base64 y consulta Google Cloud Vision API. & Cámara 1 + Internet & No (Formateador Payload Base64) \\ \hline
+        F23 & Búsqueda y Reproducción de Videos Explicativos & Módulo Búsqueda Web / ApiBuscarYoutube.cs & Construye URLs de búsqueda en YouTube y despliega videos relevantes para complementar la lectura. & Internet + Altavoces & No (YouTube Query Builder) \\ \hline
+    \end{tabular}
+    \end{small}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+A diferencia de los subsistemas anteriores, ninguna de las cinco funciones de búsqueda web fue seleccionada para prototipado. La razón es que todas consisten en consultas a servicios externos mediante APIs REST, cuya integración en Python es una tarea estándar y de bajo riesgo técnico. Sin embargo, este subsistema presenta un riesgo distinto, de tipo operacional: varios de los servicios utilizados por el sistema legado ya no están disponibles en las condiciones originales, por ejemplo credenciales de estudiantes caducadas o versiones de prueba expiradas. Por ello, para estas funciones se propone sustituir los proveedores por alternativas vigentes, como un modelo de lenguaje local mediante Ollama en el caso de las definiciones (F20), y su integración se abordará directamente en la implementación final.
+ 
+% ==========================================
+% SUBSISTEMA 6: VOZ, AUDIO E INTENCIONES
+% ==========================================
+\begin{table}[H]
+    \centering
+    \caption{Funciones del subsistema de voz, audio e intenciones.}
+    \label{tab:func_voz_audio}
+    \begin{small}
+    \begin{tabular}{|L{0.6cm}|L{2.2cm}|L{2.2cm}|L{4.1cm}|L{1.6cm}|L{1.8cm}|}
+        \hline
+        \textbf{ID} & \textbf{Función EDDIE-2023} & \textbf{Archivos C\# Legacy} & \textbf{Descripción de la Función} & \textbf{Hardware Requerido} & \textbf{¿Prototipar?} \\ \hline
+        F24 & Reconocimiento de Comandos por Voz (STT) & Augmented ReadingApp / ProjectionScreenActivity2.cs & Escucha la voz del lector para ejecutar intenciones (``buscar enciclopedia'', ``traducir'') usando SAPI5 (Propuesto migrar a Whisper). & Micrófono de audio & SÍ (OpenAI Whisper STT) \\ \hline
+        F25 & Síntesis de Voz (Text-to-Speech / TTS) & Augmented ReadingApp / ProjectionScreenActivity2.cs & Lee en voz alta las definiciones, traducciones o resúmenes al usuario usando el motor nativo de Windows. & Altavoces / Salida de audio & SÍ ( pyttsx3 / SAPI5 Python) \\ \hline
+    \end{tabular}
+    \end{small}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+El subsistema de voz permite una interacción manos libres, coherente con el carácter no obstructivo de EDDIE: el lector emite una orden hablada (F24) y recibe la respuesta de forma auditiva (F25). Ambas funciones se prototiparon porque su migración implica un cambio tecnológico significativo, desde el motor SAPI5 propio de Windows hacia Whisper en el reconocimiento de voz, lo que exige verificar la calidad del reconocimiento y la latencia obtenida. Por su parte, la síntesis de voz con  pyttsx3 se prototipó para confirmar que el motor nativo del sistema operativo sigue siendo accesible desde Python y que no introduce nuevas dependencias.
+ 
+% ==========================================
+% SUBSISTEMA 7: PRESENTACIÓN GUI, PROYECCIÓN Y LOGS
+% ==========================================
+\begin{table}[H]
+    \centering
+    \caption{Funciones del subsistema de presentación GUI, proyección y logs.}
+    \label{tab:func_gui_proyeccion}
+    \begin{small}
+    \begin{tabular}{|L{0.6cm}|L{2.2cm}|L{2.2cm}|L{4.1cm}|L{1.6cm}|L{1.8cm}|}
+        \hline
+        \textbf{ID} & \textbf{Función EDDIE-2023} & \textbf{Archivos C\# Legacy} & \textbf{Descripción de la Función} & \textbf{Hardware Requerido} & \textbf{¿Prototipar?} \\ \hline
+        F26 & Navegador Embebido (CefSharp / CEF) & Augmented ReadingApp / ProjectionScreenActivity2.cs & Renderiza páginas web, videos de YouTube y resultados HTML sobre la proyección en el escritorio. & Proyector Superior & No (PyQt / WebEngine / Browser) \\ \hline
+        F27 & Herramienta de Subrayado Digital proyectado (HighlightTool) & Módulo Visualización Datos / HighlightTool.cs & Dibuja una banda rectangular amarilla transparente interactiva en pantalla sobre la proyección. & Proyector Superior & SÍ (Canvas transparente OpenCV / PyGame) \\ \hline
+        F28 & Registro Asíncrono de Eventos y Mirada (ModuloLog) & ModuloLog / StandardLogging.cs & Guarda marcas de tiempo, eventos de interacción y coordenadas de la mirada usando Serilog asíncrono en CSV/JSON. & Ninguno (Disco / Almacenamiento) & No (Python  logging /  structlog) \\ \hline
+    \end{tabular}
+    \end{small}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+Este subsistema reúne los elementos de presentación y registro que dan soporte al resto de las funcionalidades. Solo el subrayado proyectado (F27) se seleccionó para prototipado, por ser el único con requisitos gráficos particulares, ya que debe superponer una banda translúcida e interactiva sobre el documento físico. El navegador embebido (F26) y el registro de eventos (F28) se descartaron porque cuentan con equivalentes directos y ampliamente documentados en Python, y su integración no plantea incertidumbre técnica. El registro de eventos reviste especial importancia para la investigación, dado que almacena las coordenadas de la mirada y los eventos de interacción que serán analizados posteriormente.
+ 
+\subsection{Síntesis de la selección de funciones}
+ 
+Del total de 28 funciones identificadas, 19 fueron seleccionadas para prototipado y 9 quedaron excluidas. Los criterios de exclusión fueron tres: dependencia de hardware fuera del alcance del MVP (F8), equivalencia directa en Python que no representa riesgo técnico (F18, F19, F21 a F23, F26 y F28) y migración condicionada a la sustitución del proveedor externo (F20). Esta selección concentra el esfuerzo de validación en las funciones que combinan mayor incertidumbre tecnológica con mayor impacto sobre el objetivo del sistema, que es habilitar la investigación en lectura aumentada. Los prototipos se desarrollaron de manera incremental, uno por función, y sus resultados se documentan mediante fichas de validación con una estructura común: objetivo, librerías y hardware, contrato o interfaz, requisitos asociados, y resultados y hallazgos.
+ 
+\subsection{Prototipo F1: Enumeración e Inicialización de Cámaras}
+ 
+El primer prototipo corresponde a la función de enumeración e inicialización de cámaras (F1). En el sistema legado, esta función detecta y configura las cámaras mediante DirectShow; el prototipo busca reproducir ese comportamiento en Python con OpenCV y obtener los nombres reales de los dispositivos mediante consultas WMI invocadas desde PowerShell, de modo de asignar a cada cámara su rol (captura de texto o de gestos). La Tabla~\ref{tab:ficha_camaras} resume las características y resultados de la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Enumeración e Inicialización de Cámaras.}
+    \label{tab:ficha_camaras}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Detectar, enumerar y configurar múltiples cámaras USB/DirectShow en Python (Cámara de Texto y Cámara de Gestos). \\ \hline
+        \textbf{Librerías / Hardware} & OpenCV (cv2.VideoCapture), NumPy, PowerShell (Get-CimInstance Win32\_PnPEntity) / Cámaras USB 1 y 2. \\ \hline
+        \textbf{Contrato / Interfaz} & IImageProcessor. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Captura de Datos y Sensores):} Iniciar, pausar, reanudar y detener capturas síncronas de video de cámaras. \vspace{0.1cm} \\
+        & • \textbf{RNF-01 (Multiplataforma):} Ejecución nativa mediante binding multiplataforma de OpenCV en Python 3.14. \vspace{0.1cm} \\
+        & • \textbf{RNF-07 (Eficiencia y Gestión de Memoria):} Liberación explícita de buffers de video y arreglos NumPy al liberar la cámara (cap.release()). \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Tasa de cuadros / Latencia:} $29.98 \pm 0.42$ FPS estables a resolución $640\times480$ px con una latencia media de captura de $14.2 \pm 1.1$ ms por cuadro. \vspace{0.1cm} \\
+        & • \textbf{Manejo de dispositivos:} Asignación dinámica de índices 0 (Webcam integrada) e 1/2 (Cámara cenital DroidCam/USB), obteniendo los nombres reales del dispositivo mediante invocación WMI/PowerShell en Windows 10/11. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Lógica integrada en la capa de abstracción de hardware en Python. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+\paragraph{Protocolo de validación.} Se capturó una secuencia continua de 1\,800 cuadros (60 s a 30 FPS nominales) de forma simultánea en dos dispositivos: la webcam integrada y la cámara cenital DroidCam conectada por USB. La tasa efectiva de cuadros se calculó como
+\[ \mathrm{FPS} = \frac{N}{\sum_{i=1}^{N} \Delta t_i}, \]
+y la latencia se definió como el intervalo entre la invocación de cap.read() y la disponibilidad de la matriz BGR en la memoria principal. Los tiempos se midieron con time.perf\_counter() y la memoria con tracemalloc y psutil.
+ 
+Los resultados del prototipo F1 indican que la gestión de cámaras puede migrarse a Python con OpenCV. La captura se mantuvo en $29.98 \pm 0.42$ FPS con una latencia media de $14.2 \pm 1.1$ ms por cuadro, inferior a los 33.3 ms que corresponden a un cuadro a esa tasa, utilizando el backend Microsoft Media Foundation con respaldo automático a cv2.CAP\_ANY. La combinación de OpenCV con consultas WMI permitió asignar de forma dinámica los índices de cámara y obtener los nombres reales de los dispositivos en Windows 10/11 sin colisiones de identificador. Tras liberar el dispositivo con cap.release(), la memoria residual fue de 0.0 MB, lo que no evidenció fugas y responde al RNF-07; esto es relevante porque \cite{ibaceta2023evaluacion} documentó que una cámara en uso por otra aplicación impide el correcto funcionamiento de EDDIE. El prototipo queda validado y su lógica se integra en la capa de abstracción de hardware en Python.
+
+\subsection{Prototipo F2: Preprocesamiento y Binarización de Texto}
+ 
+El prototipo F2 corresponde a la función de pre-procesamiento y binarización de texto, del subsistema de procesamiento de imágenes. En el sistema legado (ColorRecognition.cs), esta función recorta la imagen del papel, la convierte de BGR a escala de grises, aplica un filtro Gaussiano y una binarización de Otsu para aislar el texto impreso (Tabla~\ref{tab:func_procesamiento_imagenes}). El prototipo reproduce esa secuencia con OpenCV como etapa previa al reconocimiento óptico de caracteres (F3), y mide la reducción de destellos y sombras y el tiempo de procesamiento por cuadro. La Tabla~\ref{tab:ficha_f2} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Preprocesamiento y Binarización de Texto.}
+    \label{tab:ficha_f2}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Recortar el área del documento, convertir a escala de grises, aplicar filtro Gaussiano y binarización de Otsu para aislar texto impreso. \\ \hline
+        \textbf{Librerías / Hardware} & OpenCV (cv2.threshold, cv2.GaussianBlur, cv2.cvtColor) / Cámara de Documentos. \\ \hline
+        \textbf{Contrato / Interfaz} & IImageProcessor. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Plugins de Captura y Hardware - HAL):} Extender procesadores de imagen mediante contratos de interfaz definidos (PluginBase). \vspace{0.1cm} \\
+        & • \textbf{RNF-07 (Eficiencia y Gestión de Memoria):} Procesamiento de matrices OpenCV en memoria con reutilización/destrucción explícita de buffers para evitar fugas de memoria. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Calidad de imagen:} La binarización de Otsu eliminó el 96.4\% de los destellos y sombras provocados por la luz directa del proyector sobre el papel blanco impreso. \vspace{0.1cm} \\
+        & • \textbf{Tiempo de procesamiento:} $3.12 \pm 0.28$ ms por cuadro ($640\times480$ px), operando a más de 320 FPS en CPU. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Base para el pipeline de preprocesamiento del motor OCR. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+% VERIFICAR: el informe indica un universo de 3.68e7 px 'en regiones criticas', pero 120 imagenes de 640x480 suman ~3.69e7 px en total. Aclarar si P_afectados es solo la zona critica o la imagen completa.
+\paragraph{Protocolo de validación.} Se utilizó un conjunto de 120 imágenes de documentos impresos bajo las condiciones adversas que genera el proyector cenital (lámpara DLP de 2\,000 lúmenes sobre papel bond de 75 g/m$^2$): 40 con sobreexposición especular ($V > 240$ en HSV), 40 con sombras parciales de manos u objetos ($V < 60$) y 40 con gradientes de iluminación transversales (300 a 850 lux). Para cada imagen se etiquetó manualmente, a nivel de píxel, una máscara de verdad terreno que distingue texto y fondo, y la eficacia se definió como
+\[ \mathrm{Eficacia} = \left(1 - \frac{FP_{\mathrm{ruido}} + FN_{\mathrm{corte}}}{P_{\mathrm{afectados}}}\right) \times 100\%, \]
+donde $P_{\mathrm{afectados}}$ es el total de píxeles en zonas de deslumbramiento o penumbra, $FP_{\mathrm{ruido}}$ los píxeles de destello que se confunden con tinta y $FN_{\mathrm{corte}}$ los píxeles de caracteres perdidos o fragmentados por la sombra. El tiempo se midió con cv2.getTickCount() sobre 1\,000 iteraciones continuas en CPU.
+ 
+El prototipo F2 muestra que la secuencia de pre-procesamiento del sistema legado puede reproducirse con OpenCV. La binarización de Otsu alcanzó una eficacia del 96.4\% en la eliminación de destellos y sombras producidos por la luz del proyector sobre el papel, evaluada sobre las 120 imágenes con máscaras de verdad terreno; esta condición es propia de EDDIE, cuya proyección cubre el escritorio y el documento (requisito RFCO1, según \cite{ibaceta2023evaluacion}). El tiempo de $3.12 \pm 0.28$ ms por cuadro, que permitiría más de 320 FPS frente a los 30 FPS del sensor, corresponde únicamente a esta etapa, por lo que el costo total del flujo dependerá también del reconocimiento de texto (F3). Con ello, el prototipo queda validado como base del pipeline de preprocesamiento del motor OCR.
+ 
+\subsection{Prototipo F3: Reconocimiento Óptico de Caracteres}
+ 
+El prototipo F3 corresponde al reconocimiento óptico de caracteres. En el sistema legado (OCRProcess.cs), esta función convierte la imagen recortada y preprocesada en texto legible en español e inglés mediante el motor Tesseract (Tabla~\ref{tab:func_procesamiento_imagenes}), motor que ya utilizaban los desarrollos de \cite{carrasco2017diseno} y \cite{contreras2019desarrollo} según \cite{ibaceta2023evaluacion}. El prototipo evalúa el motor mediante pytesseract sobre imágenes preprocesadas, con métricas de tasa de error por palabra (WER) y por carácter (CER), y su tiempo de inferencia. La Tabla~\ref{tab:ficha_f3} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Reconocimiento Óptico de Caracteres.}
+    \label{tab:ficha_f3}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Convertir imágenes de texto preprocesadas en cadenas de caracteres legibles en español e inglés mediante Tesseract. \\ \hline
+        \textbf{Librerías / Hardware} & pytesseract (Tesseract OCR v5.x Engine) / Cámara de Documentos. \\ \hline
+        \textbf{Contrato / Interfaz} & IImageProcessor. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Consistencia Físico-Digital - F16):} Detección e inyección de anotaciones y reconstrucción de texto desde el papel impreso. \vspace{0.1cm} \\
+        & • \textbf{RNF-03 (Internacionalización - i18n):} Soporte multilingüe en extracción de texto (español/inglés) con diccionarios de idioma (spa+eng). \vspace{0.1cm} \\
+        & • \textbf{RNF-08 (Resiliencia y Tolerancia a Fallos):} Captura defensiva ante errores de reconocimiento de caracteres en imágenes con baja resolución o sombra. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Precisión (CER/WER):} Tasa de error por palabra (WER) de 4.24\% y tasa de error por carácter (CER) de 1.12\% sobre texto impreso en tipografía Times New Roman / Arial de 10, 11 y 12 pt. \vspace{0.1cm} \\
+        & • \textbf{Tiempo de inferencia:} $175.4 \pm 18.2$ ms promedio por bloque de párrafo recortado. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Módulo migrado como servicio nativo en Python. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+\paragraph{Protocolo de validación.} El corpus estuvo compuesto por 25 páginas impresas en papel bond de 75 g/m$^2$, con textos académicos de ingeniería y fragmentos del informe de seminario de EDDIE, que totalizaron 8\,450 palabras y 52\,320 caracteres (con tildes, signos de puntuación, mayúsculas y números). Se imprimieron a 300 DPI en Times New Roman y Arial, en tamaños de 10, 11 y 12 pt. Las tasas de error se calcularon con la distancia de Levenshtein respecto de la verdad terreno:
+\[ \mathrm{CER} = \frac{S_c + D_c + I_c}{N_c} \times 100\%, \qquad \mathrm{WER} = \frac{S_w + D_w + I_w}{N_w} \times 100\%, \]
+donde $S$, $D$ e $I$ son las sustituciones, supresiones e inserciones, y $N_c = 52\,320$ y $N_w = 8\,450$ son los totales de referencia. La transcripción se obtuvo con Tesseract v5.4.0 (opciones --oem 3 --psm 6 -l spa+eng) y se comparó con el módulo Levenshtein de Python.
+ 
+El prototipo F3 obtuvo una tasa de error por carácter (CER) de 1.12\% (586 errores en 52\,320 caracteres, concentrados principalmente en tildes y comillas curvas) y una tasa de error por palabra (WER) de 4.24\% (358 palabras erróneas de 8\,450), sobre texto impreso en Times New Roman y Arial de 10, 11 y 12 pt, con un tiempo de inferencia de $175.4 \pm 18.2$ ms por bloque de párrafo recortado de $400 \times 180$ px. El uso del diccionario spa+eng responde al soporte de español e inglés exigido por el RNF-03. Estas métricas no son directamente comparables con la validez por palabra y posición medida por \cite{ibaceta2023evaluacion}, que varió entre 10\% y 100\% según la ubicación de la palabra respecto de la cámara. Cabe notar que la ficha no reporta el efecto de la posición del texto, factor que ese trabajo identificó como determinante, por lo que esa condición no está cubierta por esta validación. El prototipo queda validado como servicio nativo en Python.
+ 
+\subsection{Prototipo F4: Detección Automática de Páginas}
+ 
+El prototipo F4 corresponde a la detección automática de páginas. En el sistema legado (PageDetectionSettings.cs), esta función detecta los bordes del libro impreso para ajustar el área de proyección y compensar la deformación de la página (Tabla~\ref{tab:func_procesamiento_imagenes}). El prototipo busca reproducir esa detección con OpenCV, hallando el contorno de la página y corrigiendo su perspectiva. La Tabla~\ref{tab:ficha_f4} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Detección Automática de Páginas.}
+    \label{tab:ficha_f4}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Detectar los bordes del libro impreso para ajustar el área de proyección y corregir la perspectiva de la página. \\ \hline
+        \textbf{Librerías / Hardware} & OpenCV (cv2.findContours, cv2.approxPolyDP, cv2.getPerspectiveTransform) / Cámara 1 + Proyector. \\ \hline
+        \textbf{Contrato / Interfaz} & IImageProcessor / IProjectionService. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Plugins de Visualización y Proyección):} Desplegar overlays de proyección alineados sobre el papel físico. \vspace{0.1cm} \\
+        & • \textbf{RNF-06 (Consistencia Espacio-Temporal Físico-Digital):} Garantizar la transformación homotética exacta del contorno de la página física. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Ajuste geométrico:} Estabilidad del cuadrilátero con un error cuadrático medio (RMSE) de 1.38 pt ($\approx 0.48$ mm) en las 4 esquinas del libro, con una tasa de éxito del 98.75\% (79 de 80 ensayos), bajo iluminación ambiente de 300 a 750 lux. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Algoritmo reestructurado para el módulo de calibración inicial de proyección. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+\paragraph{Protocolo de validación.} Se utilizó un banco de 80 cuadros de libros físicos en formatos Carta ($215.9 \times 279.4$ mm) y A4 ($210 \times 297$ mm), sobre superficies de contraste alto y medio, con orientaciones entre $-15^\circ$ y $+15^\circ$ y cuatro niveles de iluminancia ambiental entre 300 y 750 lux. Las cuatro esquinas estimadas con cv2.approxPolyDP (tolerancia $\epsilon = 0.02 \times$ perímetro) se compararon con las coordenadas $(\hat{x}, \hat{y})$ marcadas manualmente a nivel sub-píxel mediante
+\[ \mathrm{RMSE} = \sqrt{\frac{1}{4N} \sum_{i=1}^{N} \sum_{k=1}^{4} \left( (x_{k,i} - \hat{x}_{k,i})^2 + (y_{k,i} - \hat{y}_{k,i})^2 \right)}. \]
+ 
+El prototipo F4 logró un RMSE de 1.38 pt ($\approx 0.48$ mm) en las cuatro esquinas y una tasa de éxito del 98.75\% en la identificación del cuadrilátero (79 de 80 ensayos), con libros Carta y A4 inclinados entre $-15^\circ$ y $+15^\circ$ y cuatro niveles de iluminación de 300 a 750 lux. El resultado se acota a ese rango de condiciones: \cite{ibaceta2023evaluacion} señaló la iluminación y la posición de la cámara como causas posibles del desfase del destacado entre el formato físico y el digital (EC6), por lo que la sensibilidad a la luz debe comprobarse en la integración. El algoritmo se reestructuró como módulo de calibración inicial de la proyección y responde al RNF-06, relativo a la transformación homotética del contorno de la página.
+ 
+\subsection{Prototipo F5: Seguimiento de Puntero de Color}
+ 
+El prototipo F5 corresponde al seguimiento de un lápiz o marcador de color como puntero, del subsistema de reconocimiento gestual. En el sistema legado (ColorPen.cs), esta función segmenta un marcador azul o rojo en el espacio HSV/RGB para usarlo como puntero sobre el papel (Tabla~\ref{tab:func_reconocimiento_gestual}); en el desarrollo de \cite{contreras2019desarrollo}, la posición de la punta de color se utiliza para controlar el puntero, según \cite{ibaceta2023evaluacion}. El prototipo segmenta el color en el espacio HSV y lo implementa como plugin gestual. La Tabla~\ref{tab:ficha_f5} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Seguimiento de Puntero de Color.}
+    \label{tab:ficha_f5}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Segmentar un lápiz o marcador de color (rojo/azul) en el espacio HSV para usarlo como puntero físico. \\ \hline
+        \textbf{Librerías / Hardware} & OpenCV (cv2.inRange, HSV, cv2.morphologyEx) / Cámara de Escritorio. \\ \hline
+        \textbf{Contrato / Interfaz} & IGesturePlugin. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Plugins de Captura y Hardware - HAL):} Extender sensores gestuales mediante contratos estrictos herederos de PluginBase. \vspace{0.1cm} \\
+        & • \textbf{RNF-02 (Modularidad y Extensibilidad Estricta):} Implementación desacoplada como plugin gestual sin modificar el orquestador central. \vspace{0.1cm} \\
+        & • \textbf{RNF-07 (Eficiencia y Gestión de Memoria):} Segmentación por color en tiempo real optimizada sobre arreglos de NumPy. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Sensibilidad a la luz:} La conversión a espacio HSV (H: 0--10 y 170--180 para rojo; S: 120--255; V: 100--255), combinada con una clausura morfológica, eliminó el 92\% de los falsos reflejos generados por la proyección digital sobre la superficie del lápiz. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Plugin de entrada gestual básica incorporado. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+% VERIFICAR: unidades: el informe compara 148 detecciones POR MINUTO (legado) con 12 EN 1200 CUADROS (40 s) (HSV). 12 en 40 s equivale a 18 por minuto, lo que daria ~87.8 % y no 91.89 %. Aclarar si ambas cifras estan en la misma base. Tambien: el informe llama 'ColorRecognition.cs' al legado RGB, pero este prototipo corresponde a ColorPen.cs.
+\paragraph{Protocolo de validación.} Se registró una secuencia continua de 1\,200 cuadros (40 s a 30 FPS) con un marcador Sharpie rojo de 12 mm de diámetro sobre papel impreso, mientras el proyector mostraba diapositivas dinámicas de alto contraste con alternancia rápida de rojo, blanco, verde y cian. Se contabilizaron como detecciones erróneas los centroides espurios o saltos bruscos de más de 30 px entre cuadros contiguos, generados por la luz proyectada reflejada en el plástico del marcador. Con la implementación legada en C\# basada en el espacio RGB se registraron 148 detecciones espurias por minuto; con la segmentación HSV dual ($H_1 \in [0, 10]$, $H_2 \in [170, 180]$, $S \in [120, 255]$, $V \in [100, 255]$) y una clausura morfológica con elemento estructurante elíptico de $9 \times 9$, se registraron 12 en los 1\,200 cuadros.
+ 
+El prototipo F5 redujo las detecciones espurias de 148 por minuto en la implementación legada basada en RGB a 12 en la secuencia evaluada, lo que se reporta como una atenuación de falsos reflejos del 91.89\% ($\approx 92\%$), mediante la conversión a HSV y una clausura morfológica elíptica de $9 \times 9$. El centroide rastreado mostró una varianza espacial inferior a $\pm 1.2$ px en reposo. Los rangos reportados corresponden al rojo, que en el eje H de OpenCV (0--180) ocupa ambos extremos, razón por la que se definen dos intervalos. Su implementación como plugin gestual desacoplado, sin modificar el orquestador, responde al RNF-02, y deja incorporada una entrada gestual básica.
+ 
+\subsection{Prototipo F6: Segmentación de Mano y Apuntado}
+ 
+El prototipo F6 corresponde a la segmentación de la mano y el apuntado con el dedo. En el sistema legado (YCrCbSkinDetector.cs), esta función aísla la piel en el espacio YCrCb y calcula contornos y defectos de convexidad para detectar la punta del dedo índice y contar los dedos levantados (Tabla~\ref{tab:func_reconocimiento_gestual}); en el desarrollo de \cite{contreras2019desarrollo}, la posición de la mano se estima a partir del color de piel del usuario, según \cite{ibaceta2023evaluacion}. El prototipo reproduce el algoritmo con OpenCV y mide la precisión de detección de la punta del dedo. La Tabla~\ref{tab:ficha_f6} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Segmentación de Mano y Apuntado.}
+    \label{tab:ficha_f6}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Aislar la piel en espacio YCrCb y calcular contornos con defectos de convexidad para detectar la punta del dedo índice. \\ \hline
+        \textbf{Librerías / Hardware} & OpenCV (YCrCb, cv2.convexityDefects, cv2.contourArea) / Cámara de Escritorio. \\ \hline
+        \textbf{Contrato / Interfaz} & IGesturePlugin. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Captura de Datos y Sensores):} Registrar eventos de entrada del usuario en archivos estructurados JSON. \vspace{0.1cm} \\
+        & • \textbf{RNF-07 (Eficiencia y Gestión de Memoria):} Liberación de matrices y máscaras de segmentación por cuadro para mantener bajo consumo de RAM. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Detección de dedo:} Precisión del 94.8\% en la identificación de la punta del dedo índice extendido a una distancia de trabajo entre 30 y 60 cm del escritorio. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Algoritmo optimizado contra falsos positivos en el conteo de dedos. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+% VERIFICAR: la formula VP/(VP+FP+FN) no es la 'precision' estandar (VP/(VP+FP)); es un indice de exito tipo Jaccard. Considerar nombrarla 'tasa de acierto' o definirla explicitamente.
+\paragraph{Protocolo de validación.} Se evaluaron 250 cuadros capturados con 5 usuarios voluntarios de tonalidades de piel II a IV de la escala de Fitzpatrick, a tres distancias entre el escritorio y la cámara cenital: 30, 45 y 60 cm. Se consideró un verdadero positivo (VP) cuando el algoritmo, basado en una máscara YCrCb ($Cr \in [133, 173]$, $Cb \in [77, 127]$) y en defectos de convexidad con profundidad mayor a 15 px y ángulo agudo menor a $80^\circ$, ubicaba la punta del dedo índice a una distancia de hasta 15 px de la coordenada manual de la uña. El indicador reportado es
+\[ \mathrm{Precisión} = \frac{VP}{VP + FP + FN} \times 100\% = \frac{237}{250} \times 100\% = 94.8\%. \]
+ 
+El prototipo F6 alcanzó una precisión del 94.8\% (237 de 250 cuadros) en la identificación de la punta del dedo índice extendido, con 5 usuarios y distancias de 30, 45 y 60 cm del escritorio; los 13 cuadros restantes correspondieron a 8 falsos positivos por intersección con la muñeca o el antebrazo y 5 falsos negativos por oclusión severa. El tiempo de cómputo fue de 4.8 ms por cuadro. El resultado es válido para esas condiciones, que son las evaluadas. Según el estado reportado, el algoritmo se optimizó contra falsos positivos en el conteo de dedos, y la liberación de matrices y máscaras por cuadro responde al requisito de bajo consumo de memoria (RNF-07).
+ 
+\subsection{Prototipo F7: Mapeo de Coordenadas y Calibración Matricial}
+ 
+El prototipo F7 corresponde al mapeo de coordenadas de los gestos a la pantalla. En el sistema legado (GestureRecognitionActivity.cs), esta función transforma las coordenadas (X, Y) del sensor de cámara a la resolución del proyector y simula clics mediante Win32 P/Invoke (Tabla~\ref{tab:func_reconocimiento_gestual}). El prototipo realiza esa transformación mediante una homografía calculada con OpenCV, y mide el desfase de alineación tras una calibración planar de cuatro puntos. La Tabla~\ref{tab:ficha_f7} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Mapeo de Coordenadas y Calibración Matricial.}
+    \label{tab:ficha_f7}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Transformar coordenadas (X, Y) del plano cámara/escritorio al plano del proyector mediante homografía. \\ \hline
+        \textbf{Librerías / Hardware} & OpenCV (cv2.findHomography, cv2.perspectiveTransform) / Cámara 2 + Proyector. \\ \hline
+        \textbf{Contrato / Interfaz} & IGesturePlugin / IProjectionService. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Plugins de Visualización y Proyección):} Desplegar overlays proyectados en tiempo real alineados con los gestos del usuario. \vspace{0.1cm} \\
+        & • \textbf{RNF-06 (Consistencia Espacio-Temporal Físico-Digital):} Conversión de coordenadas homotética y exacta entre la superficie plana y la proyección. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Error de alineación:} Desfase medio de $2.08 \pm 0.35$ píxeles ($<0.78$ mm en el papel físico) tras calibración planar de 4 puntos. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Matriz de homografía integrada al orquestador visual. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+% VERIFICAR: el informe llama 'puntos interiores' a los 21 restantes; en una grilla 5x5 los interiores son 9. Se escribio 'puntos restantes' (25 - 4 esquinas).
+\paragraph{Protocolo de validación.} Se utilizó una lámina patrón de calibración impresa en papel Carta con una grilla regular de $5 \times 5 = 25$ puntos de referencia separados exactamente 40.0 mm. Con los 4 puntos de las esquinas se calculó la matriz de transformación proyectiva $H$ (de dimensión $3 \times 3$) mediante cv2.findHomography con RANSAC, y luego se transformaron los 21 puntos restantes al plano del proyector para medir el error euclidiano frente a su posición teórica:
+\[ e_{\mathrm{reproyección}} = \frac{1}{21} \sum_{j=1}^{21} \sqrt{(x_{j,\mathrm{proy}} - x_{j,\mathrm{teor}})^2 + (y_{j,\mathrm{proy}} - y_{j,\mathrm{teor}})^2}. \]
+ 
+El prototipo F7 logró un error de reproyección medio de $2.08 \pm 0.35$ píxeles sobre una matriz de visualización de $640 \times 480$ px, equivalente a menos de 0.78 mm sobre el papel físico, tras calibrar con las cuatro esquinas de la lámina patrón. Este resultado responde directamente al RNF-06, que exige una conversión de coordenadas homotética y exacta entre la superficie y la proyección. La matriz de homografía quedó integrada al orquestador visual, y el prototipo del retículo de mirada (F13) utiliza una homografía planar para ubicar la mirada sobre la proyección.
+ 
+\subsection{Prototipo F9: Entrada por Mouse como Alternativa}
+ 
+El prototipo F9 corresponde a la entrada por mouse como dispositivo de interacción secundario. En el sistema legado (MousePlugin.cs), esta función permite usar el puntero del ratón como alternativa de interacción (Tabla~\ref{tab:func_reconocimiento_gestual}). Su relevancia se explica por un error documentado por \cite{ibaceta2023evaluacion}: el programa no podía inicializarse sin una cámara disponible (EO4) y no funcionaba correctamente si no había dos cámaras (EO5). El prototipo integra el mouse como mecanismo secundario o de depuración cuando no hay cámaras gestuales. La Tabla~\ref{tab:ficha_f9} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Entrada por Mouse como Alternativa.}
+    \label{tab:ficha_f9}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Integrar la entrada por mouse convencional como mecanismo secundario o de depuración cuando no hay cámaras gestuales. \\ \hline
+        \textbf{Librerías / Hardware} & OpenCV (cv2.setMouseCallback), pynput / Mouse y Teclado. \\ \hline
+        \textbf{Contrato / Interfaz} & IGesturePlugin. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Captura de Datos y Sensores):} Registrar eventos de teclado y mouse en archivos estructurados JSON. \vspace{0.1cm} \\
+        & • \textbf{RNF-08 (Resiliencia y Tolerancia a Fallos):} Ante la falta o desconexión del sensor físico gestual, el sistema desacopla la falla y conmuta al plugin de mouse sin caerse. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Compatibilidad:} Latencia media de $0.41 \pm 0.12$ ms ($<1$ ms) ante eventos de clic izquierdo, movimiento y arrastre en todas las ventanas gráficas. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Integrado como fallback predeterminado en el DeviceFactory. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+\paragraph{Protocolo de validación.} Se utilizó un banco de 1\,000 eventos de entrada secuenciales, inyectados de forma sintética y mediante manipulación de un usuario: 500 movimientos del cursor, 300 clics (izquierdo y derecho) y 200 arrastres. La latencia se midió como $\Delta t = t_{\mathrm{despacho}} - t_{\mathrm{interrupción}}$, es decir, el intervalo entre la notificación del driver del sistema operativo y la actualización de las coordenadas en el despachador de eventos del orquestador, con time.perf\_counter() sobre callbacks de OpenCV y listeners de pynput.
+ 
+El prototipo F9 registró una latencia media de $0.41 \pm 0.12$ ms (máximo de 0.85 ms) sobre un banco de 1\,000 eventos de movimiento, clic y arrastre. Su integración como alternativa predeterminada en el DeviceFactory permite que el sistema siga operando cuando falta o se desconecta el sensor gestual, conforme al RNF-08, situación que en el sistema legado impedía la inicialización \citep{ibaceta2023evaluacion}. El prototipo queda validado y dispone de una entrada de respaldo para el resto de las funciones de interacción.
+ 
+\subsection{Prototipo F10: Sockets de Comunicación con el Rastreador Ocular}
+ 
+El prototipo F10 corresponde a la comunicación con el rastreador ocular mediante sockets, del subsistema de rastreo ocular. En el sistema legado, esta función abre un servidor socket local en el puerto 3000 (GazeCloud) o 6555 (EyeTribe, TCP) para recibir coordenadas de mirada en tiempo real, a entre 30 y 60 Hz (Tabla~\ref{tab:func_rastreo_ocular}); en el desarrollo de \cite{estay2020modulo}, el plugin de GazeCloud abre un servidor WebSocket en 127.0.0.1:3000 y entrega un diccionario con las coordenadas X e Y y un timestamp. El prototipo implementa la recepción asíncrona en Python y mide la frecuencia de recepción, el jitter y la pérdida de paquetes. La Tabla~\ref{tab:ficha_f10} resume la validación.
+ 
+% VERIFICAR: el objetivo indica puertos 3000/6555 pero la prueba usa 127.0.0.1:9999. Ademas, aclarar si los 5000 paquetes provinieron de un rastreador real o fueron generados sinteticamente.
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Sockets de Comunicación con el Rastreador Ocular.}
+    \label{tab:ficha_f10}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Establecer un servidor socket local (puerto 3000/6555) para la recepción asíncrona de coordenadas de mirada (30-60 Hz). \\ \hline
+        \textbf{Librerías / Hardware} & Python asyncio, websockets, socket / Tobii, EyeTribe o GazeCloud. \\ \hline
+        \textbf{Contrato / Interfaz} & IEyeTracker. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Plugins de Captura y Hardware - HAL):} Extender conectores de hardware para rastreo ocular (\textit{EyeTracker}). \vspace{0.1cm} \\
+        & • \textbf{RNF-01 (Multiplataforma):} Protocolos WebSockets / sockets TCP estándar compatibles con Windows y Linux. \vspace{0.1cm} \\
+        & • \textbf{RNF-08 (Resiliencia y Tolerancia a Fallos):} Manejo defensivo de desconexiones o interrupciones en el flujo de datos del socket. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Frecuencia y fluctuación:} Frecuencia media de recepción de 59.95 Hz (intervalo medio de 16.68 ms) con un jitter de 1.74 ms. \vspace{0.1cm} \\
+        & • \textbf{Pérdida de paquetes:} 0.0\% (0 paquetes perdidos de 5\,000). \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Protocolo de comunicación por socket definido en i\_eye\_tracker.py. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+\paragraph{Protocolo de validación.} Se transmitieron de forma continua 5\,000 paquetes binarios con las coordenadas de mirada (struct.pack("!fff", x, y, timestamp), 12 bytes por muestra) durante 83.3 s, sobre un enlace TCP local (127.0.0.1:9999). Se registró el intervalo entre recepciones consecutivas, $\Delta t_k = t_k - t_{k-1}$, y se calculó su desviación estándar respecto del periodo nominal de 16.66 ms (60 Hz), tomada como jitter:
+\[ \mathrm{Jitter} = \sqrt{\frac{1}{M-1} \sum_{k=1}^{M} \left(\Delta t_k - \overline{\Delta t}\right)^2}. \]
+La recepción se implementó con sockets no bloqueantes mediante asyncio.
+ 
+El prototipo F10 recibió los 5\,000 paquetes sin pérdidas, a una frecuencia media de 59.95 Hz (intervalo medio de 16.68 ms frente a 16.66 ms nominales) y con un jitter de 1.74 ms. El protocolo definido en i\_eye\_tracker.py responde al contrato de plugins de hardware y utiliza WebSockets y sockets TCP estándar, compatibles con Windows y Linux (RNF-01). Cabe notar que la prueba se realizó sobre un enlace local y que la ficha no reporta una prueba de desconexión, por lo que el manejo defensivo de interrupciones (RNF-08) no está cubierto por esta validación.
+ 
+\subsection{Prototipo F11: Aislamiento y Carga Dinámica de Plugins de Rastreo Ocular}
+ 
+El prototipo F11 corresponde a la carga y el aislamiento de los plugins de rastreo ocular. En el sistema legado (IntermediateClass.cs), esta función instancia las bibliotecas de rastreo ocular en dominios de aplicación de C\# (AppDomain y MarshalByRefObject) (Tabla~\ref{tab:func_rastreo_ocular}); en el desarrollo de \cite{estay2020integracion}, cada plugin es una biblioteca de clases que se instancia en tiempo de ejecución mediante reflexión a partir de la interfaz IEyeTracking. El prototipo reemplaza ese mecanismo por la carga dinámica de módulos de Python mediante importlib, pkgutil e inspect, y compara el tiempo de carga con la referencia del sistema legado. La Tabla~\ref{tab:ficha_f11} resume la validación.
+ 
+% VERIFICAR: \cite{estay2020modulo} describe carga por reflexion (Assembly + Activator.CreateInstance), no por AppDomain. Confirmar que EDDIE-2023 usa AppDomain y citar el archivo/lineas; indicar tambien como se obtuvo la telemetria de 448.6 ms.
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Aislamiento y Carga Dinámica de Plugins de Rastreo Ocular.}
+    \label{tab:ficha_f11}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Reemplazar los AppDomain de C\# cargando módulos de rastreo de forma dinámica mediante introspección en Python. \\ \hline
+        \textbf{Librerías / Hardware} & Python importlib, pkgutil, inspect. \\ \hline
+        \textbf{Contrato / Interfaz} & IEyeTracker. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Núcleo y Orquestador Central):} Administrar el ciclo de vida de plugins (initialize, execute, release). \vspace{0.1cm} \\
+        & • \textbf{RNF-02 (Modularidad y Extensibilidad Estricta):} Carga de plugins mediante herencia de PluginBase. \vspace{0.1cm} \\
+        & • \textbf{RNF-05 (Carga Dinámica en Tiempo de Ejecución):} Instanciar, cargar y descargar el plugin de rastreo ocular en tiempo de ejecución sin recompilar ni usar AppDomains inestables. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Tiempo de carga:} $11.4 \pm 1.2$ ms por plugin en Python frente a $448.6 \pm 35.1$ ms en C\# (reducción del 97.5\%). \vspace{0.1cm} \\
+        & • \textbf{Recarga:} Sin bloqueos de archivo ni fugas de descriptores, lo que permite actualizar o recargar plugins sin reiniciar la aplicación. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Arquitectura unificada adoptada en PluginLoader. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+\paragraph{Protocolo de validación.} Se realizaron 50 repeticiones de carga, en frío y en caliente, de cada uno de los 5 plugins del núcleo (IImageProcessor, IEyeTracker, IGesturePlugin, IConsistencyProvider e IWebSearchProvider), lo que suma 250 ciclos de carga y descarga con importlib.util.spec\_from\_file\_location y spec.loader.exec\_module. El tiempo de instanciación se contrastó con los registros de telemetría de EDDIE C\# 2023, donde los ensamblados se instanciaban en dominios secundarios creados con AppDomain.CreateDomain().
+ 
+El prototipo F11 cargó e instanció cada plugin en $11.4 \pm 1.2$ ms, frente a los $448.6 \pm 35.1$ ms de la referencia en C\#, lo que representa una reducción del 97.5\%. Además, no se observaron bloqueos de archivo ni fugas de descriptores, de modo que los plugins pueden recargarse sin reiniciar la aplicación, como exige el RNF-05 al descartar el uso de AppDomains, y la carga mediante herencia de PluginBase responde al RNF-02. La referencia del sistema legado proviene de registros de telemetría previos, por lo que la comparación debe leerse como orientativa y no como una medición simultánea bajo las mismas condiciones.
+ 
+\subsection{Prototipo F12: Detección de Fijación Atencional}
+ 
+El prototipo F12 corresponde a la detección de fijación atencional. En el sistema legado (MouseControl.cs), esta función mide si la mirada permanece fija en un radio de píxeles durante más de 400 ms para gatillar una selección (Tabla~\ref{tab:func_rastreo_ocular}); en el desarrollo de \cite{estay2020modulo}, la interacción con botones inicia una cuenta regresiva de duración configurable cuando el puntero se ubica sobre un botón, genera un clic al llegar a cero y la detiene si el puntero abandona el botón. El prototipo evalúa el algoritmo de permanencia y el riesgo de activaciones accidentales, conocido como efecto de toque de Midas. La Tabla~\ref{tab:ficha_f12} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Detección de Fijación Atencional.}
+    \label{tab:ficha_f12}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Evaluar el algoritmo de permanencia de la mirada (radio fijo durante más de 400 ms) para gatillar eventos sin clics manuales. \\ \hline
+        \textbf{Librerías / Hardware} & Lógica temporal en Python (time.perf\_counter()), NumPy / Eye Tracker o Mouse. \\ \hline
+        \textbf{Contrato / Interfaz} & IEyeTracker. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Captura de Datos y Sensores):} Registrar y gestionar eventos atencionales y sesiones de captura. \vspace{0.1cm} \\
+        & • \textbf{RNF-08 (Resiliencia y Tolerancia a Fallos):} Filtrado de datos atípicos o saltos bruscos en las coordenadas de la mirada (\textit{saccades}). \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Parámetros:} Punto de equilibrio en 400 ms de permanencia y radio de dispersión de 25 px. \vspace{0.1cm} \\
+        & • \textbf{Activaciones accidentales:} 2.80\% (8 disparos involuntarios en 285 fijaciones), con una sensibilidad de activación voluntaria del 98.1\%. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Filtro atencional embebido en la lógica del sensor. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+\paragraph{Protocolo de validación.} Se registraron sesiones de lectura guiada de 15 minutos con 3 usuarios, que sumaron más de 12\,000 muestras de coordenadas de mirada a 60 Hz. Se exploró una matriz de calibración con ventanas de tiempo $T \in \{250, 300, 350, 400, 500, 600\}$ ms y radios de dispersión $R \in \{15, 20, 25, 30, 40\}$ px. Se contabilizó como activación accidental todo evento de permanencia gatillado durante movimientos sacádicos normales de lectura o regresiones veloces (velocidad angular superior a $30^\circ$/s o desplazamiento mayor a 50 px en menos de 100 ms). De 285 fijaciones evaluadas (215 voluntarias sobre términos clave y 70 de transición) se obtuvo
+\[ \mathrm{Tasa\ de\ error\ (toque\ de\ Midas)} = \frac{8}{285} \times 100\% = 2.80\%. \]
+ 
+El prototipo F12 alcanzó su punto de equilibrio con 400 ms de permanencia y un radio de 25 px, con 8 disparos involuntarios en 285 fijaciones (2.80\%) y una sensibilidad de activación voluntaria del 98.1\%. El umbral de 400 ms coincide con el que utiliza el sistema legado (Tabla~\ref{tab:func_rastreo_ocular}), y el filtrado de saltos bruscos corresponde al requisito de resiliencia ante datos atípicos (RNF-08). La evaluación se basó en 3 usuarios, por lo que los parámetros reportados se acotan a esa muestra.
+ 
+\subsection{Prototipo F13: Renderizado del Retículo de Mirada}
+ 
+El prototipo F13 corresponde al renderizado del retículo de mirada. En el sistema legado (ReticleDrawing.cs), esta función dibuja una mira en el proyector exactamente sobre el punto donde el lector fija la mirada (Tabla~\ref{tab:func_rastreo_ocular}); en el desarrollo de \cite{estay2020modulo}, el retículo seleccionado se dibuja sobre una vista transparente ubicada sobre todas las aplicaciones. El prototipo genera el retículo con PyGame y OpenCV y mide la latencia desde la recepción de la coordenada hasta la actualización de la pantalla. La Tabla~\ref{tab:ficha_f13} resume la validación.
+ 
+% VERIFICAR: el informe llama 'glass-to-glass' a una latencia que suma solo etapas de software (socket + homografia + render/swap); no incluye captura del rastreador ni latencia del proyector. Se redacto como 'latencia de software'.
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Renderizado del Retículo de Mirada.}
+    \label{tab:ficha_f13}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Proyectar un retículo visual sobre la superficie de lectura en el punto exacto donde se fija la mirada. \\ \hline
+        \textbf{Librerías / Hardware} & OpenCV Overlay (cv2.circle, cv2.addWeighted), PyGame Canvas / Eye Tracker + Proyector. \\ \hline
+        \textbf{Contrato / Interfaz} & IEyeTracker / IProjectionService. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Plugins de Visualización y Proyección):} Desplegar overlays de proyección en tiempo real sobre el papel físico. \vspace{0.1cm} \\
+        & • \textbf{RNF-06 (Consistencia Espacio-Temporal Físico-Digital):} Sincronización continua de la posición del punto de mirada proyectado sobre la página. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Latencia:} $15.2 \pm 1.4$ ms en total (0.8 ms de recepción y desempaquetado, 1.1 ms de homografía y 13.3 ms de mezcla alfa y conmutación de búfer), inferior al periodo de 16.66 ms de un proyector de 60 Hz. \vspace{0.1cm} \\
+        & • \textbf{Tasa de cuadros:} 60.0 FPS sostenidos sin descarte de cuadros. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Módulo de proyección reticular integrado. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+\paragraph{Protocolo de validación.} Se monitorearon 3\,600 cuadros gráficos continuos a resolución Full HD ($1920 \times 1080$ px) con triple búfer habilitado. La latencia de software se midió de extremo a extremo (desde el socket hasta la conmutación del búfer de pantalla) dividida en tres segmentos cronometrados: recepción y desempaquetado de la tupla de mirada (0.8 ms), mapeo mediante homografía planar (1.1 ms) y renderizado de capas alfa con conmutación de búfer (13.3 ms).
+ 
+El prototipo F13 alcanzó una latencia total de $15.2 \pm 1.4$ ms, inferior al periodo de 16.66 ms de un proyector de 60 Hz, y sostuvo 60.0 FPS sin descartar cuadros en una secuencia de 3\,600. El resultado responde al RNF-06, relativo a la sincronización continua de la posición de la mirada proyectada. La medición cubre el procesamiento de software entre el socket y el intercambio de búfer; no incluye la latencia propia del rastreador ocular ni la del proyector.
+ 
+\subsection{Prototipo F14: Búsqueda de Coordenadas QuadPoints}
+ 
+El prototipo F14 corresponde a la búsqueda de palabras y la recuperación de sus coordenadas en el PDF digital, del subsistema de consistencia físico-digital. En el sistema legado (DigitalDocSync.cs), esta función utiliza iTextSharp para buscar palabras y obtener las coordenadas exactas (\textit{QuadPoints}) de cada línea (Tabla~\ref{tab:func_consistencia_pdf}); iTextSharp es la biblioteca que \cite{pezoa2020implementacion} emplea para obtener información del PDF. El prototipo reemplaza esa biblioteca por PyMuPDF y lo prueba sobre un documento PDF real de 22 páginas. La Tabla~\ref{tab:ficha_f14} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Búsqueda de Coordenadas QuadPoints.}
+    \label{tab:ficha_f14}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Reemplazar iTextSharp por PyMuPDF para extraer delimitadores geométricos (\textit{bounding boxes} / QuadPoints) de palabras en el PDF. \\ \hline
+        \textbf{Librerías / Hardware} & PyMuPDF (fitz.search\_for(..., quads=True)) / Archivo PDF digital real (informe de seminario de 22 páginas). \\ \hline
+        \textbf{Contrato / Interfaz} & IConsistencyProvider. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Consistencia Físico-Digital - F14):} Búsqueda y mapeo de \textit{QuadPoints} exactos en documentos PDF reales. \vspace{0.1cm} \\
+        & • \textbf{RNF-06 (Consistencia Espacio-Temporal Físico-Digital):} Mapeo homotético utilizando puntos tipográficos (pt) y \textit{QuadPoints} sin desalineación. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Rendimiento:} Búsqueda y extracción de las ocho coordenadas \textit{QuadPoints} (cuatro vértices: TL, TR, BL, BR) ejecutada en $7.84 \pm 0.62$ ms por página sobre un documento PDF real de 22 páginas. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Motor de lectura y análisis de PDFs plenamente operativo. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+% VERIFICAR: el informe y el RNF-06 dicen 'QuadPoints de 8 vertices'; un QuadPoint tiene 4 vertices (8 coordenadas). Se redacto asi aqui; corregir tambien el RNF-06 en requerimientos.tex.
+\paragraph{Protocolo de validación.} Se utilizó un documento real del proyecto (informe de seminario) de 22 páginas, 618\,447 bytes, 4\,920 palabras y 34\,150 caracteres, en formato PDF 1.5. Se ejecutó una batería automatizada de 220 consultas: 10 términos técnicos de distinta longitud y frecuencia (EDDIE, visión, OCR, arquitectura, consistencia, hardware, sensores, proyección, datos e interfaz) buscados en las 22 páginas. Los 8 valores de cada QuadPoint ($x_{tl}, y_{tl}, x_{tr}, y_{tr}, x_{bl}, y_{bl}, x_{br}, y_{br}$) se contrastaron con el texto extraído del rectángulo mediante page.get\_text("text", clip=rect), y los tiempos se midieron con time.perf\_counter().
+ 
+El prototipo F14 extrajo las ocho coordenadas QuadPoints, correspondientes a los cuatro vértices de cada resultado, en $7.84 \pm 0.62$ ms por página sobre un PDF real de 22 páginas, mediante 220 consultas. En todas las áreas delimitadas, el texto extraído del rectángulo fue coherente con el término buscado (100\% de coherencia), lo que verifica la consistencia geométrica de las coordenadas obtenidas; esa verificación se realizó sobre el documento digital y no mide la coincidencia con lo marcado en el papel. El prototipo reemplaza la dependencia de iTextSharp del sistema legado por PyMuPDF y se relaciona con el RNF-06. Además, el ciclo de inyección de destacados de F15 incluye la resolución geométrica del QuadPoint de la línea, con lo que el motor de lectura y análisis de PDFs queda operativo.
+ 
+\subsection{Prototipo F15: Sincronización de Destacado}
+ 
+El prototipo F15 corresponde a la sincronización del destacado entre el papel físico y el PDF digital. En el sistema legado, esta función estampa franjas de subrayado amarillo translúcido en el PDF cuando el usuario subraya sobre el papel (Tabla~\ref{tab:func_consistencia_pdf}). Un error documentado por \cite{ibaceta2023evaluacion} se relaciona con ella: el destacado de texto no coincidía en posición ni largo con la palabra destacada, tanto de físico a digital como de digital a físico (E40 y E41, ambos sin solución). El prototipo agrega la anotación de resaltado al PDF mediante PyMuPDF. La Tabla~\ref{tab:ficha_f15} resume la validación.
+ 
+% VERIFICAR: la ficha original lista PageMarkerPD.cs y HighlightTool.cs, pero la Tabla de funciones indica DigitalDocSync.cs para F15. Unificar. Tampoco hay metrica de alineacion con lo marcado en papel.
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Sincronización de Destacado.}
+    \label{tab:ficha_f15}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Añadir franjas de destacado translúcido sobre el PDF digital cuando el usuario subraya el papel físico. \\ \hline
+        \textbf{Librerías / Hardware} & PyMuPDF (add\_highlight\_annot), OpenCV HSV / Cámara 1 + Proyector + PDF. \\ \hline
+        \textbf{Contrato / Interfaz} & IConsistencyProvider. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Consistencia Físico-Digital - F15):} Sincronización de destacado fluorescente físico $\leftrightarrow$ digital. \vspace{0.1cm} \\
+        & • \textbf{RNF-06 (Consistencia Espacio-Temporal Físico-Digital):} Persistencia de anotaciones en coordenadas tipográficas con alineación homotética exacta. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Persistencia:} Inyección nativa de anotaciones de resaltado amarillo (1.0, 0.9, 0.1) guardada en disco con respaldo .bac en $23.47 \pm 2.38$ ms, abriendo correctamente en visores estándar (Adobe Reader / Edge). \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Sincronización bidireccional confirmada. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+\paragraph{Protocolo de validación.} Se realizó una prueba de estrés con 50 anotaciones de resaltado inyectadas sucesivamente sobre el PDF real, disparadas tanto por la detección óptica cenital de un resaltador físico sobre papel como por selección interactiva en la interfaz de proyección. Se midió el ciclo completo de persistencia: copia de seguridad previa (.bac), apertura con fitz.open, resolución geométrica del QuadPoint de la línea, inyección con add\_highlight\_annot, guardado en disco con escritura incremental (doc.save) y cierre del descriptor, sobre un SSD NVMe. Luego se verificó la visualización de las anotaciones en Adobe Acrobat Reader DC y en Microsoft Edge.
+ 
+El prototipo F15 completó el ciclo de inyección y guardado de una anotación de resaltado en $23.47 \pm 2.38$ ms, en una prueba de 50 anotaciones, y todas se visualizaron de forma idéntica en Adobe Acrobat Reader DC y en Microsoft Edge, conservando los metadatos de autor, fecha y el color amarillo (1.0, 0.9, 0.1). La ficha valida la inyección y la persistencia de la anotación; en cambio, no mide la coincidencia en posición y largo con lo marcado en el papel, que \cite{ibaceta2023evaluacion} registró como error sin solución (E40 y E41) y que se relaciona con el RNF-06. Esa coincidencia debe comprobarse en la integración con la cámara y el proyector. Según el estado reportado, la sincronización bidireccional quedó confirmada.
+ 
+\subsection{Prototipo F16: Sincronización de Notas Adhesivas}
+ 
+El prototipo F16 corresponde a la sincronización de notas adhesivas (post-its) entre el papel y el PDF. En el sistema legado (CommentsPD.cs), esta función sincroniza las notas escritas en el papel hacia el PDF como anotaciones de texto, o proyecta post-its digitales sobre el libro (Tabla~\ref{tab:func_consistencia_pdf}); en el desarrollo de \cite{pezoa2020implementacion}, la nota amarilla se detecta y se copia como imagen en el documento digital, según \cite{ibaceta2023evaluacion}. El prototipo detecta el post-it con OpenCV, extrae su texto con Tesseract e inserta una anotación de texto con PyMuPDF. La Tabla~\ref{tab:ficha_f16} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Sincronización de Notas Adhesivas.}
+    \label{tab:ficha_f16}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Insertar anotaciones de texto en el PDF digital y renderizar post-its virtuales proyectados sobre el libro impreso. \\ \hline
+        \textbf{Librerías / Hardware} & PyMuPDF (add\_text\_annot), OpenCV (Otsu), pytesseract / Proyector + PDF. \\ \hline
+        \textbf{Contrato / Interfaz} & IConsistencyProvider. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Consistencia Físico-Digital - F16):} Detección de post-its en papel con Tesseract OCR e inyección de anotaciones. \vspace{0.1cm} \\
+        & • \textbf{RNF-04 (Documentación y Mantenibilidad):} Estructura del módulo bajo estándares PEP 8 para fácil extensión de tipos de anotaciones. \vspace{0.1cm} \\
+        & • \textbf{RNF-06 (Consistencia Espacio-Temporal Físico-Digital):} Posicionamiento exacto de la nota emergente en el PDF digital respetando el área física observada. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Ubicación:} Desviación media de posicionamiento del icono Text/Note de 0.94 pt (tolerancia de $\pm1.0$ pt) respecto a la ubicación real del post-it físico. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Estructura de comentarios en PDF totalmente operativa. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+% VERIFICAR: el informe no define como se calculo el 91.2 % de precision OCR en las notas (CER, palabras, caracteres). Indicar la formula.
+\paragraph{Protocolo de validación.} Se utilizaron 40 notas adhesivas cuadradas de color amarillo canario ($76 \times 76$ mm), adheridas en posiciones arbitrarias sobre páginas impresas del documento de seminario. El centroide de cada nota en coordenadas de cámara se proyectó al espacio tipográfico del PDF mediante la homografía $H$, y se midió su desviación euclidiana respecto de la ubicación real, determinada con una regla micrométrica (1 pt = 0.3527 mm):
+\[ \Delta_{\mathrm{error}} = \sqrt{(x_{\mathrm{real}} - \hat{x}_{\mathrm{pdf}})^2 + (y_{\mathrm{real}} - \hat{y}_{\mathrm{pdf}})^2}. \]
+ 
+El prototipo F16 posicionó el icono de nota con una desviación media de 0.94 pt ($\approx 0.33$ mm) respecto de la ubicación real del post-it, medida con regla micrométrica sobre 40 notas, dentro de la tolerancia de $\pm 1.0$ pt, y transcribió el texto de notas escritas en letra imprenta legible con una precisión del 91.2\% mediante OCR. A diferencia del sistema legado, que copiaba la nota como imagen, el prototipo extrae su texto con Tesseract y lo inserta como anotación de texto, según lo indicado en el requisito asociado. La estructura del módulo se organizó bajo los estándares de PEP 8 para facilitar la extensión de tipos de anotaciones (RNF-04). El prototipo queda validado con la estructura de comentarios en PDF operativa.
+ 
+\subsection{Prototipo F17: Sincronización de Figuras Geométricas}
+ 
+El prototipo F17 corresponde a la sincronización de figuras geométricas entre el papel y el PDF. En el sistema legado (FiguresPD.cs), esta función extrae o dibuja círculos y rectángulos sobre el PDF y los proyecta sobre el libro impreso (Tabla~\ref{tab:func_consistencia_pdf}); en el desarrollo de \cite{pezoa2020implementacion}, las figuras del papel se detectan mediante un filtro de color rosado y se agregan al PDF según sus coordenadas y dimensiones, según \cite{ibaceta2023evaluacion}. El prototipo clasifica las formas mediante la compacidad $C = 4\pi A / P^{2}$, donde $A$ es el área y $P$ el perímetro del contorno, y las traza en el PDF con PyMuPDF. La Tabla~\ref{tab:ficha_f17} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Sincronización de Figuras Geométricas.}
+    \label{tab:ficha_f17}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Clasificar formas geométricas y proyectar halos de luz alineados con el papel físico. \\ \hline
+        \textbf{Librerías / Hardware} & PyMuPDF (draw\_rect, draw\_circle, draw\_line), OpenCV (approxPolyDP) / Proyector + PDF. \\ \hline
+        \textbf{Contrato / Interfaz} & IConsistencyProvider. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Consistencia Físico-Digital - F17):} Clasificación de figuras geométricas mediante compacidad $C = 4\pi A / P^{2}$ y proyección de halos de luz. \vspace{0.1cm} \\
+        & • \textbf{RNF-06 (Consistencia Espacio-Temporal Físico-Digital):} Precisión geométrica sin desalineación entre el halo proyectado y el vector del PDF. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Renderizado:} Fidelidad geométrica (IoU) de $98.6 \pm 0.6$\%, trazando rectángulos, círculos y líneas vectoriales en el PDF en $4.92 \pm 0.38$ ms. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Módulo de anotación vectorial validado. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+% VERIFICAR: el IoU de un segmento de linea (area cero) no esta definido sin un grosor. Indicar como se calculo para los 20 segmentos.
+\paragraph{Protocolo de validación.} Se utilizó un banco de 60 figuras: 20 rectángulos con relación de aspecto de 1:1 a 3:1, 20 círculos de radio entre 10 y 60 pt y 20 segmentos de línea recta, trazados con la herramienta interactiva de proyección o detectados desde bocetos en papel frente a la cámara. La fidelidad se evaluó con la intersección sobre la unión (IoU) entre la figura de entrada y la primitiva vectorial renderizada en el PDF:
+\[ \mathrm{IoU} = \frac{\mathrm{Área}(\mathrm{Figura}_{\mathrm{PDF}} \cap \mathrm{Figura}_{\mathrm{Entrada}})}{\mathrm{Área}(\mathrm{Figura}_{\mathrm{PDF}} \cup \mathrm{Figura}_{\mathrm{Entrada}})} \times 100\%. \]
+ 
+El prototipo F17 trazó rectángulos, círculos y líneas vectoriales en el PDF en $4.92 \pm 0.38$ ms por primitiva, con una fidelidad geométrica de IoU = $98.6 \pm 0.6$\% sobre 60 figuras. La compacidad permite distinguir las formas porque su valor es 1 para un círculo ideal y menor para figuras más alargadas o angulosas. El resultado se relaciona con el RNF-06, relativo a la ausencia de desalineación entre el halo proyectado y el vector del PDF, y deja validado el módulo de anotación vectorial.
+ 
+\subsection{Prototipo F24: Reconocimiento de Comandos de Voz}
+ 
+El prototipo F24 corresponde al reconocimiento de comandos por voz, del subsistema de voz y audio. En el sistema legado (ProjectionScreenActivity2.cs), esta función escucha la voz del lector para ejecutar intenciones usando SAPI5 (Tabla~\ref{tab:func_voz_audio}); el módulo de búsqueda de \cite{montanares2019desarrollo} define ocho comandos (cinco de búsqueda y tres de lectura, como \textit{Buscar Enciclopedia} y \textit{Lectura Definición}), según \cite{ibaceta2023evaluacion}. El prototipo evalúa la conversión de voz a texto con Whisper en reemplazo de SAPI5. La Tabla~\ref{tab:ficha_f24} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Reconocimiento de Comandos de Voz.}
+    \label{tab:ficha_f24}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Evaluar la captura y conversión de voz a texto (STT) para comandos e intenciones de lectura en reemplazo de SAPI5 en C\#. \\ \hline
+        \textbf{Librerías / Hardware} & OpenAI Whisper (local / API), speech\_recognition / Micrófono. \\ \hline
+        \textbf{Contrato / Interfaz} & IVoiceService. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Núcleo y Orquestador Central):} Soporte dinámico de comandos e intenciones de usuario. \vspace{0.1cm} \\
+        & • \textbf{RNF-03 (Internacionalización - i18n):} Reconocimiento de voz con soporte para los idiomas español e inglés. \vspace{0.1cm} \\
+        & • \textbf{RNF-08 (Resiliencia y Tolerancia a Fallos):} Aislamiento de excepciones ante fallos de audio o micrófono desconectado sin afectar al orquestador principal. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Latencia y precisión:} Exactitud de comandos del 97.33\% (146 de 150 grabaciones) con un tiempo de respuesta de $310 \pm 25$ ms usando Whisper en modo local (modelo tiny). \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Pipeline STT aislado y listo para integración. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+% VERIFICAR: (1) el informe nombra el modelo 'tiny.es'; OpenAI publica 'tiny' y 'tiny.en', no 'tiny.es'. Confirmar el modelo exacto. (2) 150 audios con 3 locutores y 15 comandos no se reparten en partes iguales; indicar la distribucion real. (3) la ficha dice tiny/base, el informe solo tiny.
+\paragraph{Protocolo de validación.} Se utilizaron 150 grabaciones de voz en formato WAV monoaural (16 kHz, 16 bits PCM) registradas por 3 locutores hispanohablantes (2 masculinos y 1 femenino) en un laboratorio con ruido ambiente de 35 a 45 dBA. El conjunto cubrió 15 comandos operacionales del sistema, como ``subrayar línea'', ``leer párrafo en voz alta'', ``buscar definición'' y ``siguiente página''. La exactitud se calculó como
+\[ \mathrm{Exactitud} = \frac{N_{\mathrm{comandos\ correctos}}}{N_{\mathrm{emisiones}}} \times 100\%, \]
+y la latencia se midió desde el fin de la actividad de voz (detección VAD) hasta la emisión del evento textual normalizado.
+ 
+El prototipo F24 alcanzó una exactitud de comandos del 97.33\% (146 de 150 grabaciones) con un tiempo de respuesta de $310 \pm 25$ ms, usando Whisper en modo local cuantizado sobre una CPU de 4 núcleos. El pipeline quedó aislado del resto del sistema, de modo que un fallo de audio o un micrófono desconectado no afecta al orquestador (RNF-08), y soporta español e inglés (RNF-03). \cite{ibaceta2023evaluacion} registró que los comandos de voz no permitían acceder a la búsqueda de diccionario (EB7), problema que atribuyó a la disposición del proyector que capta el audio, por lo que el dispositivo de captura de sonido es un factor a considerar en la integración. El pipeline queda listo para ella.
+ 
+\subsection{Prototipo F25: Síntesis de Voz}
+ 
+El prototipo F25 corresponde a la síntesis de voz. En el sistema legado (ProjectionScreenActivity2.cs), esta función lee en voz alta las definiciones, traducciones o resúmenes al usuario con el motor nativo de Windows (Tabla~\ref{tab:func_voz_audio}), lo que corresponde al requisito de acceso a un lector de información (RFM13) y a los comandos de lectura del módulo de búsqueda \citep{montanares2019desarrollo,ibaceta2023evaluacion}. El prototipo valida la lectura asistida mediante pyttsx3. La Tabla~\ref{tab:ficha_f25} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Síntesis de Voz.}
+    \label{tab:ficha_f25}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Validar la lectura asistida de resúmenes y traducciones mediante síntesis de voz en español. \\ \hline
+        \textbf{Librerías / Hardware} & pyttsx3 / SAPI5 Python / Altavoces. \\ \hline
+        \textbf{Contrato / Interfaz} & IVoiceService. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Núcleo y Orquestador Central):} Soportar cambio dinámico de idioma y reproducción asistiva de respuestas. \vspace{0.1cm} \\
+        & • \textbf{RNF-03 (Internacionalización - i18n):} Síntesis de audio con voces en español e inglés según la configuración i18n. \vspace{0.1cm} \\
+        & • \textbf{RNF-07 (Eficiencia y Gestión de Memoria):} Ejecución asíncrona de audio para evitar congelamientos en el hilo principal de la interfaz. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Naturalidad / Bloqueo:} Ejecución asíncrona fluida sin bloqueo del hilo gráfico principal, alcanzando una velocidad de lectura de 149.6 palabras por minuto. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Servicio TTS configurado. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+\paragraph{Protocolo de validación.} Se utilizaron 10 extractos de texto en español (definiciones académicas y resúmenes) de exactamente 100 palabras cada uno, es decir, 1\,000 palabras sintetizadas. La velocidad de habla se calculó como $\mathrm{WPM} = N_{\mathrm{palabras}} / t_{\mathrm{emisión\ (min)}}$ a partir del temporizador de audio, y la ausencia de bloqueo se comprobó midiendo la tasa de cuadros de la interfaz gráfica durante la síntesis, que se ejecutó en un hilo dedicado (threading.Thread) con la voz SAPI5 en español (Microsoft Helena o Sabina).
+ 
+El prototipo F25 sintetizó los diez textos de forma asíncrona; cada bloque de 100 palabras se reprodujo en $40.1 \pm 0.7$ s, lo que equivale a 149.6 palabras por minuto, y la interfaz gráfica mantuvo 60 FPS sin bloqueos. La ejecución asíncrona responde al RNF-07, que busca evitar congelamientos de la interfaz, y la selección de voces según la configuración i18n responde al RNF-03. El servicio de síntesis de voz queda configurado y completa, junto con F24, el subsistema de interacción por voz.
+ 
+\subsection{Prototipo F27: Herramienta de Subrayado Digital Proyectado}
+ 
+El prototipo F27 corresponde a la herramienta de subrayado digital proyectado. En el sistema legado (HighlightTool.cs), esta función dibuja una banda rectangular amarilla transparente e interactiva sobre la proyección (Tabla~\ref{tab:func_gui_proyeccion}), en línea con el requisito de \cite{contreras2019desarrollo} de seleccionar un fragmento de texto proyectando un rectángulo de color sobre él (RFCO5, según \cite{ibaceta2023evaluacion}). El prototipo genera una capa transparente con PyGame y OpenCV sobre la imagen proyectada en el libro. La Tabla~\ref{tab:ficha_f27} resume la validación.
+ 
+\begin{table}[H]
+    \centering
+    \caption{Ficha de validación del prototipo: Herramienta de Subrayado Digital Proyectado.}
+    \label{tab:ficha_f27}
+    \begin{tabular}{|L{3.2cm}|L{11.0cm}|}
+        \hline
+        \textbf{Objetivo} & Generar una capa transparente (canvas) para dibujar bandas amarillas interactivas sobre la imagen proyectada en el libro físico. \\ \hline
+        \textbf{Librerías / Hardware} & PyGame / OpenCV Overlay (cv2.addWeighted) / Proyector Superior. \\ \hline
+        \textbf{Contrato / Interfaz} & IProjectionService. \\ \hline
+        \textbf{Requisitos Asociados} &
+        • \textbf{RF (Plugins de Visualización y Proyección):} Desplegar overlays de proyección sobre el papel físico en tiempo real. \vspace{0.1cm} \\
+        & • \textbf{RNF-01 (Multiplataforma):} Renderizado gráfico multiplataforma sobre PyGame / OpenCV en Windows y Linux. \vspace{0.1cm} \\
+        & • \textbf{RNF-06 (Consistencia Espacio-Temporal Físico-Digital):} Superposición óptica exacta de la capa digital sobre las líneas impresas del libro. \\ \hline
+        \textbf{Resultados y Hallazgos} &
+        • \textbf{Mezcla de color (\textit{alpha blending}):} Nivel de transparencia translúcida optimizado a $\alpha=0.45$, con contraste de Weber $C_W=-0.78$, que permite una legibilidad clara del texto impreso bajo la luz proyectada. \vspace{0.1cm} \\
+        & • \textbf{Estado:} Validado y completado. Integrado en el subsistema gráfico definitivo. \\ \hline
+    \end{tabular}
+    \fuente{Elaboración propia.}
+\end{table}
+ 
+% VERIFICAR: (1) el contraste de Weber se define con luminancia (cd/m2) y el luxometro mide iluminancia (lux); aclarar el instrumento/magnitud. (2) el umbral C_W <= -0.70 se atribuye a la ISO 9241-303 en el informe; no se incluyo esa atribucion hasta confirmarla.
+\paragraph{Protocolo de validación.} La evaluación se realizó sobre un libro físico impreso, iluminado por el proyector cenital a 65 cm de distancia. Se probaron cinco coeficientes de mezcla alfa, $\alpha \in \{0.25, 0.35, 0.45, 0.60, 0.75\}$, para una banda de realce amarilla RGB(255, 230, 0). La legibilidad se cuantificó con el contraste de Weber entre el trazo negro impreso y el papel resaltado por el proyector, medido con un luxómetro digital:
+\[ C_W = \frac{L_{\mathrm{texto}} - L_{\mathrm{fondo}}}{L_{\mathrm{fondo}}}, \]
+y se definió como zona óptima aquella que conserva $C_W \le -0.70$ sin atenuar la visibilidad de la luz amarilla de realce.
+ 
+El prototipo F27 evaluó cinco coeficientes de mezcla alfa y fijó $\alpha = 0.45$, con un contraste de Weber $C_W = -0.78$ y una iluminancia media de realce de 520 lux, valor que cumple el criterio $C_W \le -0.70$ adoptado, de modo que el texto impreso se mantiene legible bajo la luz proyectada. \cite{ibaceta2023evaluacion} registró que el color del botón de destacado entraba en conflicto con el reconocimiento de texto de la cámara, por lo que el color de las capas proyectadas es un factor a considerar al integrar este prototipo con F3. El prototipo queda integrado en el subsistema gráfico definitivo, con el renderizado multiplataforma sobre Windows y Linux que exige el RNF-01.

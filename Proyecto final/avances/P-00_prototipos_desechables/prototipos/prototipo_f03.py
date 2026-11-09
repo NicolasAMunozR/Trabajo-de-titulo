@@ -1,12 +1,5 @@
-"""
-Prototipo F03 OCR Tesseract sobre frame de cámara
-Versión original en comportamiento:
-- abre la primera cámara disponible
-- muestra OCR en tiempo real sobre la imagen
-- mejora el texto antes de reconocerlo
-
-S = guardar evidencia  |  Q = salir
-"""
+# Prototipo F03: OCR con Tesseract en tiempo real sobre el frame de la cámara.
+# S = guardar evidencia  |  Q = salir
 
 import cv2
 import numpy as np
@@ -25,7 +18,7 @@ except ImportError:
 
 
 def ensure_tesseract_installed():
-    """Verifica si Tesseract está instalado y lo instala si hace falta."""
+    # Verifica si Tesseract está instalado y lo instala si hace falta.
     candidates = [
         shutil.which("tesseract"),
         r"C:\Program Files\Tesseract-OCR\tesseract.exe",
@@ -66,7 +59,7 @@ EVID.mkdir(parents=True, exist_ok=True)
 
 
 def wrap_text(text, width=32):
-    """Divide el texto en líneas para que se vea completo en pantalla."""
+    # Divide el texto en líneas para que se vea completo en pantalla.
     words = text.split()
     lines = []
     current = ""

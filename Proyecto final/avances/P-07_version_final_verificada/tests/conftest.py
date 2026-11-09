@@ -1,4 +1,4 @@
-"""Fixtures compartidas: PDF de prueba, frames sintéticos y un servidor LLM falso."""
+# Fixtures compartidas: PDF de prueba, frames sintéticos y un servidor LLM falso.
 import json
 import os
 import sys
@@ -38,7 +38,7 @@ def blank_page(width: int = 640, height: int = 480) -> np.ndarray:
 
 @pytest.fixture
 def frames() -> dict:
-    """Frames de cámara con las marcas físicas que detecta BibliotecaConsistencia."""
+    # Frames de cámara con las marcas físicas que detecta BibliotecaConsistencia.
     bookmark = blank_page()
     cv2.rectangle(bookmark, (50, 50), (130, 120), (200, 120, 0), -1)        # azul (H≈100)
     comment = blank_page()

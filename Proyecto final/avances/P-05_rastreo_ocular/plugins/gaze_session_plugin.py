@@ -1,17 +1,5 @@
-"""
-plugins/gaze_session_plugin.py
-==============================
-Sesión de rastreo ocular (reemplaza ModuloRastreoOcular/IntermediateClass.cs).
-
-Consume en cada ciclo la mirada del eye tracker seleccionado en "Eye tracking" y:
-  - mueve el cursor del sistema si "Mouse Control" está activo (MouseControl.cs),
-  - guarda X, Y, Timestamp, Click en un CSV si "Save Data" está activo
-    (StandardLogging/Serilog → CSV en la carpeta elegida),
-  - publica la mirada en píxeles de pantalla para la retícula (ReticleDrawing.cs).
-
-Ya no se crea un AppDomain ni se carga el eye tracker por reflexión: el tracker es
-otro plugin IEyeTracker del orquestador y aquí solo se leen sus resultados.
-"""
+# Sesión de rastreo ocular (reemplaza IntermediateClass.cs).
+# En cada ciclo mueve el cursor si "Mouse Control" está activo, guarda la mirada en CSV y la publica para la retícula.
 import logging
 import time
 from datetime import datetime
@@ -52,7 +40,7 @@ class GazeSessionPlugin(PluginBase, ICycleResultConsumer):
     def configure_session(self, tracker_name: Optional[str], mouse_control: bool, save_data: bool,
                           save_route: str = "", file_name: str = "",
                           screen: Optional[tuple[int, int, int, int]] = None) -> Optional[str]:
-        """Equivalente a IntermediateClass.InitializeClass(). Retorna la ruta del CSV, si aplica."""
+        # Equivalente a IntermediateClass.InitializeClass(). Retorna la ruta del CSV, si aplica.
         self.close_session()
         self._tracker_name = tracker_name
         self._mouse_control = mouse_control
@@ -77,7 +65,7 @@ class GazeSessionPlugin(PluginBase, ICycleResultConsumer):
         self._last_screen_point = None
 
     def register_click(self) -> None:
-        """Un botón activado por permanencia de la mirada marca el clic en el CSV."""
+        # Un botón activado por permanencia de la mirada marca el clic en el CSV.
         self._click_register = 1
 
     def consume_cycle_results(self, results: dict[str, dict]) -> None:

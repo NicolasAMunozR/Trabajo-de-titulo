@@ -1,12 +1,9 @@
-"""
-main.py — Punto de entrada de EDDIE (equivale a ReadingSession.Main del C#)
-==========================================================================
-Uso:
-  python main.py                 → Abre "EDDIE Menu Settings" (interfaz completa)
-  python main.py --sim           → Igual, pero con cámaras y eye tracker simulados (DeviceFactory)
-  python main.py --headless 100  → Solo el orquestador, N ciclos, sin interfaz (pruebas de latencia)
-  python main.py --config ruta   → Otro archivo de plugins
-"""
+# Este módulo es el punto de entrada de EDDIE (equivale a ReadingSession.Main del C#).
+# Uso:
+# python main.py                 → Abre "EDDIE Menu Settings" (interfaz completa)
+# python main.py --sim           → Igual, pero con cámaras y eye tracker simulados (DeviceFactory)
+# python main.py --headless 100  → Solo el orquestador, N ciclos, sin interfaz (pruebas de latencia)
+# python main.py --config ruta   → Otro archivo de plugins
 import argparse
 import logging
 import os

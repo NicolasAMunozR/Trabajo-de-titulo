@@ -1,24 +1,5 @@
-"""
-ui/projection_screen.py
-=======================
-Interfaz de realidad aumentada proyectada sobre el escritorio (ProjectionScreenActivity2.cs).
-
-Flujo principal (idéntico al original):
-  1. El lector resalta una palabra en el área blanca (HighlightTool) con el mouse, el
-     lápiz de color o la mano. Al soltar, la cámara de texto detecta el resaltado
-     proyectado y el OCR obtiene el término (modo Highlight) o se recorta la imagen
-     de la cámara gestual (modo Capture).
-  2. "Web search" muestra los cinco servicios: diccionario y traductor (panel izquierdo),
-     enciclopedia, video e imagen (panel derecho). Ahora los responde un LLM.
-  3. "PDF synchronizer" muestra las herramientas de consistencia papel ↔ PDF.
-
-P-08 (interfaz renovada): la lógica es la de P-07. Cambia la disposición (ui/modern_forms.
-arrange_projection): fondo negro (el proyector no ilumina lo que no se usa), todos los botones
-en la franja superior —zona donde el eye tracker fue 100 % válido en Ibaceta (2023)—, ningún
-botón amarillo (el amarillo es del resaltador que busca la cámara), botones con estado
-encendido visible y barra de progreso del clic por mirada. La zona de lectura y las cruces
-de calibración quedan exactamente donde estaban.
-"""
+# Interfaz de realidad aumentada proyectada sobre el escritorio (ProjectionScreenActivity2.cs).
+# Flujo: resaltar en el área blanca → OCR o captura → búsqueda con el LLM o sincronización con el PDF.
 import logging
 import re
 import time
@@ -145,7 +126,7 @@ class ProjectionScreen(QWidget):
         self.raise_()
 
     def _ensure_browser(self):
-        """ChromiumWebBrowser (CefSharp) → QWebEngineView con el mismo user agent móvil."""
+        # ChromiumWebBrowser (CefSharp) → QWebEngineView con el mismo user agent móvil.
         if self.browser is not None:
             return self.browser
         try:
@@ -172,7 +153,7 @@ class ProjectionScreen(QWidget):
 
     # ------------------------------------------------------------------ resaltado / captura
     def toggle_marks(self) -> None:
-        """button1_Click: muestra/oculta las cruces de calibración."""
+        # button1_Click: muestra/oculta las cruces de calibración.
         for name in ("pictureBox3", "pictureBox4", "pictureBox5"):
             if self.mark_point:
                 self.form[name].setPixmap(theme.target_pixmap(60))
@@ -181,14 +162,14 @@ class ProjectionScreen(QWidget):
         self.mark_point = not self.mark_point
 
     def toggle_mode(self) -> None:
-        """button3_Click: alterna modo resaltado (OCR) / modo captura (imagen)."""
+        # button3_Click: alterna modo resaltado (OCR) / modo captura (imagen).
         self.highlight.highlight_on = not self.highlight.highlight_on
         self._show_mode()
         self.highlight.update()
         self.capture_text(update_concept=False)
 
     def _show_mode(self) -> None:
-        """El botón dice el modo actual (P-07 mostraba la imagen del modo al que se cambiaba)."""
+        # El botón dice el modo actual (P-07 mostraba la imagen del modo al que se cambiaba).
         button = self.form.textImageButton
         if self.highlight.highlight_on:
             button.configure("highlighter", "Resaltando")
@@ -199,11 +180,11 @@ class ProjectionScreen(QWidget):
         button.set_active(self.highlight.highlight_on)
 
     def toast_anchor(self) -> tuple[int, int]:
-        """Avisos bajo la zona de lectura, centrados, sin tapar el libro ni los paneles."""
+        # Avisos bajo la zona de lectura, centrados, sin tapar el libro ni los paneles.
         return 285 + 517 // 2 + 180, 562
 
     def _mark_service(self, active: Optional[str], group: tuple[str, ...]) -> None:
-        """Reemplaza las líneas guía del original: el servicio que respondió queda encendido."""
+        # Reemplaza las líneas guía del original: el servicio que respondió queda encendido.
         for name in group:
             self.form[name].set_active(name == active)
 
@@ -213,13 +194,13 @@ class ProjectionScreen(QWidget):
         return plugin if plugin is not None and plugin.recognition_active else None
 
     def first_click(self) -> None:
-        """FirstClick → recGestual.FinalToRectXY()."""
+        # FirstClick → recGestual.FinalToRectXY().
         gesture = self._gesture()
         if gesture is not None:
             gesture.mark_selection_start()
 
     def button_action(self) -> None:
-        """ButtonAction: al terminar un resaltado (OCR) o una captura de imagen."""
+        # ButtonAction: al terminar un resaltado (OCR) o una captura de imagen.
         if self.highlight.highlight_on:
             self.capture_text(update_concept=True)
             return
@@ -231,7 +212,7 @@ class ProjectionScreen(QWidget):
             gesture_page.show_capture(gesture.capture_selection())
 
     def capture_text(self, update_concept: bool) -> None:
-        """CaptureTxt + OCRProcess.TransformImage sobre la cámara de texto."""
+        # CaptureTxt + OCRProcess.TransformImage sobre la cámara de texto.
         def done(result) -> None:
             if not result.ok:
                 if update_concept:
@@ -246,7 +227,7 @@ class ProjectionScreen(QWidget):
         self.ctx.runtime.run_async("ImageProcessor", "recognize_highlighted_text", callback=done)
 
     def _concept_edited(self) -> None:
-        """El lector puede corregir el texto reconocido antes de buscar."""
+        # El lector puede corregir el texto reconocido antes de buscar.
         self.concepto_buscar = " ".join(self.form.textBox1.toPlainText().split())
 
     # ------------------------------------------------------------------ menús
@@ -298,7 +279,7 @@ class ProjectionScreen(QWidget):
         return self.ctx.pages["web"].provider_for(service)
 
     def _record(self, term: str, service: str) -> None:
-        """busquedasRecientes2 + línea del CSV de actividades."""
+        # busquedasRecientes2 + línea del CSV de actividades.
         stamp = datetime.now().strftime("%Y/%m/%d-%H:%M:%S")
         layout = self.form.fl_busquedasRecientes.property("flow_layout")
         layout.insertWidget(layout.count() - 1, RecentSearchItem(stamp, term, service))
@@ -494,7 +475,7 @@ class ProjectionScreen(QWidget):
             self.form[name].setVisible(False)
 
     def close_right(self) -> None:
-        """btn_cerrarVentanaDerecha: cierra enciclopedia, video e imagen."""
+        # btn_cerrarVentanaDerecha: cierra enciclopedia, video e imagen.
         f = self.form
         self.right_lines.clear()
         f.panel2.setVisible(False)
@@ -533,7 +514,7 @@ class ProjectionScreen(QWidget):
             self.ctx.runtime.invoke("SpeechProvider", "stop_speaking")
 
     def start_voice(self) -> None:
-        """iniciarVR: gramática Buscar|Lectura|Cerrar + Video|Enciclopedia|Traducción|Definición|Imagen."""
+        # iniciarVR: gramática Buscar|Lectura|Cerrar + Video|Enciclopedia|Traducción|Definición|Imagen.
         commands = [f"{verb} {target}" for verb in ("Buscar", "Lectura", "Cerrar") for target in VOICE_TARGETS]
         result = self.ctx.runtime.invoke("SpeechProvider", "start_listening", commands, self._voice.command.emit)
         if not result.ok:
@@ -577,7 +558,7 @@ class ProjectionScreen(QWidget):
             self.highlight.set_page_rectangles([(a.x0, a.y0, a.x1, a.y1) for a in result.value])
 
     def sync_highlight(self) -> None:
-        """syncPdfButton_Click: guarda el resaltado actual en la página n del PDF."""
+        # syncPdfButton_Click: guarda el resaltado actual en la página n del PDF.
         if not self._pdf_loaded():
             return
         from contracts.i_consistency_provider import Annotation
@@ -614,7 +595,7 @@ class ProjectionScreen(QWidget):
         self.form.PagesLabel.setText(", ".join(str(p) for p in result.value or []) or "ninguna")
 
     def load_pdf_content(self) -> None:
-        """buttonPDF_Click (Content, digital → papel): figuras, marcadores y comentarios."""
+        # buttonPDF_Click (Content, digital → papel): figuras, marcadores y comentarios.
         if not self._pdf_loaded():
             return
         page = self._page_from_box()
@@ -676,7 +657,7 @@ class ProjectionScreen(QWidget):
         self.form.listBox2.takeItem(self.form.listBox2.row(item))
 
     def physical_sync(self, method: str) -> None:
-        """buttonMarker / buttonComments / buttonFiguresPD (papel → digital)."""
+        # buttonMarker / buttonComments / buttonFiguresPD (papel → digital).
         if not self._pdf_loaded():
             return
         page = self._page_from_box()
@@ -721,7 +702,7 @@ class ProjectionScreen(QWidget):
         self._drag_from = None
 
     def write_activity_log(self) -> None:
-        """ProjectionScreenActivity_FormClosing: agrega las búsquedas de la sesión al CSV."""
+        # ProjectionScreenActivity_FormClosing: agrega las búsquedas de la sesión al CSV.
         if len(self.csv_lines) <= 1:
             return
         self.csv_path.parent.mkdir(parents=True, exist_ok=True)

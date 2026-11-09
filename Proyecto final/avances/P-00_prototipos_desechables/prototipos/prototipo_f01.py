@@ -1,10 +1,6 @@
-"""
-Prototipo F01 Enumeración e Inicialización de Cámaras
-Muestra todas las cámaras detectadas, con nombre real si Windows lo puede obtener,
-permite elegir una, abre esa cámara en vivo durante 8 segundos y guarda el frame.
-
-Presiona Q para salir antes de los 8 segundos.
-"""
+# Prototipo F01: enumeración e inicialización de cámaras.
+# Lista las cámaras detectadas, abre la elegida durante 8 segundos y guarda el frame.
+# Q = salir antes
 
 import cv2
 import pathlib
@@ -17,7 +13,7 @@ EVID.mkdir(parents=True, exist_ok=True)
 
 
 def get_windows_camera_names():
-    """Intenta obtener nombres reales de cámaras en Windows usando PowerShell."""
+    # Intenta obtener nombres reales de cámaras en Windows usando PowerShell.
     try:
         result = subprocess.run(
             [

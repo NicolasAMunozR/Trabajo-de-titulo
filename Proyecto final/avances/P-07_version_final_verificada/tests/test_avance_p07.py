@@ -1,4 +1,4 @@
-"""Pruebas del avance P-07: los hallazgos de la verificación (H-01, H-02) quedan corregidos."""
+# Pruebas del avance P-07: los hallazgos de la verificación (H-01, H-02) quedan corregidos.
 import importlib.util
 import json
 import sys

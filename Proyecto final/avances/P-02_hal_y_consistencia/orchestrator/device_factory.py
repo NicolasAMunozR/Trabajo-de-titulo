@@ -1,19 +1,5 @@
-"""
-orchestrator/device_factory.py
-==============================
-Capa de abstracción de hardware (DeviceFactory).
-
-Cada plugin de hardware declarado en plugins.json puede indicar una implementación
-simulada con la clave "simulated_class". DeviceFactory decide cuál cargar:
-
-    EDDIE_DEVICE_MODE=real   → clase real (cámara física, eye tracker físico)   [por defecto]
-    EDDIE_DEVICE_MODE=sim    → clase simulada (MockCameraSensor, EyeTrackerMock, ...)
-
-También se puede forzar por plugin con "device_mode": "sim" | "real" en su entrada
-(o en los ajustes del usuario). Esto permite validar el sistema completo sin el
-montaje físico del laboratorio y distinguir una falla de sensor de una señal
-experimental (sección 3.1 del informe).
-"""
+# Capa de abstracción de hardware (DeviceFactory).
+# Decide si cargar la clase real o la simulada según EDDIE_DEVICE_MODE (real | sim) o "device_mode" del plugin.
 import logging
 import os
 
@@ -24,7 +10,7 @@ VALID_MODES = ("real", "sim")
 
 
 class DeviceFactory:
-    """Resuelve la clase concreta de cada dispositivo según el modo real/simulado."""
+    # Resuelve la clase concreta de cada dispositivo según el modo real/simulado.
 
     @staticmethod
     def global_mode() -> str:
@@ -36,7 +22,7 @@ class DeviceFactory:
 
     @classmethod
     def resolve(cls, plugin_conf: dict) -> str:
-        """Retorna el class_path que debe cargarse para esta entrada de plugins.json."""
+        # Retorna el class_path que debe cargarse para esta entrada de plugins.json.
         class_path = plugin_conf.get("class", "")
         simulated = plugin_conf.get("simulated_class")
         if not simulated:

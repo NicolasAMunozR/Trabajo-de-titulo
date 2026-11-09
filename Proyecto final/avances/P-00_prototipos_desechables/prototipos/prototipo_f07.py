@@ -1,12 +1,5 @@
-"""
-Prototipo F07 Homografía
-Usa la cámara en vivo. El usuario hace CLIC en 4 esquinas
-de la hoja/libro para definir el plano de referencia.
-EDDIE calcula la homografía y muestra la vista "rectificada"
-(como si la cámara mirara de frente a la hoja).
-
-R = reiniciar puntos  |  S = guardar  |  Q = salir
-"""
+# Prototipo F07: homografía a partir de 4 esquinas marcadas con clic; muestra la hoja rectificada.
+# R = reiniciar puntos  |  S = guardar  |  Q = salir
 import cv2, pathlib, sys
 import numpy as np
 

@@ -1,4 +1,4 @@
-"""Extrae las imágenes embebidas (base64) de los archivos .resx de WinForms."""
+# Extrae las imágenes embebidas (base64) de los archivos .resx de WinForms.
 import base64
 import re
 import sys

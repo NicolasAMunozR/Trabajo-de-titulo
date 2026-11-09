@@ -1,21 +1,5 @@
-"""
-Prototipo F15 Sincronización de Resaltados (Subrayado en Papel Físico a PDF Digital)
-Permite navegar entre páginas (N / P).
-Transmisión en vivo desde DroidCam / Webcam enfocando el papel.
-Cuando el usuario SUBRAYA O RESALTA en el papel físico (con resaltador fluorescente amarillo, verde, naranja o lápiz de color), la cámara detecta el trazo en HSV.
-Mapea la posición vertical y horizontal del trazo físico hacia la línea de texto correspondiente en el PDF digital real.
-Muestra cómo el proyector proyecta la banda de luz de realce sobre el libro físico.
-El ratón también permite simular el movimiento ocular de lectura (Gaze tracking).
-Controles:
-  SUBRAYAR EN PAPEL : Subrayar con resaltador/lápiz frente a la cámara (se refleja en el PDF)
-  C                 : Forzar captura manual de trazo detectado por la cámara
-  CLIC IZQUIERDO    : Resaltar línea directamente desde la Vista Proyector
-  N / P             : Página Siguiente / Anterior en el PDF real
-  R                 : Reiniciar anotaciones de la página actual
-  O                 : Abrir el PDF real sincronizado en el visor del sistema
-  S                 : Guardar captura de evidencia PNG
-  Q / ESC           : Salir
-"""
+# Prototipo F15: sincroniza lo subrayado en el papel con el PDF digital (detección HSV del trazo).
+# C = capturar trazo  |  clic = resaltar línea  |  N / P = página  |  R = reiniciar  |  O = abrir PDF  |  S = guardar  |  Q = salir
 
 import os
 import sys
@@ -62,13 +46,13 @@ HIGHLIGHTER_HSV = {
 HIGHLIGHTS_APLICADOS = []
 
 def inicializar_pdf_salida():
-    """Copia el PDF base al archivo de salida."""
+    # Copia el PDF base al archivo de salida.
     doc = fitz.open(str(PDF_ORIGINAL_PATH))
     doc.save(str(PDF_OUTPUT_PATH))
     doc.close()
 
 def aplicar_highlight_en_linea_pdf(page_num, rect_pdf, texto=""):
-    """Inserta una anotación Highlight real en la página indicada del PDF."""
+    # Inserta una anotación Highlight real en la página indicada del PDF.
     if PDF_OUTPUT_PATH.exists():
         try:
             if PDF_BACKUP_PATH.exists():
@@ -89,7 +73,7 @@ def aplicar_highlight_en_linea_pdf(page_num, rect_pdf, texto=""):
     doc.close()
 
 def obtener_lineas_pagina_pdf(pdf_path, page_num):
-    """Extrae todas las líneas de texto de la página del PDF real con sus rectángulos exactos."""
+    # Extrae todas las líneas de texto de la página del PDF real con sus rectángulos exactos.
     doc = fitz.open(str(pdf_path))
     page_num = max(0, min(len(doc) - 1, page_num))
     page = doc[page_num]

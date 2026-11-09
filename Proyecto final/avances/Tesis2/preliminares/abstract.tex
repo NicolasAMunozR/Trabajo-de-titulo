@@ -1,0 +1,23 @@
+\resumenCastellano{
+EDDIE es una plataforma de investigación del laboratorio InTeractiOn de la Universidad de Santiago de Chile que habilita la lectura aumentada no obstructiva sobre documentos impresos: un proyector y dos cámaras sobre el escritorio permiten resaltar una palabra en el papel y obtener su definición, traducción o contenido relacionado, sincronizar anotaciones entre el libro y su versión PDF y registrar la mirada del lector con un eye tracker. Tras seis memorias de título sucesivas, el sistema llegó a unas 45\,000 líneas de C\# en 26 proyectos, con tres mecanismos distintos de carga de módulos por reflexión y 67 errores documentados por \citet{ibaceta2023evaluacion}, lo que impedía usarlo de forma confiable como instrumento de medición.
+
+Este trabajo reconstruye el núcleo de EDDIE en Python bajo una arquitectura de plugins con un contrato único (\texttt{PluginBase}), un orquestador central (\texttt{OrchestratorCore}) que ejecuta un ciclo de inicialización, ejecución y liberación con aislamiento de fallos, y una capa de abstracción de hardware (\texttt{DeviceFactory}) que conmuta cada dispositivo entre su implementación real y una simulada. Siguiendo el ciclo PDCA con prototipado rápido (RAD) y Kanban, se evaluó primero la factibilidad de migrar 19 funciones críticas mediante prototipos desechables y luego se integraron, en siete iteraciones, los módulos de consistencia físico-digital, reconocimiento de texto, interacción gestual, rastreo ocular, búsqueda (respondida por un modelo de lenguaje en lugar de las APIs vencidas) y voz, con una interfaz rediseñada a partir de los hallazgos de usabilidad de la evaluación previa.
+
+La versión final aprueba \PSietePruebas{} pruebas automatizadas con una cobertura de líneas de \PSieteCobertura\% y una latencia del ciclo completo del orquestador de \PSieteCicloPnoventaycinco{}~ms en el percentil 95, bajo el umbral de 8,3~ms derivado de la frecuencia de los eye trackers. La verificación funcional con MECIVA PS y las pruebas de aceptación con el hardware del laboratorio completan la evaluación.
+
+\vspace*{0.5cm}
+\KeywordsES{lectura aumentada; arquitectura de plugins; software científico; deuda técnica; rastreo ocular; Python}
+}
+
+\newpage
+
+\resumenIngles{
+EDDIE is a research platform from the InTeractiOn laboratory at Universidad de Santiago de Chile that enables non-obstructive augmented reading on printed documents: a projector and two cameras above the desk let readers highlight a word on paper and obtain its definition, translation or related content, synchronize annotations between the book and its PDF, and record their gaze with an eye tracker. After six successive undergraduate theses, the system had grown to about 45,000 lines of C\# in 26 projects, with three different reflection-based module loading mechanisms and 67 documented errors \citep{ibaceta2023evaluacion}, which prevented its reliable use as a measurement instrument.
+
+This work rebuilds the EDDIE core in Python on a plugin architecture with a single contract (\texttt{PluginBase}), a central orchestrator that runs an initialize--execute--release cycle with fault isolation, and a hardware abstraction layer that switches each device between its real and simulated implementation. Following PDCA with rapid application development and Kanban, the feasibility of migrating 19 critical functions was first assessed with throwaway prototypes; the consistency, text recognition, gesture, eye tracking, search (answered by a language model instead of the expired web APIs) and voice modules were then integrated in seven iterations, with a user interface redesigned from previous usability findings.
+
+The final version passes \PSietePruebas{} automated tests with \PSieteCobertura\% line coverage and a 95th-percentile orchestrator cycle latency of \PSieteCicloPnoventaycinco{}~ms, below the 8.3~ms threshold derived from the eye trackers' sampling rate. Functional verification with MECIVA PS and acceptance tests with the laboratory hardware complete the evaluation.
+
+\vspace*{0.5cm}
+\KeywordsEN{augmented reading; plugin architecture; research software; technical debt; eye tracking; Python}
+}

@@ -1,14 +1,5 @@
-"""
-plugins/gestures/detectors.py
-=============================
-Detectores gestuales portados desde los plugins C#:
-  - ColorPenRecognition.dll  → ColorPenPlugin
-  - HandSkinRecognition.dll  → HandSkinPlugin
-  - MouseRecognition.dll     → MousePlugin
-
-Todos implementan IGesturePlugin vía CalibratedGesturePlugin y se declaran en
-config/plugins.json; ya no se cargan con Assembly.LoadFrom desde la carpeta Plugins.
-"""
+# Detectores gestuales portados desde los plugins C#: ColorPenPlugin, HandSkinPlugin y MousePlugin.
+# Se declaran en config/plugins.json; ya no se cargan con Assembly.LoadFrom.
 import math
 
 import cv2
@@ -20,7 +11,7 @@ from plugins.gestures.base import CalibratedGesturePlugin, Detection, write_mult
 
 
 class ColorPenPlugin(CalibratedGesturePlugin):
-    """Lápiz de color/luminoso: segmenta BGR (0,0,230)…(255,255,255), erosión 1, dilatación 7."""
+    # Lápiz de color/luminoso: segmenta BGR (0,0,230)…(255,255,255), erosión 1, dilatación 7.
 
     DISPLAY_NAME = "Color Pen Recognition"
     AUTO_CLICK = True
@@ -55,7 +46,7 @@ class ColorPenPlugin(CalibratedGesturePlugin):
 
 
 class HandSkinPlugin(CalibratedGesturePlugin):
-    """Mano por color de piel (YCrCb) con conteo de defectos de convexidad para el clic."""
+    # Mano por color de piel (YCrCb) con conteo de defectos de convexidad para el clic.
 
     DISPLAY_NAME = "Hand Skin Recognition"
     AUTO_CLICK = False
@@ -124,7 +115,7 @@ class HandSkinPlugin(CalibratedGesturePlugin):
 
 
 class MousePlugin(CalibratedGesturePlugin):
-    """El cursor del sistema actúa como sensor (MouseRecognition.dll)."""
+    # El cursor del sistema actúa como sensor (MouseRecognition.dll).
 
     DISPLAY_NAME = "Mouse Recognition"
     AUTO_CLICK = True
